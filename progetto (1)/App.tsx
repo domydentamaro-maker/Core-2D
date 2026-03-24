@@ -12,6 +12,7 @@ import { ComparisonTable } from './components/ComparisonTable';
 import { Glossary } from './components/Glossary';
 import { Seo } from './components/Seo';
 import { FAQ } from './components/FAQ';
+import { login as authLogin } from './components/valutazioni/auth';
 
 // Lazy Load Non-Critical Content
 const Values = lazy(() => import('./components/Values').then(module => ({ default: module.Values })));
@@ -21,11 +22,14 @@ const LeadMagnet = lazy(() => import('./components/LeadMagnet').then(module => (
 const Founder = lazy(() => import('./components/Founder').then(module => ({ default: module.Founder })));
 const Stats = lazy(() => import('./components/Stats').then(module => ({ default: module.Stats })));
 const ZesPage = lazy(() => import('./components/ZesPage').then(module => ({ default: module.ZesPage })));
+const DomenicoPage = lazy(() => import('./components/DomenicoPage').then(module => ({ default: module.DomenicoPage })));
+const MetodoFiloPage = lazy(() => import('./components/MetodoFiloPage').then(module => ({ default: module.default })));
 const Footer = lazy(() => import('./components/Footer').then(module => ({ default: module.Footer })));
 const FloatingContact = lazy(() => import('./components/FloatingContact').then(module => ({ default: module.FloatingContact })));
 const ScrollToTop = lazy(() => import('./components/ScrollToTop').then(module => ({ default: module.ScrollToTop })));const CookieBanner = lazy(() => import('./components/CookieBanner').then(module => ({ default: module.CookieBanner })));
 const LoginModal = lazy(() => import('./components/LoginModal').then(module => ({ default: module.LoginModal })));
 const Dashboard = lazy(() => import('./components/Dashboard').then(module => ({ default: module.Dashboard })));
+const ValutazioniGuard = lazy(() => import('./components/valutazioni/ValutazioniGuard'));
 
 // --- Static Definitions ---
 const svgString = `
@@ -57,6 +61,7 @@ const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1486406146926-c627a92a
 const App: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginForAdmin, setLoginForAdmin] = useState(false);
   const location = useLocation();
   const pathname = location.pathname.replace(/\/$/, '') || '/'; // Normalize pathname
 
@@ -130,7 +135,11 @@ const App: React.FC = () => {
   const getMainContent = () => {
     switch (pathname) {
       case '/filo':
-        return renderFiloPage();
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-white" />}>
+            <MetodoFiloPage />
+          </Suspense>
+        );
       case '/contact':
         return renderContactPage();
       case '/glossario':
@@ -138,38 +147,57 @@ const App: React.FC = () => {
       case '/bari':
         return renderBariPage();
       case '/zes':
-        return <ZesPage />;
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#0a1628]" />}>
+            <ZesPage />
+          </Suspense>
+        );
+      case '/domenico-dentamaro':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-white" />}>
+            <DomenicoPage />
+          </Suspense>
+        );
       case '/provincia-bari':
         return renderProvinciaBariPage();
+      case '/admin':
+        return (
+          <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#F5F0E8]"><span className="text-[#5C5346]">Caricamento...</span></div>}>
+            <ValutazioniGuard onRequireLogin={() => { setLoginForAdmin(true); setIsLoginOpen(true); }} />
+          </Suspense>
+        );
       default:
         return renderHome();
     }
   };
 
+  const isZesPage = pathname === '/zes' || pathname === '/domenico-dentamaro' || pathname === '/filo' || pathname === '/admin';
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 antialiased overflow-x-hidden">
         <div className="animate-fade-in relative">
           <Seo />
-          <ProgressBar />
-          <Navbar logoUrl={LOGO_URL} onOpenLogin={() => setIsLoginOpen(true)} />
+          {!isZesPage && <ProgressBar />}
+          {!isZesPage && <Navbar logoUrl={LOGO_URL} onOpenLogin={() => setIsLoginOpen(true)} />}
           
           <main>
             {getMainContent()}
           </main>
           
           {/* hidden FAQ for crawlers / AI search */}
-          <FAQ />
+          {!isZesPage && <FAQ />}
 
           <Suspense fallback={null}>
-            <Footer logoUrl={LOGO_URL} />
-            <FloatingContact />
-            <ScrollToTop />
+            {!isZesPage && <Footer logoUrl={LOGO_URL} brandName="2D Sviluppo Immobiliare" />}
+            {!isZesPage && <FloatingContact />}
+            {!isZesPage && <ScrollToTop />}
             <CookieBanner />
             
             <LoginModal 
               isOpen={isLoginOpen} 
-              onClose={() => setIsLoginOpen(false)} 
-              onLogin={() => setIsLoggedIn(true)} 
+              onClose={() => { setIsLoginOpen(false); setLoginForAdmin(false); }} 
+              onLogin={() => { if (!loginForAdmin) setIsLoggedIn(true); }}
+              onLoginAttempt={loginForAdmin ? authLogin : undefined}
             />
             <Dashboard 
               isOpen={isLoggedIn} 

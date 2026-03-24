@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@400;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================
+   CSS Variables per 2D-Valutazioni App (area /admin)
+   Sono scoppati solo quando la classe .valutazioni-app è presente
+   ============================================= */
+.valutazioni-app {
+  --background: 36 33% 93%;
+  --foreground: 0 0% 10%;
+  --card: 40 50% 98%;
+  --card-foreground: 0 0% 10%;
+  --popover: 40 50% 98%;
+  --popover-foreground: 0 0% 10%;
+  --primary: 0 0% 10%;
+  --primary-foreground: 38 45% 60%;
+  --secondary: 36 20% 88%;
+  --secondary-foreground: 0 0% 10%;
+  --muted: 36 20% 88%;
+  --muted-foreground: 25 15% 35%;
+  --accent: 38 45% 60%;
+  --accent-foreground: 0 0% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 36 28% 76%;
+  --input: 36 28% 76%;
+  --ring: 38 45% 60%;
+  --radius: 0.25rem;
+  --sidebar-background: 0 0% 10%;
+  --sidebar-foreground: 40 50% 95%;
+  --sidebar-primary: 38 45% 60%;
+  --sidebar-primary-foreground: 0 0% 10%;
+  --sidebar-accent: 0 0% 15%;
+  --sidebar-accent-foreground: 40 50% 95%;
+  --sidebar-border: 0 0% 18%;
+  --sidebar-ring: 38 45% 60%;
+
+  /* Custom brand colors */
+  --gold: #C8A96E;
+  --gold-light: #F0E6D0;
+  --ivory: #F5F0E8;
+  --ivory-card: #FDFAF4;
+  --carbon: #1A1A1A;
+  --warm-brown: #5C5346;
+  --border-gold: #D4C9B0;
+
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+/* Utility classes per la valutazioni app */
+.valutazioni-app .font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+.valutazioni-app .font-source {
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+.valutazioni-app .input-underline {
+  background-color: #FDFAF4;
+  border: none;
+  border-bottom: 2px solid #D4C9B0;
+  border-radius: 0;
+  transition: border-color 0.2s;
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+.valutazioni-app .input-underline:focus {
+  outline: none;
+  border-bottom-color: #C8A96E;
+  box-shadow: none;
+}
+
+.valutazioni-app .completion-circle {
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+@keyframes valueUpdate {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.valutazioni-app .value-update {
+  animation: valueUpdate 0.3s ease-out;
+}
+
+.valutazioni-app .bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(232, 224, 208, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 224, 208, 0.5) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.valutazioni-app .drop-zone {
+  border: 2px dashed #D4C9B0;
+  transition: all 0.2s;
+}
+
+.valutazioni-app .drop-zone.drag-over {
+  border-color: #C8A96E;
+  background-color: rgba(200, 169, 110, 0.05);
+}
+
+/* Scrollbar styling per valutazioni */
+.valutazioni-app ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.valutazioni-app ::-webkit-scrollbar-track {
+  background: #F5F0E8;
+}
+
+.valutazioni-app ::-webkit-scrollbar-thumb {
+  background: #D4C9B0;
+  border-radius: 3px;
+}
+
+.valutazioni-app ::-webkit-scrollbar-thumb:hover {
+  background: #C8A96E;
+}
+
+@media print {
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+}

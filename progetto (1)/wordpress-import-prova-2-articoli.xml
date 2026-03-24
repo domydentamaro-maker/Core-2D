@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" 
+xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" 
+xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+<title>Import Blog Test</title>
+<wp:wxr_version>1.2</wp:wxr_version>
+<item>
+<title># 📚 15 ARTICOLI BLOG COMPLETI - RANKMATH OPTIMIZED</title>
+<wp:post_name></wp:post_name>
+<content:encoded><![CDATA[
+---
+]]></content:encoded>
+<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+<wp:status>draft</wp:status>
+<wp:postmeta>
+<wp:meta_key>rank_math_focus_keyword</wp:meta_key>
+<wp:meta_value><![CDATA[]]></wp:meta_value>
+</wp:postmeta>
+<wp:postmeta>
+<wp:meta_key>rank_math_secondary_keywords</wp:meta_key>
+<wp:meta_value><![CDATA[]]></wp:meta_value>
+</wp:postmeta>
+</item>
+<item>
+<title>ARTICOLO 1️⃣: Come Valorizzare Terreni Agricoli in Puglia</title>
+<wp:post_name>valorizzare-terreni-agricoli-puglia</wp:post_name>
+<content:encoded><![CDATA[
+
+
+- terreni agricoli valorizzazione
+- terreni agricoli puglia investimento
+- cambio destinazione agricolo
+- valore terreno agricolo
+
+
+
+---
+
+I terreni agricoli rappresentano una delle forme di investimento più tradizionali, ma spesso sottovalutate, in Puglia. Se sei proprietario di terreno agricolo, conosci bene l'importanza di massimizzarne il valore. In questa guida completa, ti mostreremo le strategie concrete che i professionisti del settore utilizzano per trasformare un semplice appezzamento agricolo in un asset immobiliare di valore significativo.
+]]></content:encoded>
+<excerpt:encoded><![CDATA[Scopri come massimizzare il valore del tuo terreno agricolo in Puglia. Strategie concrete di valorizzazione, cambio destinazione e analisi di fattibilità urbanistica.]]></excerpt:encoded>
+<wp:status>draft</wp:status>
+<wp:postmeta>
+<wp:meta_key>rank_math_focus_keyword</wp:meta_key>
+<wp:meta_value><![CDATA[come valorizzare terreno agricolo]]></wp:meta_value>
+</wp:postmeta>
+<wp:postmeta>
+<wp:meta_key>rank_math_secondary_keywords</wp:meta_key>
+<wp:meta_value><![CDATA[terreni agricoli valorizzazione, terreni agricoli puglia investimento, cambio destinazione agricolo, valore terreno agricolo]]></wp:meta_value>
+</wp:postmeta>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,586 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║   📋 GUIDA COMPLETA IMPORTAZIONE XML WORDPRESS                           ║
+║   15 ARTICOLI + RANKMATH + FOTO PLACEHOLDER                             ║
+║                                                                           ║
+║   File: 🔄_FILE_XML_MASTER_RANKMATH_COMPLETO.xml                       ║
+║   Creato: 15 Marzo 2026                                                 ║
+║   Status: ✅ PRONTO PER L'IMPORT                                        ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 1: COSA CONTIENE IL FILE XML
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ 15 ARTICOLI COMPLETI (2500-3000 parole ciascuno)
+
+Articoli inclusi:
+  1️⃣  Come Valorizzare Terreni Agricoli in Puglia
+  2️⃣  ZES Bari 2024-2025: Guida Completa agli Incentivi
+  3️⃣  Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti
+  4️⃣  Terreni in Vendita Puglia: Come Riconoscere Opportunità
+  5️⃣  Metodo F.I.L.O.: La Metodologia Proprietaria
+  6️⃣  Stima Terreni Bari: Come Calcolare il Valore Corretto
+  7️⃣  Immobiliare Brindisi 2025
+  8️⃣  Lecce e Salento: Immobiliare ad Alta Rendita
+  9️⃣  Taranto: Mercato Immobiliare in Espansione
+  🔟  Foggia e Capitanata: Guida Completa al Mercato
+  1️⃣1️⃣ BAT - Barletta Andria Trani: Questa Provincia Emergente
+  1️⃣2️⃣ Fattibilità Immobiliare: Come Analizzare un Progetto
+  1️⃣3️⃣ Terreni Edificabili Bari: Potenziale Costruttivo
+  1️⃣4️⃣ Investimenti Immobiliari Puglia 2025
+  1️⃣5️⃣ Come Trovare un Consulente Immobiliare Bravo
+
+✅ STRUTTURA PRESERVATA
+   - ✓ Titoli (H1)
+   - ✓ Sottotitoli (H2)
+   - ✓ Sottosottotitoli (H3)
+   - ✓ Paragrafi normali (<p>)
+   - ✓ Liste puntate (<ul>/<li>)
+   - ✓ Liste numerate (<ol>/<li>)
+   - ✓ Strong/Bold (<strong>)
+   - ✓ Italic (<em>)
+   - ✓ Link (<a href>)
+   - ✓ TUTTO INCAPSULATO IN <![CDATA[...]]> per evitare frammenti
+
+✅ METADATA RANKMATH PRONTO
+   Per ogni articolo sono inclusi:
+   - rank_math_focus_keyword (1 keyword principale)
+   - rank_math_title (titolo SEO 60-70 chars)
+   - rank_math_description (descrizione 160 chars)
+   - rank_math_keywords (secondary keywords separate da virgola)
+
+✅ CATEGORIE E TAG
+   - Categoria principale per ogni articolo
+   - Tag addizionali per clustering semantico
+
+✅ EXCERPT
+   - Estratto di 160 caratteri per snippet Google
+
+✅ PLACEHOLDER FOTO
+   - [IMAGE_PLACEHOLDER_1]: Descrizione foto
+   - [IMAGE_PLACEHOLDER_2]: Descrizione foto
+   - [IMAGE_PLACEHOLDER_3]: Descrizione foto (dove rilevante)
+   - Ogni placeholder include: dimensioni, alt-text, descrizione dettagliata
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 2: COME IMPORTARE IN WORDPRESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+METHOD 1: IMPORTATORE WORDPRESS NATIVO (CONSIGLIATO)
+════════════════════════════════════════════════════
+
+Step 1: Accedi al dashboard WordPress
+   URL: https://materiaprima.2dsviluppoimmobiliare.it/wp-admin
+   Username: [admin]
+   Password: [password]
+
+Step 2: Naviga al menu Importazione
+   Percorso: Tools → Import
+   Clicca: "WordPress Importer" (se non vedi, scaricalo da WordPress.org)
+
+Step 3: Seleziona il file XML
+   Clicca: "Upload File"
+   Seleziona: 🔄_FILE_XML_MASTER_RANKMATH_COMPLETO.xml
+   Clicca: "Upload file and import"
+
+Step 4: Assegna Autore (IMPORTANTE!)
+   Quando chiede "Assign posts to an existing user":
+   ✓ Seleziona: Domenico Dentamaro (o l'account corretto)
+   ✓ Spunta: "Download and import file attachments"
+   ✓ Clicca: "Submit"
+
+Step 5: Attendi il completamento
+   ⏳ Tempo stimato: 2-5 minuti
+   ✓ Vedrai: "Import successful!"
+   ✓ Articoli appariranno in: Posts → All Posts (tutti con status "Published")
+
+═════════════════════════════════════════════════════════════════════════
+
+METHOD 2: RANKMATH BULK IMPORTER (ALTERNATIVO)
+════════════════════════════════════════════════
+
+Step 1: Installa RankMath plugin
+   Se non installato: Plugins → Add New → Cerca "Rank Math" → Installa
+
+Step 2: Accedi a RankMath
+   Percorso: Rank Math → Import → Content Importer
+
+Step 3: Seleziona WordPress XML
+   Formato: WordPress (WXR)
+   File: 🔄_FILE_XML_MASTER_RANKMATH_COMPLETO.xml
+
+Step 4: Importa
+   RankMath preleverà automaticamente i custom post meta (metadata SEO)
+   I metadata RankMath saranno già configurati nei post meta fields
+
+═════════════════════════════════════════════════════════════════════════
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 3: COME EVITARE FRAMMENTI NEGLI H2/H3
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ PROBLEMA COMUNE: 
+   Quando articoli carichi si frammentiziavano negli H2/H3, 
+   perdendo la struttura di gerarchia.
+
+✅ SOLUZIONE IMPLEMENTATA NEL NOSTRO XML:
+   
+   1. CDATA WRAPPING:
+      Tutto il contenuto è incapsulato in <![CDATA[...]]>
+      Questo PROTEGGE il markup HTML dagli interpreti XML
+      
+   2. HTML MARKUP PULITO:
+      - <h1>...</h1>  per titoli principali
+      - <h2>...</h2>  per sottosezioni
+      - <h3>...</h3>  per sotto-sottosezioni
+      - <p>...</p>    per paragrafi normali
+      - Nessun nesting strano, struttura gerarchica chiara
+      
+   3. LISTA CORRETTAMENTE FORMATTATA:
+      <ul>
+        <li>Punto 1</li>
+        <li>Punto 2</li>
+      </ul>
+      
+      Non come: <ul><li>Punto 1 <li>Punto 2</ul> (SBAGLIATO!)
+      
+   4. ESCAPE CORRETTI:
+      - &amp; per &
+      - &lt; per <
+      - &gt; per >
+      - &quot; per "
+      
+      (Tutto automatico nel CDATA, non serve muoversi manualmente)
+
+✅ VERIFICA POST-IMPORT (IMPORTANTE!):
+   
+   Dopo import, apri 1-2 articoli e verifica:
+   
+   ✓ H1 è presente e visibile come titolo post
+   ✓ H2 e H3 mantengono gerarchia (indentazione a livello editor)
+   ✓ Liste non sono frammentate
+   ✓ Link funzionano
+   ✓ Bold/Italic preservati
+   ✓ Paragrafi non uniti in blocchi mostruosi
+   
+   Se tutto check, gli altri 14 articoli avranno la stessa qualità.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 4: RANKMATH CONFIGURATION POST-IMPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ METADATA GIÀ POPOLDATI?
+   
+   SÌ! Nel nostro XML abbiamo pre-caricato:
+   
+   Per ogni articolo (esempio Articolo 1):
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   <wp:postmeta>
+     <wp:meta_key>rank_math_focus_keyword</wp:meta_key>
+     <wp:meta_value>come valorizzare terreno agricolo</wp:meta_value>
+   </wp:postmeta>
+   
+   <wp:postmeta>
+     <wp:meta_key>rank_math_title</wp:meta_key>
+     <wp:meta_value>Come Valorizzare Terreni Agricoli in Puglia: Guida Completa</wp:meta_value>
+   </wp:postmeta>
+   
+   <wp:postmeta>
+     <wp:meta_key>rank_math_description</wp:meta_key>
+     <wp:meta_value>Scopri come massimizzare il valore del tuo terreno agricolo...</wp:meta_value>
+   </wp:postmeta>
+   
+   <wp:postmeta>
+     <wp:meta_key>rank_math_keywords</wp:meta_key>
+     <wp:meta_value>terreni agricoli valorizzazione, terreni agricoli puglia, ...</wp:meta_value>
+   </wp:postmeta>
+
+✅ COME VERIFICARE CHE RANKMATH HA IMPORTATO CORRETTAMENTE:
+   
+   Step 1: Apri un articolo in edit
+   Step 2: Scorri in basso a "Rank Math" box
+   Step 3: Verifica i campi:
+      - Focus Keyword: ✓ pre-compilato
+      - SEO Title: ✓ pre-compilato (60-70 chars)
+      - SEO Description: ✓ pre-compilato (160 chars)
+      - Keywords: ✓ pre-compilato
+   
+   Step 4: Se non vedi i campi:
+      - Clicca: "Settings" in alto a destra della box Rank Math
+      - Spunta: "Show Advanced"
+      - Ricarica pagina
+      - I campi appariranno
+
+✅ ADVANCED RANKMATH SETTINGS (OPZIONALE):
+   
+   Se vuoi optimizzare ulteriormente:
+   
+   1. Apri ogni articolo
+   2. Rank Math box → verifica "Readability" score
+      (dovrebbe essere GREEN - >= 80 su 100)
+   3. Se YELLOW/RED, RankMath suggerirà changes:
+      - Aggiungi più parole chiave nel corpo
+      - Accorcia frasi troppo lunghe
+      - Aggiungi bullet points
+      Apply suggestions e ricarica
+   
+   4. Verifica "Content AI" per suggerimenti di structure
+   
+   5. Clicca "Check SEO" per analysis completo
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 5: GESTIONE FOTO / IMAGE PLACEHOLDER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ PLACEHOLDER FOTO NEL CONTENUTO:
+
+   Ogni articolo ha 2-3 placeholder così formattati:
+   
+   [IMAGE_PLACEHOLDER_1: Descrizione completa - Dimensioni: XxYpx - Alt text: "testo"]
+   
+   Esempio dal nostro XML:
+   ═════════════════════════
+   
+   [IMAGE_PLACEHOLDER_1: Drone view di terreno agricolo panoramico in Puglia con ulivi 
+    - Dimensioni: 1200x800px 
+    - Alt text: "Terreno agricolo panoramico in Puglia visualizzato da drone"]
+
+✅ COME SOSTITUIRE I PLACEHOLDER CON FOTO VERE:
+
+   Method 1: UPLOAD FOTO DA MEDIA LIBRARY
+   ═══════════════════════════════════════
+   
+   Step 1: Apri articolo in edit
+   Step 2: Posiziona cursor dove vedi il placeholder
+   Step 3: Seleziona ed elimina il testo placeholder
+   Step 4: Clicca "Add Media" button
+   Step 5: Seleziona immagine dalla Media Library
+               (o carica nuova immagine)
+   Step 6: Configura immagine:
+      - Alt text: copia dal placeholder (es: "Terreno agricolo panoramico...")
+      - Caption: opzionale
+      - Align: "Center"
+      - Size: "Large" (per larghezza full)
+   Step 7: Click "Insert into post"
+   Step 8: Salva
+   
+   RIPETI per ogni placeholder
+
+   Method 2: BULK REPLACEMENT (Se hai molte foto)
+   ═══════════════════════════════════════════════
+   
+   Se vuoi una soluzione veloce per tutti gli articoli:
+   
+   1. Prepara cartella: /immagini-articoli/ con foto
+      Nomina file:
+      - articolo-1-foto-1.jpg
+      - articolo-1-foto-2.jpg
+      - articolo-2-foto-1.jpg
+      ecc.
+   
+   2. Usa plugin "Bulk Image Edit" o "Image Regenerator"
+      per auto-replace placeholder pattern
+   
+   3. O scrivi uno script PHP custom che:
+      a) Find: [IMAGE_PLACEHOLDER_1: ...]
+      b) Replace: <img src="/immagini/articolo-1-foto-1.jpg" alt="...">
+   
+   NOTA: Non consigliato se non hai esperienza tecnica.
+         Metodo 1 è più sicuro.
+
+✅ FONTE FOTO SUGGERITE:
+
+   Per ogni placeholder, abbiamo suggerito il TIPO di foto:
+   
+   Articolo 1 - FOTO 1: "Drone view di terreno agricolo"
+      → Scarica da: https://unsplash.com → Search "agricultural landscape"
+      → o https://pexels.com → Search "farmland aerial"
+      
+   Articolo 1 - FOTO 2: "Terreno con strada asfaltata"
+      → Scarica da: Unsplash/Pexels → Search "mountain road"
+      
+   Articolo 2 - FOTO 1: "Skyline Bari con aree industriali"
+      → Scarica da: https://commons.wikimedia.org → Search "Bari skyline"
+      → o portfolio di contatti locali
+   
+   Articolo 2 - FOTO 2: "Cantieri costruzione"
+      → Scarica da: Unsplash → Search "construction site"
+
+✅ DIMENSIONI CONSIGLIATE:
+
+   Larghezza: 1200px (responsive)
+   Altezza: 600-800px (aspetto ratio 16:9 o 3:2)
+   Formato: JPG (compresso, < 500KB)
+   Compressione: 80-85% quality
+
+   Se foto troppo grande:
+      1. Potrebbe rallentare page load
+      2. RankMath darebbe avviso in Performance
+      → Usa https://tinypng.com per compressione automatica
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 6: CHECKLIST FINALE PRIMA DI PUBBLICARE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dopo aver importato e configurato, verifica:
+
+STEP 1: VERIFICA IMPORTAZIONE GENERALE
+═════════════════════════════════════
+☐ Posts count: 15 articoli visibili in All Posts
+☐ Status: Tutti "Published" (non "Draft")
+☐ Author: Tutti assegnati a Domenico Dentamaro
+☐ Categories: Ogni articolo ha categoria (immobiliare, zes, edilizia, ecc)
+☐ URL Slug: Corretti e SEO-friendly (non contengono spazi)
+
+STEP 2: VERIFICA RANKMATH METADATA (Campione: 3 articoli)
+═════════════════════════════════════════════════════════
+Apri 3 articoli casuali e verifica nella box Rank Math:
+☐ Focus Keyword: presente e rilevante
+☐ SEO Title: 50-60 chars, contiene keyword
+☐ Meta Description: 150-160 chars, accattivante, contiene keyword
+☐ Secondary Keywords: populate e separate da virgola
+☐ Readability Score: VERDE (80+)
+☐ SEO Score: VERDE (80+)
+
+STEP 3: VERIFICA CONTENUTO E STRUTTURA (Campione: Articolo 1)
+═════════════════════════════════════════════════════════════
+Apri Articolo 1: "Come Valorizzare Terreni Agricoli"
+☐ H1 Titolo: Presente e visibile
+☐ H2 Sottotitoli: Almeno 4-5, es. "Perché Valorizzare", "Strategie", ecc.
+☐ H3 Sub-sottotitoli: Presenti sotto H2 per break down dettagli
+☐ Paragrafi: <p> tags, non fuse insieme
+☐ Liste: Corrette con bullets o numeri
+☐ Bold/Italic: Preservate
+☐ Link: Funzionanti (scopri su Rank Math "Internal Links")
+
+STEP 4: VERIFICA FOTO PLACEHOLDER
+══════════════════════════════════
+Apri 5 articoli casuali:
+☐ Vedi placeholder [IMAGE_PLACEHOLDER_X: ...]?
+   → Se SÌ, è normale. Sostituisci con foto vera (leggi SEZIONE 5)
+   → Se NO (vedi foto vere), significa le hai già sostituite. ✓
+☐ Posizione foto: dentro articolo nei punti logici
+
+STEP 5: VERIFICA LINK INTERNI E CTA
+════════════════════════════════════
+Apri 3 articoli:
+☐ CTA finali: "[Testo link] → https://www.2dsviluppoimmobiliare.it/contact/"
+☐ Link funzionanti: Click per verificare
+☐ Cross-linking: Articoli linkano tra loro dove rilevante?
+   → Se no, leg SEZIONE 10 per aggiungere cross-link
+
+STEP 6: PERFORMANCE & SEO CHECK
+════════════════════════════════
+Visita homepage blog:
+☐ URL: https://materiaprima.2dsviluppoimmobiliare.it
+☐ Vedi lista di 15 articoli sul blog?
+☐ ✓ Se SÌ, importazione ha funzionato!
+
+Esegui RankMath Audit:
+☐ Rank Math → Audit
+☐ Attendi scan (1-2 min)
+☐ Verifica "Issues": Dovrebbero essere minimal (foto non optimizzate, ecc)
+☐ Fix issues ad alta priorità
+
+STEP 7: TEST MOBILE RESPONSIVENESS
+═════════════════════════════════════
+Apri 1 articolo da mobile (test con Developer Tools F12):
+☐ Testo leggibile (font size >= 14px)
+☐ Titre e sottotitoli ben formattati
+☐ Liste non escono dallo schermo
+☐ Immagini responsive (non troppo grandi)
+☐ CTA button cliccabile
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 7: TROUBLESHOOTING PROBLEMI COMUNI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ PROBLEMA 1: "Errore 504 durante import"
+───────────────────────────────────────────
+   CAUSA: File troppo grande o timeout server
+   SOLUZIONE:
+   ☐ Aumenta PHP memory_limit in wp-config.php:
+     define('WP_MEMORY_LIMIT', '256M');
+   ☐ Aumenta PHP time limit in .htaccess:
+     php_value max_execution_time 300
+   ☐ Riprova import
+
+❌ PROBLEMA 2: "Articoli importati ma RankMath metadata vuoto"
+──────────────────────────────────────────────────────────────
+   CAUSA: RankMath non ha letto custom post meta
+   SOLUZIONE:
+   ☐ Va a: Rank Math → Import & Export
+   ☐ Clicca: "Re-index All Content"
+   ☐ Attendi (5-10 min)
+   ☐ Metadata dovrebbe ripopolarsi
+
+❌ PROBLEMA 3: "Articoli frammenti, H2/H3 disorganizzati"
+────────────────────────────────────────────────────────────
+   CAUSA: WordPress theme ha CSS che rompe gerarchia
+   SOLUZIONE:
+   ☐ Apri articolo in "Code Editor" (non visual)
+   ☐ Verifica che <h1>, <h2>, <h3> siano corretti nei raw source
+   ☐ Se HTML è corretta ma visione sbagliata:
+     → Disabilita plugin CSS (Elementor, Divi, ecc)
+     → Verifica se è problema theme CSS
+     → Usa theme standard (twentytwentythree) per test
+   ☐ Ripristina plugin e regola CSS custom
+
+❌ PROBLEMA 4: "Foto placeholder ancora visibili"
+────────────────────────────────────────────────
+   CAUSA: Non hai sostituito i placeholder
+   SOLUZIONE:
+   ☐ Leggi SEZIONE 5: GESTIONE FOTO
+   ☐ Sostituisci manualmente o con script bulk
+
+❌ PROBLEMA 5: "Link CTA non funzionano"
+─────────────────────────────────────────
+   CAUSA: Link scorretti o dominio wrong
+   SOLUZIONE:
+   ☐ Verifica URL base nel file XML:
+     <wp:base_site_url>https://materiaprima.2dsviluppoimmobiliare.it</wp:base_site_url>
+   ☐ Se URL diverso dal tuo blog, modifica prima di importare
+   ☐ Usa Find/Replace:
+     Find: https://www.2dsviluppoimmobiliare.it/contact/
+     Replace: https://www.2dsviluppoimmobiliare.it/contact/ (o tuo URL)
+
+❌ PROBLEMA 6: "Ranking non migliora dopo 2 settimane"
+───────────────────────────────────────────────────────
+   CAUSA: Google non ha ancora crawlato nuovo contenuto
+   SOLUZIONE:
+   ☐ Vai a Google Search Console
+   ☐ Url Inspection di ogni articolo nuovo
+   ☐ Clicca "Request Indexing"
+   ☐ Google priorizzará indexing
+   ☐ Attendi 1-2 settimane per ranking
+   ☐ Share articoli su social per segnali
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 8: CROSS-LINKING STRATEGY POST-IMPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Per MASSIMIZZARE SEO e user engagement, aggiungi link interni tra articoli:
+
+SCHEMA DI LINKING:
+═════════════════
+
+Articolo 1 (Valorizzare Terreni Agricoli)
+   → Link a: Articolo 4 (Terreni in Vendita) - "vedi anche terreni in vendita"
+   → Link a: Articolo 5 (Metodo F.I.L.O.) - "usa il Metodo F.I.L.O."
+   → Link a: Articolo 6 (Stima Terreni) - "per stima professionale"
+
+Articolo 2 (ZES Bari Incentivi)
+   → Link a: Articolo 3 (Edilizia Bari) - "opportunità edilizia"
+   → Link a: Articolo 9 (Possiblità Metodo) Link "Nel nostro Metodo..."
+
+Articolo 3 (Edilizia Bari)
+   → Link a: Articolo 2 (ZES Bari) - "scopri incentivi ZES"
+   → Link a: Articoli 7-11 (province altre) - "Vedi anche mercato Brindisi/Lecce"
+
+[Continua per tutti gli altri articoli]
+
+HOW TO ADD INTERNAL LINKS:
+══════════════════════════
+
+OPZIONE 1: MANUALE (se pochi link)
+─────────────────────────────────
+1. Apri articolo in edit
+2. Seleziona parola/frase dove inserire link
+3. Clicca "Add Link" tool (chain icon)
+4. Seleziona articolo da linking list
+5. Click "Apply"
+
+OPZIONE 2: RANKMATH SMART LINKING (Automatico!)
+─────────────────────────────────────────────────
+1. Apri Rank Math → Tools
+2. Clicca: "Internal Links"
+3. Attendi: RankMath suggerirà link rilevanti
+4. Accept e Apply
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 9: PROSSIMI STEP PER PIENA IMPLEMENTAZIONE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dopo import e configurazione, il prossimo:
+
+STEP 1: SYNC CON MAIN SITE
+═════════════════════════
+Linkerare i 15 articoli del blog (Materiaprima)
+al sito principale (www.2dsviluppoimmobiliare.it):
+   
+   ☐ Aggiungi "Blog" link in main nav
+   ☐ Aggiungi featured articles nella homepage
+   ☐ Ogni blog post linka back a main site in CTA
+
+STEP 2: EMAIL NEWSLETTER
+────────────────────────
+Setup Mail Chimp / ConvertKit con trigger:
+
+   Quando articolo nuovo pubblica:
+   ☐ Email automatically inviata al subscriber list
+   ☐ Titolo + excerpt + link CTA
+   ☐ Cron job ogni settimana
+
+STEP 3: SOCIAL MEDIA AUTOMATION
+────────────────────────────────
+Setup Buffer.com o Hootsuite:
+
+   Quando articolo nuovo:
+   ☐ Post tweet (LinkedIn, Facebook, Twitter)
+   ☐ Schedule: 3x per settimana a time diversi
+   ☐ Include: Titolo + URL + Hashtags (#RealEstate #Bari)
+
+STEP 4: BACKLINK BUILDING
+──────────────────────────
+Per aumentare authority blog:
+   ☐ Invia articoli a Quora (risponde con link al blog)
+   ☐ Comment su blog immobiliari simili (con link)
+   ☐ Press release ogni 2-3 articoli
+   ☐ Guest post su altre authority sites
+
+STEP 5: TRACK RANKINGS
+──────────────────────
+Monitora posizioni SERP:
+   ☐ Usa Google Search Console (monthly report)
+   ☐ Usa SEMRUSH o Ahrefs (keyword tracking)
+   ☐ Aspetta 6-8 settimane per prime posizioni
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEZIONE 10: CONTATTI E SUPPORTO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Se hai problemi con l'importazione o configurazione:
+
+EMAIL: info@2dsviluppoimmobiliare.it
+WHATSAPP: +39 3408039322
+SITO: www.2dsviluppoimmobiliare.it
+
+Comunica:
+- Screenshot dell'errore
+- Nome file XML usato
+- Step dove blocco avviene
+- Versione WordPress e RankMath
+
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║  ✅ IMPORTAZIONE COMPLETATA CON SUCCESSO!                                ║
+║                                                                           ║
+║  15 articoli, RankMath pronto, foto placeholder documentati              ║
+║  Pronto per live upload su WordPress                                     ║
+║                                                                           ║
+║  Data: 15 Marzo 2026 | Status: PRODUCTION READY                          ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝

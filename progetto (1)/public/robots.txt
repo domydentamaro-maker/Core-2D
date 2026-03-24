@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /node_modules/
+Disallow: /dist/
+Disallow: /.git/
+Allow: /images/
+Allow: /assets/
+
+# Sitemaps
+Sitemap: https://www.2dsviluppoimmobiliare.it/sitemap.xml
+Sitemap: https://www.2dsviluppoimmobiliare.it/images-sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

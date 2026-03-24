@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://www.2dsviluppoimmobiliare.it/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.2dsviluppoimmobiliare.it/assets/og-image.jpg</image:loc>
+      <image:title>2D Sviluppo Immobiliare — Bari e Puglia</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.2dsviluppoimmobiliare.it/domenico-dentamaro/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.2dsviluppoimmobiliare.it/domenico/domenico-dentamaro-portrait-leadership.jpg</image:loc>
+      <image:title>Domenico Dentamaro — Sviluppatore Immobiliare Bari</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.2dsviluppoimmobiliare.it/zes/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.2dsviluppoimmobiliare.it/filo/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.2dsviluppoimmobiliare.it/bari/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.2dsviluppoimmobiliare.it/provincia-bari/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.2dsviluppoimmobiliare.it/glossario/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.2dsviluppoimmobiliare.it/contact/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.65</priority>
+  </url>
+</urlset>
