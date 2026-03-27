@@ -28,10 +28,14 @@
 <header class="site-header" role="banner">
 	<div class="container">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-brand" aria-label="Homepage">
-			<div class="site-brand__text">
-				<div class="site-brand__name">Osservatorio</div>
-				<div class="site-brand__tagline">Sviluppo Immobiliare del Mezzogiorno</div>
-			</div>
+			<?php if ( has_custom_logo() ) : ?>
+				<?php the_custom_logo(); ?>
+			<?php else : ?>
+				<div class="site-brand__text">
+					<div class="site-brand__name">Osservatorio</div>
+					<div class="site-brand__tagline">Sviluppo Immobiliare del Mezzogiorno</div>
+				</div>
+			<?php endif; ?>
 		</a>
 
 		<button class="nav-toggle" id="nav-toggle" aria-label="Apri menu" aria-expanded="false" type="button">
