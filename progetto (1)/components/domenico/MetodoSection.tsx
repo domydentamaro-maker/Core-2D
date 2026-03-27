@@ -38,21 +38,17 @@ const MetodoSection = () => {
 
         <div className="mt-10 flex flex-wrap gap-4">
           <a
-            href="https://www.2dsviluppoimmobiliare.it/metodofilo/"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/filo"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-[0.97]"
             style={{ backgroundColor: "hsl(42, 55%, 55%)", color: "hsl(215, 45%, 12%)" }}
           >
             Scopri il Metodo F.I.L.O.™
           </a>
           <a
-            href="https://www.metodofiloinvisibile.it"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/filo"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white/70 border border-white/15 hover:border-white/30 transition-all duration-200 active:scale-[0.97]"
           >
-            metodofiloinvisibile.it
+            Approfondisci il Metodo
           </a>
         </div>
       </div>

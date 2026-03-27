@@ -52,6 +52,7 @@ const Header: React.FC = () => {
     { name: 'ZES & Terziario', href: '#focus' },
     { name: 'Progetti', href: '#projects' },
     { name: 'Proprietari', href: '#owners' },
+    { name: 'Manuale ZES 2026', href: '/zes/manuale' },
   ];
 
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -59,6 +60,12 @@ const Header: React.FC = () => {
     setIsMenuOpen(false);
     
     if (href === '#') return;
+
+    // Handle internal route navigation
+    if (href.startsWith('/')) {
+      window.location.href = href;
+      return;
+    }
 
     const element = document.querySelector(href);
     if (element) {

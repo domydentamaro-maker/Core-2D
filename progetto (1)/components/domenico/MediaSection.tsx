@@ -20,9 +20,9 @@ const links = [
     icon: FileText,
   },
   {
-    platform: "metodofiloinvisibile.it",
-    url: "https://www.metodofiloinvisibile.it",
-    desc: "Sito dedicato alla metodologia F.I.L.O.™ — approfondimenti e manuale.",
+    platform: "Metodo F.I.L.O.™ — Pagina Dedicata",
+    url: "/filo",
+    desc: "Pagina dedicata alla metodologia F.I.L.O.™ — approfondimenti e fasi operative.",
     icon: Globe,
   },
   {

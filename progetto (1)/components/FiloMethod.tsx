@@ -71,8 +71,8 @@ export const FiloMethod: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
                   <div className="text-center p-8">
                      <Zap className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
-                     <h3 className="text-2xl font-bold text-white mb-2">www.metodofiloinvisibile.it</h3>
-                     <p className="text-slate-400">Clicca per approfondire la metodologia</p>
+                     <h3 className="text-2xl font-bold text-white mb-2">Metodo F.I.L.O.™</h3>
+                     <p className="text-slate-400">Scopri la metodologia proprietaria</p>
                   </div>
                 </div>
               </div>

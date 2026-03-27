@@ -26,9 +26,7 @@ const BioSection = () => {
                 Il suo credo professionale: il vero valore non sta solo nel mattone, ma nella sicurezza di un processo gestito con cura dall'inizio alla fine.
                 Questa filosofia lo ha portato a sviluppare il{" "}
                 <a
-                  href="https://www.2dsviluppoimmobiliare.it/metodofilo/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/filo"
                   className="font-semibold text-slate-900 underline underline-offset-4 decoration-accent hover:decoration-2 transition-all"
                 >
                   Metodo F.I.L.O.™
@@ -79,8 +77,8 @@ const BioSection = () => {
         </div>
 
         {/* Quote with photo */}
-        <div className="mt-16 grid md:grid-cols-[200px_1fr] gap-8 items-center p-8 rounded-2xl bg-slate-100/30 border border-slate-200">
-          <div className="rounded-xl overflow-hidden shadow-md mx-auto md:mx-0 max-w-[200px]">
+        <div className="mt-16 grid md:grid-cols-[300px_1fr] gap-8 items-center p-8 rounded-2xl bg-slate-100/30 border border-slate-200">
+          <div className="rounded-xl overflow-hidden shadow-md mx-auto md:mx-0 max-w-[300px]">
             <img
               src="/domenico/domenico-dentamaro-fondatore-2d-sviluppo.jpg"
               alt="Domenico Dentamaro fondatore 2D Sviluppo Immobiliare"

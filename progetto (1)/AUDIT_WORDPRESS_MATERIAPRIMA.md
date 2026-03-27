@@ -1,6 +1,6 @@
 # AUDIT FRAMEWORK - WordPress Blog "Materiaprima"
 **URL:** https://materiaprima.2dsviluppoimmobiliare.it  
-**Admin:** doppio-editor / temporanea  
+**Admin:** doppio-editor / [REDACTED — usa credenziali dal password manager]  
 **Plugin SEO:** RankMath  
 **Data Audit:** March 11, 2026  
 **Timeline Realistica:** 6-8 ore di setup completo

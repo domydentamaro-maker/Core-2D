@@ -1,6 +1,6 @@
 # AUDIT FRAMEWORK - WordPress Property Listings "Visioniimmobiliari"
 **URL:** https://visioniimmobiliari.2dsviluppoimmobiliare.it  
-**Admin:** doppio-editor / 8%7yI8F0Z2HQWD#KQd6w3^1!  
+**Admin:** doppio-editor / [REDACTED — usa credenziali dal password manager]  
 **Custom Plugin:** "core" (ChatGPT-developed)  
 **Linked Blog:** materiaprima.2dsviluppoimmobiliare.it  
 **Data Audit:** March 11, 2026  

@@ -68,10 +68,18 @@ const EcosystemSection = () => {
           ))}
         </div>
 
-        {/* ZES Division */}
-        <div className="mt-12 p-8 rounded-2xl border border-slate-200 bg-slate-100/30">
-          <div className="flex flex-col md:flex-row gap-6 items-start">
-            <div className="flex-1">
+        {/* ZES Division — con immagine */}
+        <div className="mt-12 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100/30">
+          <div className="flex flex-col md:flex-row">
+            <div className="md:w-2/5">
+              <img
+                src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=75&w=800&auto=format&fit=crop"
+                alt="Cantiere ZES - Zona Economica Speciale Puglia"
+                className="w-full h-48 md:h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div className="flex-1 p-8">
               <p className="text-xs font-semibold tracking-widest uppercase text-amber-600 mb-2">Divisione Corporate</p>
               <h3 className="text-xl font-semibold text-slate-900 mb-3">ZES Unica & Sviluppo Terziario</h3>
               <p className="text-sm text-slate-500 leading-relaxed mb-4">
@@ -79,9 +87,7 @@ const EcosystemSection = () => {
                 Trasforma le opportunità della Zona Economica Speciale in vantaggio competitivo — logistica, industria leggera e direzionale.
               </p>
               <a
-                href="https://www.2dsviluppoimmobiliare.it/zes/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/zes"
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-900 underline underline-offset-4 decoration-accent hover:decoration-2 transition-all"
               >
                 Scopri le opportunità ZES <ExternalLink className="w-3.5 h-3.5" />

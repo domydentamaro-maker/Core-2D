@@ -14,11 +14,11 @@ const HeroSection = () => {
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, hsl(215, 45%, 8%) 0%, hsl(215, 45%, 8%, 0.85) 35%, hsl(215, 45%, 8%, 0.4) 100%)" }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pb-16 pt-32 md:pb-24">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pb-16 pt-52 md:pt-56 md:pb-24">
         <div className="flex flex-col md:flex-row md:items-end gap-8 md:gap-16">
-          {/* Portrait - nice and visible */}
+          {/* Portrait */}
           <div className="shrink-0">
-            <div className="w-44 h-56 md:w-56 md:h-72 rounded-2xl overflow-hidden shadow-2xl ring-2 ring-white/15">
+            <div className="w-56 h-72 md:w-72 md:h-96 rounded-2xl overflow-hidden shadow-2xl ring-2 ring-white/15">
               <img
                 src="/domenico/domenico-dentamaro-portrait-leadership.jpg"
                 alt="Domenico Dentamaro - Sviluppatore Immobiliare e Fondatore 2D Sviluppo Immobiliare"

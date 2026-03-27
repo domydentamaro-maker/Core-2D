@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import HeroSection from './domenico/HeroSection';
 import BioSection from './domenico/BioSection';
@@ -8,6 +8,31 @@ import TrackRecordSection from './domenico/TrackRecordSection';
 import MediaSection from './domenico/MediaSection';
 import ContactSection from './domenico/ContactSection';
 import FooterSection from './domenico/FooterSection';
+
+/** Attiva le animazioni reveal-section con IntersectionObserver */
+const RevealObserver: React.FC = () => {
+  useEffect(() => {
+    const sections = document.querySelectorAll('.reveal-section');
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('opacity-0', 'translate-y-4');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
+  return null;
+};
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -24,8 +49,10 @@ const jsonLd = {
       "email": "info@2dsviluppoimmobiliare.it",
       "sameAs": [
         "https://it.linkedin.com/in/domenico-dentamaro-",
-        "https://www.facebook.com/2DSviluppoImmobiliare",
-        "https://www.instagram.com/2d.sviluppoimmobiliare/",
+        "https://www.facebook.com/domenico.dentamaro.7",
+        "https://www.instagram.com/domenicodentamaro/",
+        "https://www.threads.net/@domenicodentamaro",
+        "https://www.crunchbase.com/person/domenico-dentamaro",
         "https://www.2dsviluppoimmobiliare.it",
         "https://visioniimmobiliari.2dsviluppoimmobiliare.it",
         "https://materiaprima.2dsviluppoimmobiliare.it"
@@ -54,6 +81,24 @@ const jsonLd = {
         "Metodo F.I.L.O.™",
         "Project Management Immobiliare",
         "Terreni Edificabili Puglia"
+      ],
+      "hasCredential": [
+        {
+          "@type": "EducationalOccupationalCredential",
+          "name": "Profilo Crunchbase — Domenico Dentamaro",
+          "url": "https://www.crunchbase.com/person/domenico-dentamaro"
+        }
+      ],
+      "author": [
+        {
+          "@type": "Book",
+          "@id": "https://www.2dsviluppoimmobiliare.it#manuale-filo",
+          "name": "Metodo F.I.L.O.™ — Manuale Operativo per lo Sviluppo Immobiliare",
+          "author": { "@id": "https://www.2dsviluppoimmobiliare.it/domenico-dentamaro/#domenico" },
+          "about": "Protocollo proprietario per la gestione del flusso di lavoro nello sviluppo immobiliare",
+          "inLanguage": "it",
+          "bookFormat": "https://schema.org/EBook"
+        }
       ]
     },
     {
@@ -70,9 +115,11 @@ export const DomenicoPage: React.FC = () => {
   return (
     <>
       <Helmet>
+        <html lang="it" />
         <title>Domenico Dentamaro | Sviluppatore Immobiliare Bari | 2D</title>
         <meta name="description" content="Domenico Dentamaro: esperto in sviluppo immobiliare a Bari, fondatore di 2D Sviluppo Immobiliare. Ideatore del Metodo F.I.L.O.™ per la valorizzazione di terreni e asset in Puglia." />
-        <meta name="robots" content="index, follow" />
+        <meta name="author" content="Domenico Dentamaro — 2D Sviluppo Immobiliare" />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
         <link rel="canonical" href="https://www.2dsviluppoimmobiliare.it/domenico-dentamaro/" />
         <meta property="og:title" content="Domenico Dentamaro — Sviluppatore Immobiliare Bari" />
         <meta property="og:description" content="Fondatore di 2D Sviluppo Immobiliare e ideatore del Metodo F.I.L.O.™. Trasforma visioni in asset immobiliari a Bari e in Puglia." />
@@ -80,6 +127,7 @@ export const DomenicoPage: React.FC = () => {
         <meta property="og:url" content="https://www.2dsviluppoimmobiliare.it/domenico-dentamaro/" />
         <meta property="og:image" content="https://www.2dsviluppoimmobiliare.it/domenico/domenico-dentamaro-portrait-leadership.jpg" />
         <meta property="og:locale" content="it_IT" />
+        <meta property="og:site_name" content="2D Sviluppo Immobiliare" />
         <meta property="profile:first_name" content="Domenico" />
         <meta property="profile:last_name" content="Dentamaro" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -90,6 +138,7 @@ export const DomenicoPage: React.FC = () => {
       </Helmet>
 
       <div className="min-h-screen bg-white overflow-x-hidden">
+        <RevealObserver />
         <HeroSection />
         <BioSection />
         <MetodoSection />

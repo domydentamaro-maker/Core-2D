@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Menu, X, Lock } from 'lucide-react';
 
 interface NavbarProps {
@@ -10,6 +11,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,9 +22,10 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
   }, []);
 
   const navLinks = [
-    { label: 'Chi Siamo', href: '#mission' },
-    { label: 'Metodo F.I.L.O', href: 'https://www.2dsviluppoimmobiliare.it/metodofilo/' },
-    { label: 'ZES', href: 'https://www.2dsviluppoimmobiliare.it/zes/' },
+    { label: 'Domenico Dentamaro', href: '/domenico-dentamaro' },
+    { label: 'Metodo F.I.L.O', href: '/filo' },
+    { label: 'ZES', href: '/zes' },
+    { label: 'Osservatorio', href: '/osservatorio' },
     { label: 'Permuta', href: '#permuta' },
     { label: 'Glossario', href: '#glossario' },
     { label: 'Area Tecnica', href: '#partners' },
@@ -30,9 +33,16 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
   ];
 
   const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // only intercept internal anchors (starting with #)
+    // internal page routes — use React router (no full reload)
+    if (href.startsWith('/')) {
+      e.preventDefault();
+      navigate(href);
+      setIsMobileMenuOpen(false);
+      window.scrollTo(0, 0);
+      return;
+    }
+    // anchor links on same page
     if (!href.startsWith('#')) {
-      // allow normal navigation
       return;
     }
     e.preventDefault();
@@ -52,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
       <div className="container mx-auto px-6 flex justify-between items-center">
         
         {/* Logo */}
-        <a href="#" className="flex-shrink-0">
+        <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); window.scrollTo(0, 0); }} className="flex-shrink-0">
           <img 
             src="https://storage.googleapis.com/tempo-image-previews/user_33jc6kDInS2v6uK8MIf4PZDaR7c-1764612387906-1000321309-removebg-preview.png" 
             alt="2D Sviluppo Immobiliare" 

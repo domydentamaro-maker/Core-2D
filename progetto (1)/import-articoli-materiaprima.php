@@ -12,7 +12,7 @@
 
 define('WP_DOMAIN', 'https://materiaprima.2dsviluppoimmobiliare.it');
 define('WP_USER', 'doppio-editor');
-define('WP_PASS', 'Dentamaro2026');  // Update if needed
+define('WP_PASS', getenv('WP_APP_PASSWORD') ?: 'CHANGE_ME');  // Set via env var WP_APP_PASSWORD
 
 // Articoli da importare
 $articoli = [

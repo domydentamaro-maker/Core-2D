@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 120" width="620" height="120">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4AF6E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C8A96E;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="darkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2A2A2A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1A1A1A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="620" height="120" fill="#1A1A1A" rx="10"/>
+
+  <!-- Icon: osservatorio / cupola con occhio -->
+  <g transform="translate(22, 14)">
+    <!-- Base edificio -->
+    <rect x="12" y="62" width="52" height="22" fill="none" stroke="#C8A96E" stroke-width="2"/>
+    <!-- Colonne -->
+    <line x1="20" y1="62" x2="20" y2="84" stroke="#C8A96E" stroke-width="1.5"/>
+    <line x1="30" y1="62" x2="30" y2="84" stroke="#C8A96E" stroke-width="1.5"/>
+    <line x1="46" y1="62" x2="46" y2="84" stroke="#C8A96E" stroke-width="1.5"/>
+    <line x1="56" y1="62" x2="56" y2="84" stroke="#C8A96E" stroke-width="1.5"/>
+    <!-- Cupola -->
+    <path d="M10,62 Q38,18 66,62" fill="none" stroke="#C8A96E" stroke-width="2.5"/>
+    <!-- Apertura cupola -->
+    <path d="M22,62 Q38,35 54,62" fill="#C8A96E" opacity="0.15"/>
+    <!-- Croce meridiana -->
+    <line x1="38" y1="22" x2="38" y2="62" stroke="#C8A96E" stroke-width="1" stroke-dasharray="3,3"/>
+    <!-- Stella/punto osservazione -->
+    <circle cx="38" cy="18" r="4" fill="#C8A96E"/>
+    <line x1="38" y1="12" x2="38" y2="24" stroke="#C8A96E" stroke-width="1.5"/>
+    <line x1="32" y1="18" x2="44" y2="18" stroke="#C8A96E" stroke-width="1.5"/>
+    <!-- Gradini base -->
+    <rect x="8" y="84" width="60" height="5" fill="#C8A96E" opacity="0.6" rx="1"/>
+    <rect x="4" y="89" width="68" height="4" fill="#C8A96E" opacity="0.3" rx="1"/>
+  </g>
+
+  <!-- Linea verticale separatore -->
+  <line x1="108" y1="18" x2="108" y2="102" stroke="#C8A96E" stroke-width="1" opacity="0.5"/>
+
+  <!-- Testi -->
+  <g transform="translate(124, 0)">
+    <!-- OSSERVATORIO -->
+    <text x="0" y="46"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="13"
+      font-weight="400"
+      fill="#C8A96E"
+      letter-spacing="5">OSSERVATORIO</text>
+
+    <!-- SVILUPPO IMMOBILIARE -->
+    <text x="0" y="74"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="26"
+      font-weight="700"
+      fill="#F5F0E8"
+      letter-spacing="1">SVILUPPO IMMOBILIARE</text>
+
+    <!-- Linea decorativa -->
+    <line x1="0" y1="83" x2="460" y2="83" stroke="#C8A96E" stroke-width="0.8" opacity="0.5"/>
+
+    <!-- by 2D Sviluppo Immobiliare -->
+    <text x="0" y="100"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="11"
+      font-weight="400"
+      fill="#888888"
+      letter-spacing="2">by 2D Sviluppo Immobiliare</text>
+  </g>
+</svg>

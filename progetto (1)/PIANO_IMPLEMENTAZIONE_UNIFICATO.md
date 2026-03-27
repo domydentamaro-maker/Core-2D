@@ -79,7 +79,7 @@ CRITICO #6: TESTIMONIALS COMPONENT (2h)
 
 ```
 STEP 1: RankMath Configuration (1h)
-☐ Accedi WP: doppio-editor / temporanea
+☐ Accedi WP: doppio-editor / [REDACTED — vedi password manager]
 ☐ Vai Rank Math → Wizard Setup
 ☐ Connect Google Search Console
 ☐ Enable Focus Keyword mode
@@ -139,7 +139,7 @@ STEP 5: Internal Linking Setup (1h)
 
 ```
 STEP 1: Audit Plugin "core" (2h)
-☐ SFTP access: su318279 / 3m8VQA4VBHd4b!8 @ access-5019331717...
+☐ SFTP access: [REDACTED — usa credenziali dal password manager]
   (usa FileZilla if special chars issue)
 ☐ Examina: wp-content/plugins/core/
 ☐ Leggi plugin file principale
