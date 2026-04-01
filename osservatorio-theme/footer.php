@@ -70,7 +70,10 @@
 		</div>
 
 		<div class="footer-bottom">
-			<span>&copy; <?php echo esc_html( date( 'Y' ) ); ?> Osservatorio Sviluppo Immobiliare — 2D Sviluppo Immobiliare</span>
+			<div class="footer-copyright">
+				<span>&copy; <?php echo esc_html( date( 'Y' ) ); ?> Osservatorio Sviluppo Immobiliare</span>
+				<span>2D Sviluppo Immobiliare</span>
+			</div>
 			<div class="footer-ecosystem">
 				<a href="https://www.2dsviluppoimmobiliare.it" target="_blank" rel="noopener">2D Sviluppo</a>
 				<a href="https://materiaprima.2dsviluppoimmobiliare.it" target="_blank" rel="noopener">Materia Prima</a>

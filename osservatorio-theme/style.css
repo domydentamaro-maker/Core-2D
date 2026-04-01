@@ -209,7 +209,18 @@ blockquote p:last-child { margin-bottom: 0; }
 }
 
 .site-brand .custom-logo-link { display: flex; align-items: center; }
-.site-brand .custom-logo { height: 40px; width: auto; max-width: 320px; object-fit: contain; }
+.site-brand .custom-logo {
+  height: 16px !important;
+  max-height: 16px !important;
+  width: auto !important;
+  max-width: 120px !important;
+  object-fit: contain !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: block !important;
+  box-shadow: none !important;
+  border: none !important;
+}
 
 .site-brand__text { color: var(--color-white); }
 
@@ -1096,6 +1107,19 @@ blockquote p:last-child { margin-bottom: 0; }
 
 @media (max-width: 768px) {
   .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+  .footer-bottom .footer-copyright {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .footer-ecosystem {
+    justify-content: center;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════

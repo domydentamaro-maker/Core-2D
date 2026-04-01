@@ -7,6 +7,11 @@
   RewriteCond %{HTTP_HOST} !^www\. [NC]
   RewriteRule ^(.*)$ https://www.2dsviluppoimmobiliare.it/$1 [L,R=301]
 
+  # Canonical redirects: avoid duplicate Metodo F.I.L.O. URLs
+  RewriteRule ^filo/?$ /metodofilo/ [R=301,L]
+  RewriteRule ^manuale/?$ /metodofilo/manuale.html [R=301,L]
+  RewriteRule ^metodofilo/manuale/?$ /metodofilo/manuale.html [R=301,L]
+
   # Don't process requests for real files or directories
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d

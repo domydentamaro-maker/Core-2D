@@ -1,90 +1,85 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 
 // metadata mapping per section id
 interface MetaInfo {
   title: string;
   description: string;
   image?: string;
+  canonicalPath?: string;
 }
 
 const defaultMeta: MetaInfo = {
   title: '2D Sviluppo Immobiliare | Domenico Dentamaro — Bari',
   description: 'Specialisti in sviluppo immobiliare, valorizzazione terreni e ZES a Bari e Puglia. Domenico Dentamaro, Metodo F.I.L.O.™ — dalle visioni alle costruzioni.',
   image: 'https://www.2dsviluppoimmobiliare.it/assets/og-image.jpg',
+  canonicalPath: '/',
 };
 
-const sectionMeta: Record<string, MetaInfo> = {
-  filo: {
-    title: "Metodo F.I.L.O.™ | Sviluppo Immobiliare Bari | 2D",
-    description: "Metodo F.I.L.O.™ di Domenico Dentamaro: metodologia proprietaria per valorizzare terreni e sviluppare asset immobiliari a Bari e in Puglia.",
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&h=675&q=75&fm=webp"
+const routeMeta: Record<string, MetaInfo> = {
+  '/': {
+    ...defaultMeta,
+    canonicalPath: '/',
   },
-  zes: {
-    title: "ZES Puglia | Zona Economica Speciale Bari | Dentamaro",
-    description: "ZES Puglia: agevolazioni fiscali, terreni edificabili e opportunità immobiliari nella Zona Economica Speciale. Domenico Dentamaro, 2D Sviluppo Bari.",
-    image: "https://www.2dsviluppoimmobiliare.it/assets/og-image.jpg"
+  '/filo': {
+    title: 'Metodo F.I.L.O.™ | Sviluppo Immobiliare Bari | Dentamaro',
+    description: 'Metodo F.I.L.O.™: Fusione, Innesco, Latenza, Orchestrazione. La metodologia proprietaria di Domenico Dentamaro per valorizzare terreni a Bari e in Puglia.',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&h=675&q=75&fm=webp',
+    canonicalPath: '/metodofilo/',
   },
-  progetti: {
-    title: "Sviluppo Immobiliare Bari | Progetti e Aree | 2D",
-    description: "Progetti di sviluppo immobiliare a Bari e provincia: selezione suolo, analisi di mercato, cantieri. Domenico Dentamaro, 2D Sviluppo Immobiliare.",
+  '/metodofilo': {
+    title: 'Metodo F.I.L.O.™ | Sviluppo Immobiliare Bari | Dentamaro',
+    description: 'Metodo F.I.L.O.™: Fusione, Innesco, Latenza, Orchestrazione. La metodologia proprietaria di Domenico Dentamaro per valorizzare terreni a Bari e in Puglia.',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&h=675&q=75&fm=webp',
+    canonicalPath: '/metodofilo/',
   },
-  contact: {
-    title: "Contatti Domenico Dentamaro | 2D Sviluppo Immobiliare",
-    description: "Contatta Domenico Dentamaro e il team 2D Sviluppo Immobiliare a Bari. Consulenza immobiliare, terreni e ZES. Tel +39 340 803 9322.",
-  }
+  '/manuale': {
+    title: 'MANUALE AVANZATO - METODO F.I.L.O.™',
+    description: 'Manuale Avanzato Metodo F.I.L.O.™ - Sistema Operativo per lo Sviluppo Immobiliare.',
+    image: 'https://www.2dsviluppoimmobiliare.it/logo.png',
+    canonicalPath: '/metodofilo/manuale.html',
+  },
+  '/metodofilo/manuale': {
+    title: 'MANUALE AVANZATO - METODO F.I.L.O.™',
+    description: 'Manuale Avanzato Metodo F.I.L.O.™ - Sistema Operativo per lo Sviluppo Immobiliare.',
+    image: 'https://www.2dsviluppoimmobiliare.it/logo.png',
+    canonicalPath: '/metodofilo/manuale.html',
+  },
+  '/zes': {
+    title: 'ZES Puglia | Zona Economica Speciale Bari | Dentamaro',
+    description: 'ZES Puglia: agevolazioni fiscali, terreni edificabili e opportunita immobiliari nella Zona Economica Speciale. Domenico Dentamaro, 2D Sviluppo Bari.',
+    image: 'https://www.2dsviluppoimmobiliare.it/assets/og-image.jpg',
+    canonicalPath: '/zes/',
+  },
+  '/contact': {
+    title: 'Contatti Domenico Dentamaro | 2D Sviluppo Immobiliare',
+    description: 'Contatta Domenico Dentamaro e il team 2D Sviluppo Immobiliare a Bari. Consulenza immobiliare, terreni e ZES. Tel +39 340 803 9322.',
+    canonicalPath: '/contact/',
+  },
+  '/glossario': {
+    title: 'Glossario Sviluppo Immobiliare | 2D Sviluppo Immobiliare',
+    description: 'Glossario dei termini chiave per sviluppo immobiliare, valorizzazione terreni, urbanistica e ZES in Puglia.',
+    canonicalPath: '/glossario/',
+  },
+  '/bari': {
+    title: 'Sviluppo Immobiliare Bari | Progetti e Aree | 2D',
+    description: 'Progetti e opportunita di sviluppo immobiliare a Bari: analisi aree, fattibilita e valorizzazione asset.',
+    canonicalPath: '/bari/',
+  },
+  '/provincia-bari': {
+    title: 'Sviluppo Immobiliare Provincia di Bari | 2D',
+    description: 'Aree e progetti nella provincia di Bari: strategia, due diligence e valorizzazione immobiliare.',
+    canonicalPath: '/provincia-bari/',
+  },
 };
-
-function useScrollSpy(ids: string[]) {
-  const [current, setCurrent] = useState<string>('');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + 100; // offset for header
-      // choose the *first* id whose top is <= scrollPos
-      let selected = '';
-      for (const id of ids) {
-        const elem = document.getElementById(id);
-        if (elem) {
-          const top = elem.offsetTop;
-          if (scrollPos >= top) {
-            selected = id;
-            break; // stop at first match
-          }
-        }
-      }
-      setCurrent(selected);
-    };
-
-    // initial assignment based on hash or scroll
-    const initialHash = window.location.hash.replace('#', '');
-    if (initialHash && ids.includes(initialHash)) {
-      setCurrent(initialHash);
-    } else {
-      handleScroll();
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [ids]);
-
-  return current;
-}
-
 
 export const Seo: React.FC = () => {
-  const currentSection = useScrollSpy(Object.keys(sectionMeta));
-  const meta = currentSection && sectionMeta[currentSection] ? sectionMeta[currentSection] : defaultMeta;
-  const isInitial = useRef(true);
-
-  useEffect(() => {
-    if (currentSection) {
-      const newHash = `#${currentSection}`;
-      if (window.location.hash !== newHash && !isInitial.current) {
-        window.history.replaceState(null, '', newHash);
-      }
-    }
-  }, [currentSection]);
+  const location = useLocation();
+  const pathname = location.pathname.replace(/\/$/, '') || '/';
+  const meta = routeMeta[pathname] ?? defaultMeta;
+  const canonicalPath = meta.canonicalPath ?? pathname;
+  const canonicalUrl = `https://www.2dsviluppoimmobiliare.it${canonicalPath}`;
 
   // additional structured data graph (non-article portion)
   const structuredGraph = {
@@ -138,11 +133,11 @@ export const Seo: React.FC = () => {
         '@type': 'BreadcrumbList',
         'itemListElement': [
           { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.2dsviluppoimmobiliare.it/' },
-          { '@type': 'ListItem', 'position': 2, 'name': 'Metodo F.I.L.O.™', 'item': 'https://www.2dsviluppoimmobiliare.it/filo/' },
+          { '@type': 'ListItem', 'position': 2, 'name': 'Metodo F.I.L.O.™', 'item': 'https://www.2dsviluppoimmobiliare.it/metodofilo/' },
           { '@type': 'ListItem', 'position': 3, 'name': 'ZES Puglia', 'item': 'https://www.2dsviluppoimmobiliare.it/zes/' },
           { '@type': 'ListItem', 'position': 4, 'name': 'Bari', 'item': 'https://www.2dsviluppoimmobiliare.it/bari/' },
           { '@type': 'ListItem', 'position': 5, 'name': 'Glossario', 'item': 'https://www.2dsviluppoimmobiliare.it/glossario/' },
-          { '@type': 'ListItem', 'position': 6, 'name': 'Chi Sono', 'item': 'https://www.2dsviluppoimmobiliare.it/chi-sono/' }
+          { '@type': 'ListItem', 'position': 6, 'name': 'Chi Sono', 'item': 'https://www.2dsviluppoimmobiliare.it/domenico-dentamaro/' }
         ]
       },
       // article data for ZES
@@ -218,11 +213,14 @@ export const Seo: React.FC = () => {
       {/* Open Graph / Twitter */}
       <meta property="og:title" content={meta.title} />
       <meta property="og:description" content={meta.description} />
+      <meta property="og:url" content={canonicalUrl} />
       {meta.image && <meta property="og:image" content={meta.image} />}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
       {meta.image && <meta name="twitter:image" content={meta.image} />}
+      <meta name="robots" content="index, follow" />
+      <link rel="canonical" href={canonicalUrl} />
 
       {/* structured data for service + article etc */}
       <script type="application/ld+json">
