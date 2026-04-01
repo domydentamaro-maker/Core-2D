@@ -7,7 +7,7 @@ import EcosystemSection from './domenico/EcosystemSection';
 import TrackRecordSection from './domenico/TrackRecordSection';
 import MediaSection from './domenico/MediaSection';
 import ContactSection from './domenico/ContactSection';
-import FooterSection from './domenico/FooterSection';
+import OsservatorioSection from './domenico/OsservatorioSection';
 
 /** Attiva le animazioni reveal-section con IntersectionObserver */
 const RevealObserver: React.FC = () => {
@@ -137,16 +137,16 @@ export const DomenicoPage: React.FC = () => {
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
-      <div className="min-h-screen bg-white overflow-x-hidden">
+      <div className="min-h-screen bg-white">
         <RevealObserver />
         <HeroSection />
         <BioSection />
         <MetodoSection />
         <EcosystemSection />
         <TrackRecordSection />
+        <OsservatorioSection />
         <MediaSection />
         <ContactSection />
-        <FooterSection />
       </div>
     </>
   );

@@ -31,6 +31,7 @@ const FooterSection = () => {
               <a href="https://www.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" className="block text-white/50 hover:text-white transition-colors">2dsviluppoimmobiliare.it</a>
               <a href="https://visioniimmobiliari.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" className="block text-white/50 hover:text-white transition-colors">Visioni Immobiliari</a>
               <a href="https://materiaprima.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" className="block text-white/50 hover:text-white transition-colors">Materia Prima</a>
+              <a href="/osservatorio" className="block text-white/50 hover:text-white transition-colors">Osservatorio</a>
             </div>
           </div>
 

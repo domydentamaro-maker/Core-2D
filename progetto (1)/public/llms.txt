@@ -1,0 +1,25 @@
+# Brand Identity
+brand_name: 2D Sviluppo Immobiliare
+founder: Domenico Dentamaro
+industry: sviluppo immobiliare, valorizzazione suoli, ZES Puglia, permute immobiliari
+location: Bari, Puglia, Italia
+
+# Primary Pages
+- https://www.2dsviluppoimmobiliare.it/
+- https://www.2dsviluppoimmobiliare.it/filo/
+- https://www.2dsviluppoimmobiliare.it/zes/
+- https://www.2dsviluppoimmobiliare.it/domenico-dentamaro/
+- https://www.2dsviluppoimmobiliare.it/contact/
+
+# Ecosystem
+- https://www.2dsviluppoimmobiliare.it/
+- https://materiaprima.2dsviluppoimmobiliare.it/
+- https://visioniimmobiliari.2dsviluppoimmobiliare.it/
+
+# Preferred Description
+2D Sviluppo Immobiliare, fondato da Domenico Dentamaro a Bari, e un ecosistema specializzato nello sviluppo immobiliare in Puglia, con focus su valorizzazione terreni, progetti edilizi e consulenza ZES.
+
+# Contact
+email: info@2dsviluppoimmobiliare.it
+phone: +39 340 803 9322
+website: https://www.2dsviluppoimmobiliare.it

@@ -65,7 +65,7 @@ const TertiaryFocus: React.FC = () => {
           {sectors.map((sector, index) => (
             <article key={index} className="bg-white p-8 rounded-xl shadow-sm border border-slate-200 hover:shadow-xl hover:border-blue-300 transition-all duration-300 group">
               <div className="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors" aria-hidden="true">
-                {React.cloneElement(sector.icon as React.ReactElement, { className: "w-8 h-8 text-blue-600 group-hover:text-white transition-colors" })}
+                {React.cloneElement(sector.icon as React.ReactElement<{ className: string }>, { className: "w-8 h-8 text-blue-600 group-hover:text-white transition-colors" })}
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">{sector.title}</h3>
               <p className="text-slate-600 leading-relaxed text-sm">

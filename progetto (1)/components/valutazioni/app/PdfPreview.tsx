@@ -121,21 +121,23 @@ export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewP
       <div className="flex-1 overflow-y-auto bg-[#888] p-6">
         <div className="max-w-2xl mx-auto space-y-2">
           {/* Cover */}
-          <div className="bg-[#1A1A1A] p-12 text-center shadow-xl" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <p className="text-[#C8A96E]/50 text-xs font-source uppercase tracking-[0.3em] mb-6">2D Sviluppo Immobiliare</p>
+          <div className="bg-[#F5F0E8] p-12 text-center shadow-xl border border-[#D4C9B0]" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <p className="text-[#5C5346] text-xs font-source uppercase tracking-[0.3em] mb-4">2D Sviluppo Immobiliare · Domenico Dentamaro</p>
             <div className="w-16 h-px bg-[#C8A96E] mb-6" />
-            <h1 className="font-playfair text-4xl font-bold text-[#F5F0E8] mb-2">PERIZIA IMMOBILIARE</h1>
+            <h1 className="font-playfair text-4xl font-bold text-[#1A1A1A] mb-2">PERIZIA IMMOBILIARE</h1>
             <h2 className="font-playfair text-xl text-[#C8A96E] mb-8">Stima del Valore di Mercato</h2>
             <div className="w-24 h-px bg-[#C8A96E] mb-8" />
             {imm.comune && (
-              <p className="text-[#F5F0E8]/70 text-sm font-source mb-1">
+              <p className="text-[#1A1A1A]/70 text-sm font-source mb-1">
                 {imm.via} {imm.civico} — {imm.comune} ({imm.provincia})
               </p>
             )}
-            <p className="text-[#C8A96E]/60 text-xs font-source mb-4">Pratica n. {perizia.numeroPratica}</p>
+            <p className="text-[#5C5346] text-xs font-source mb-4">
+              Data: {formatDateIT(perizia.dataCreazione)}
+            </p>
             {valoreFinale > 0 && (
-              <div className="mt-4 border border-[#C8A96E]/40 px-8 py-4">
-                <p className="text-[#C8A96E]/50 text-[10px] font-source uppercase tracking-wider">Valore di Stima</p>
+              <div className="mt-4 border border-[#C8A96E]/60 px-8 py-4 bg-white/60">
+                <p className="text-[#5C5346] text-[10px] font-source uppercase tracking-wider">Valore di Stima</p>
                 <p className="font-playfair text-3xl font-bold text-[#C8A96E] mt-1">{formatCurrency(valoreFinale)}</p>
               </div>
             )}
@@ -149,12 +151,8 @@ export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewP
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-xs text-[#5C5346] font-source uppercase tracking-wide mb-1">Numero Pratica</p>
-                <p className="font-source font-600 text-[#1A1A1A]">{d.numeroPratica}</p>
-              </div>
-              <div>
                 <p className="text-xs text-[#5C5346] font-source uppercase tracking-wide mb-1">Data Perizia</p>
-                <p className="font-source font-600 text-[#1A1A1A]">{d.dataPerizia}</p>
+                <p className="font-source font-600 text-[#1A1A1A]">{formatDateIT(perizia.dataCreazione)}</p>
               </div>
               <div>
                 <p className="text-xs text-[#5C5346] font-source uppercase tracking-wide mb-1">Committente</p>
@@ -195,7 +193,14 @@ export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewP
   );
 }
 
+function formatDateIT(isoDate: string): string {
+  if (!isoDate) return '';
+  const [y, m, d] = isoDate.split('-');
+  return `${d}/${m}/${y}`;
+}
+
 function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): string {
+  const dataIT = formatDateIT(perizia.dataCreazione);
   const d = perizia.datiIncarico;
   const imm = perizia.datiImmobile;
   const { valori } = calcValoreFinale(perizia.metodiValutazione);
@@ -204,23 +209,23 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Perizia ${perizia.numeroPratica}</title>
+<title>Perizia Immobiliare — ${dataIT}</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Source Sans 3', sans-serif; background: #F5F0E8; color: #1A1A1A; }
-  .cover { background: #1A1A1A; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; page-break-after: always; }
-  .cover h1 { font-family: 'Playfair Display', serif; font-size: 36px; color: #F5F0E8; margin: 16px 0 8px; }
-  .cover h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: #C8A96E; margin-bottom: 24px; }
+  .cover { background: #F5F0E8; border: 2px solid #D4C9B0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; page-break-after: always; }
+  .cover h1 { font-family: 'Playfair Display', serif; font-size: 36px; color: #1A1A1A; margin: 16px 0 8px; }
+  .cover h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: #5C5346; margin-bottom: 24px; }
   .cover .divider { width: 80px; height: 1px; background: #C8A96E; margin: 16px auto; }
-  .cover .subtitle { color: #C8A96E; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; }
-  .cover .value-box { border: 1px solid rgba(200,169,110,0.4); padding: 24px 40px; margin-top: 24px; }
-  .cover .value-label { color: rgba(200,169,110,0.5); font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; }
-  .cover .value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #C8A96E; margin-top: 8px; }
+  .cover .subtitle { color: #5C5346; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; }
+  .cover .value-box { border: 2px solid #C8A96E; background: #FDFAF4; padding: 24px 40px; margin-top: 24px; border-radius: 4px; }
+  .cover .value-label { color: #5C5346; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; }
+  .cover .value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #1A1A1A; margin-top: 8px; }
   .page { background: #F5F0E8; padding: 40px; page-break-after: always; }
   .page-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #C8A96E; padding-bottom: 12px; margin-bottom: 24px; }
   .page-header h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: #1A1A1A; }
-  .page-header span { font-size: 10px; color: #C8A96E; }
+  .page-header span { font-size: 10px; color: #5C5346; }
   .field { margin-bottom: 16px; }
   .field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #5C5346; display: block; margin-bottom: 4px; }
   .field p { font-size: 13px; font-weight: 600; color: #1A1A1A; border-bottom: 1px solid #D4C9B0; padding-bottom: 6px; }
@@ -229,18 +234,18 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   .section-card { background: #FDFAF4; border: 1px solid #D4C9B0; border-radius: 4px; padding: 20px; margin-bottom: 16px; }
   .section-card h3 { font-family: 'Playfair Display', serif; font-size: 15px; color: #1A1A1A; margin-bottom: 16px; border-bottom: 1px solid #D4C9B0; padding-bottom: 8px; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0; }
-  th { background: #1A1A1A; color: #C8A96E; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
+  th { background: #D4C9B0; color: #1A1A1A; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
   tr:nth-child(even) { background: #F5F0E8; }
   tr:nth-child(odd) { background: #FDFAF4; }
   td { padding: 8px 12px; border-bottom: 1px solid #D4C9B0; }
-  .value-final { background: #C8A96E; padding: 32px; text-align: center; margin: 20px 0; border-radius: 4px; }
-  .value-final .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(26,26,26,0.6); }
+  .value-final { border: 2px solid #C8A96E; background: #FDFAF4; padding: 32px; text-align: center; margin: 20px 0; border-radius: 4px; }
+  .value-final .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #5C5346; }
   .value-final .amount { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: #1A1A1A; margin-top: 8px; }
   .photo-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 16px 0; }
   .photo-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 2px; }
   .photo-caption { font-size: 10px; color: #5C5346; text-align: center; margin-top: 4px; }
-  .legal-note { background: #1A1A1A; padding: 20px; border-radius: 4px; }
-  .legal-note p { font-size: 10px; color: rgba(245,240,232,0.5); line-height: 1.7; font-style: italic; }
+  .legal-note { background: #FDFAF4; border: 1px solid #D4C9B0; padding: 20px; border-radius: 4px; }
+  .legal-note p { font-size: 10px; color: #5C5346; line-height: 1.7; font-style: italic; }
   .text-section { margin-bottom: 16px; }
   .text-section h4 { font-family: 'Playfair Display', serif; font-size: 13px; color: #1A1A1A; margin-bottom: 8px; }
   .text-section p { font-size: 12px; line-height: 1.8; color: #1A1A1A; white-space: pre-line; }
@@ -259,8 +264,8 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   <h1>PERIZIA IMMOBILIARE</h1>
   <h2>Stima del Valore di Mercato</h2>
   <div class="divider"></div>
-  ${imm.comune ? `<p style="color:rgba(245,240,232,0.7);font-size:13px;margin-bottom:4px">${imm.via} ${imm.civico} — ${imm.comune} (${imm.provincia})</p>` : ''}
-  <p style="color:rgba(200,169,110,0.6);font-size:11px">Pratica n. ${perizia.numeroPratica}</p>
+  ${imm.comune ? `<p style="color:#5C5346;font-size:13px;margin-bottom:4px">${imm.via} ${imm.civico} — ${imm.comune} (${imm.provincia})</p>` : ''}
+  <p style="color:#5C5346;font-size:11px;margin-bottom:12px">Data: ${dataIT}</p>
   ${valoreFinale > 0 ? `<div class="value-box"><p class="value-label">Valore di Stima</p><p class="value">${formatCurrency(valoreFinale)}</p></div>` : ''}
 </div>
 
@@ -269,12 +274,11 @@ ${options.includiSezione1 ? `
 <div class="page">
   <div class="page-header">
     <h2>Dati dell'Incarico</h2>
-    <span>2D Valuta Pro · ${perizia.numeroPratica}</span>
+    <span>2D Valuta Pro · ${dataIT}</span>
   </div>
   <div class="grid-2">
-    <div class="field"><label>Numero Pratica</label><p>${d.numeroPratica}</p></div>
-    <div class="field"><label>Data Perizia</label><p>${d.dataPerizia}</p></div>
-    <div class="field"><label>Data Sopralluogo</label><p>${d.dataSopralluogo}</p></div>
+    <div class="field"><label>Data Perizia</label><p>${d.dataPerizia || dataIT}</p></div>
+    <div class="field"><label>Data Sopralluogo</label><p>${d.dataSopralluogo || '—'}</p></div>
     <div class="field"><label>Committente</label><p>${d.committenteNome || '—'}</p></div>
     <div class="field"><label>Indirizzo Committente</label><p>${d.committenteIndirizzo || '—'}</p></div>
     <div class="field"><label>CF / P.IVA</label><p>${d.committenteCfPiva || '—'}</p></div>
@@ -288,7 +292,7 @@ ${options.includiSezione5 && valori.length > 0 ? `
 <div class="page">
   <div class="page-header">
     <h2>Metodi di Valutazione</h2>
-    <span>2D Valuta Pro · ${perizia.numeroPratica}</span>
+    <span>2D Valuta Pro · ${dataIT}</span>
   </div>
   <table>
     <thead><tr><th>Metodo</th><th>Valore Calcolato</th><th>Peso %</th><th>Contributo Ponderato</th></tr></thead>
@@ -300,7 +304,7 @@ ${options.includiSezione5 && valori.length > 0 ? `
       }).join('')}
     </tbody>
   </table>
-  ${valoreFinale > 0 ? `<div class="value-final"><p class="label">Valore di Stima Finale</p><p class="amount">${formatCurrency(valoreFinale)}</p><p style="font-size:11px;color:rgba(26,26,26,0.6);margin-top:8px">Range: ${formatCurrency(valoreFinale * 0.92)} — ${formatCurrency(valoreFinale * 1.08)}</p></div>` : ''}
+  ${valoreFinale > 0 ? `<div class="value-final"><p class="label">Valore di Stima Finale</p><p class="amount">${formatCurrency(valoreFinale)}</p><p style="font-size:11px;color:#5C5346;margin-top:8px">Range: ${formatCurrency(valoreFinale * 0.92)} — ${formatCurrency(valoreFinale * 1.08)}</p></div>` : ''}
 </div>` : ''}
 
 ${options.includiSezione6 && perizia.foto.filter(f => f.includiPdf).length > 0 ? `
@@ -308,7 +312,7 @@ ${options.includiSezione6 && perizia.foto.filter(f => f.includiPdf).length > 0 ?
 <div class="page">
   <div class="page-header">
     <h2>Documentazione Fotografica</h2>
-    <span>2D Valuta Pro · ${perizia.numeroPratica}</span>
+    <span>2D Valuta Pro · ${dataIT}</span>
   </div>
   <div class="photo-grid">
     ${perizia.foto.filter(f => f.includiPdf).map(f => `
@@ -325,7 +329,7 @@ ${options.includiSezione7 && perizia.sezioniTestuali.length > 0 ? `
 <div class="page">
   <div class="page-header">
     <h2>Relazione Tecnica</h2>
-    <span>2D Valuta Pro · ${perizia.numeroPratica}</span>
+    <span>2D Valuta Pro · ${dataIT}</span>
   </div>
   ${perizia.sezioniTestuali.map(s => `
     <div class="text-section">

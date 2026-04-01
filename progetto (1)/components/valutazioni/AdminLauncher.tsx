@@ -42,7 +42,8 @@ const APPS: AppCard[] = [
 ];
 
 const AdminLauncher: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
-  const [activeApp, setActiveApp] = useState<string | null>(null);
+  // Apri direttamente l'app Perizie & Stime all'accesso
+  const [activeApp, setActiveApp] = useState<string | null>('perizie');
 
   if (activeApp === 'perizie') {
     return (
@@ -51,16 +52,7 @@ const AdminLauncher: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
           <p className="text-[#5C5346] font-medium">Caricamento...</p>
         </div>
       }>
-        <div className="relative">
-          <button
-            onClick={() => setActiveApp(null)}
-            className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-[#1A1A1A] text-[#C8A96E] text-sm font-medium px-4 py-2 rounded-full shadow-lg hover:bg-[#333] transition-colors"
-            style={{ fontFamily: 'Source Sans 3, sans-serif' }}
-          >
-            ← Area Riservata
-          </button>
-          <ValutazioniApp />
-        </div>
+        <ValutazioniApp onLogout={onLogout} />
       </Suspense>
     );
   }

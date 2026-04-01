@@ -4,6 +4,7 @@ import {
   loadPerizie, savePerizia, deletePerizia, duplicatePerizia,
   exportPeriziaJSON, scheduleAutosave, calcCompletamento
 } from '@/components/valutazioni/lib/storage';
+import { dbSavePerizia, dbDeletePerizia, dbLoadAndMerge } from '@/components/valutazioni/lib/db';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Dashboard from './Dashboard';
@@ -22,7 +23,7 @@ type SaveStatus = 'saved' | 'saving' | 'unsaved';
 
 const SEZIONI_ORDER = ['incarico', 'immobile', 'tecnica', 'mercato', 'valutazione', 'foto', 'relazione'];
 
-export default function AppShell() {
+export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
   const [perizie, setPerizie] = useState<Perizia[]>([]);
   const [periziaCorrente, setPeriziaCorrente] = useState<Perizia | null>(null);
   const [sezioneAttiva, setSezioneAttiva] = useState<string>('dashboard');
@@ -32,7 +33,13 @@ export default function AppShell() {
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setPerizie(loadPerizie());
+    const local = loadPerizie();
+    setPerizie(local);
+    // Sync con DB in background: scarica versioni più recenti
+    dbLoadAndMerge(local).then(merged => {
+      merged.forEach(p => savePerizia(p)); // aggiorna localStorage
+      setPerizie(loadPerizie());
+    }).catch(() => { /* offline — localStorage sufficiente */ });
   }, []);
 
   const triggerAutosave = useCallback((perizia: Perizia) => {
@@ -42,6 +49,7 @@ export default function AppShell() {
       const updated = savePerizia(perizia);
       setPerizie(updated);
       setSaveStatus('saved');
+      dbSavePerizia(perizia).catch(() => {}); // fire-and-forget DB sync
     }, 2000);
   }, []);
 
@@ -83,12 +91,14 @@ export default function AppShell() {
     const updated = savePerizia(periziaCorrente);
     setPerizie(updated);
     setSaveStatus('saved');
+    dbSavePerizia(periziaCorrente).catch(() => {});
     toast.success('Perizia salvata con successo');
   };
 
   const handleElimina = (id: string) => {
     const updated = deletePerizia(id);
     setPerizie(updated);
+    dbDeletePerizia(id).catch(() => {});
     toast.success('Perizia eliminata');
   };
 
@@ -157,6 +167,7 @@ export default function AppShell() {
           onPreviewPdf={() => setShowPdf(true)}
           onGeneratePdf={() => setShowPdf(true)}
           onMenuToggle={() => setIsMobileSidebarOpen(true)}
+          onLogout={onLogout}
           isMobile
         />
 
@@ -196,6 +207,12 @@ export default function AppShell() {
                 <Sezione4
                   data={periziaCorrente.analisiMercato}
                   onChange={(analisiMercato) => updatePerizia({ analisiMercato })}
+                  comune={periziaCorrente.datiImmobile.comune}
+                  tipologia={periziaCorrente.schedaTecnica.tipologia}
+                  via={periziaCorrente.datiImmobile.via}
+                  civico={periziaCorrente.datiImmobile.civico}
+                  provincia={periziaCorrente.datiImmobile.provincia}
+                  cap={periziaCorrente.datiImmobile.cap}
                 />
               )}
               {sezioneAttiva === 'valutazione' && (

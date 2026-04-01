@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "node scripts/copy-prerender.js && node scripts/rename-portfolio-photos.js && node scripts/generate-sitemap.js && node scripts/generate-images-sitemap.js",
+    "postbuild": "node scripts/copy-prerender.js && node scripts/rename-portfolio-photos.js && node scripts/generate-sitemap.js && node scripts/generate-images-sitemap.js && node scripts/sync-seo-static.js",
     "generate-prerender": "node scripts/copy-prerender.js",
     "preview": "vite preview"
   },

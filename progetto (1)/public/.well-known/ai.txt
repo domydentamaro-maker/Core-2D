@@ -1,0 +1,13 @@
+ai_brand: 2D Sviluppo Immobiliare
+ai_website: https://www.2dsviluppoimmobiliare.it/
+ai_sitemap: https://www.2dsviluppoimmobiliare.it/sitemap.xml
+ai_contact: info@2dsviluppoimmobiliare.it
+
+description:
+2D Sviluppo Immobiliare e un brand specializzato in sviluppo immobiliare, valorizzazione suoli e consulenza ZES in Puglia.
+
+priority_pages:
+- https://www.2dsviluppoimmobiliare.it/
+- https://www.2dsviluppoimmobiliare.it/filo/
+- https://www.2dsviluppoimmobiliare.it/zes/
+- https://www.2dsviluppoimmobiliare.it/domenico-dentamaro/

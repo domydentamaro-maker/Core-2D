@@ -78,9 +78,13 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center text-xs">
+        <div className="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center text-xs gap-4">
           <p>&copy; {new Date().getFullYear()} 2D Sviluppo Immobiliare. Tutti i diritti riservati. P.IVA 08269550720</p>
-          <p className="mt-2 md:mt-0">Le agevolazioni ZES sono soggette a requisiti normativi. Consulenza professionale per investimenti immobiliari garantiti.</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <a href="https://www.2dsviluppoimmobiliare.it/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="https://www.2dsviluppoimmobiliare.it/cookie-policy" className="hover:text-white transition-colors">Cookie Policy</a>
+            <a href="https://www.2dsviluppoimmobiliare.it/termini" className="hover:text-white transition-colors">Termini di Servizio</a>
+          </div>
         </div>
       </div>
     </footer>

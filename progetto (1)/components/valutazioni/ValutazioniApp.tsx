@@ -7,7 +7,7 @@ import AppShell from './app/AppShell';
  * Applica il tema gold/ivory tramite la classe `valutazioni-app`
  * che attiva le CSS variables definite in index.css.
  */
-const ValutazioniApp: React.FC = () => {
+const ValutazioniApp: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
   useEffect(() => {
     // Marca il body per le CSS variables scoped
     document.body.classList.add('valutazioni-app');
@@ -18,7 +18,7 @@ const ValutazioniApp: React.FC = () => {
 
   return (
     <div className="valutazioni-app min-h-screen">
-      <AppShell />
+      <AppShell onLogout={onLogout} />
       <Toaster
         position="top-right"
         toastOptions={{

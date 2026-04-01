@@ -1,9 +1,83 @@
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight, BarChart3, FileText, BookOpen, TrendingUp, Building2, Globe, Users, ExternalLink } from 'lucide-react';
 
 const OSSERVATORIO_URL = 'https://osservatorio.2dsviluppoimmobiliare.it';
+const WP_API = `${OSSERVATORIO_URL}/wp-json/wp/v2`;
+
+interface WpArticle {
+  id: number;
+  date: string;
+  slug: string;
+  type: string;
+  title: { rendered: string };
+  excerpt: { rendered: string };
+  featured_media: number;
+  link: string;
+  _embedded?: {
+    'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string }>;
+  };
+}
+
+const TYPE_LABEL: Record<string, string> = {
+  analisi: 'Analisi',
+  report: 'Report',
+  approfondimenti: 'Approfondimento',
+};
+
+const TYPE_CATEGORY: Record<string, string> = {
+  analisi: 'Mercato',
+  report: 'Statistiche',
+  approfondimenti: 'Normativa',
+};
+
+const FALLBACK_IMAGES: Record<string, string> = {
+  analisi: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop',
+  report: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=800&auto=format&fit=crop',
+  approfondimenti: 'https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=800&auto=format&fit=crop',
+};
+
+function getFeaturedImage(article: WpArticle): string {
+  const media = article._embedded?.['wp:featuredmedia']?.[0];
+  if (media?.source_url) return media.source_url;
+  return FALLBACK_IMAGES[article.type] ?? FALLBACK_IMAGES.analisi;
+}
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, '')
+    .replace(/&amp;/g, '&').replace(/&#8217;|&rsquo;/g, "'").replace(/&hellip;/g, '…')
+    .replace(/&ldquo;/g, '"').replace(/&rdquo;/g, '"').replace(/&nbsp;/g, ' ')
+    .trim();
+}
 
 const OsservatorioLandingPage = () => {
+  const [articles, setArticles] = useState<WpArticle[]>([]);
+  const [loadingArticles, setLoadingArticles] = useState(true);
+
+  useEffect(() => {
+    const cpts = ['analisi', 'report', 'approfondimenti'];
+    const fields = 'id,title,excerpt,slug,date,type,featured_media,link,_embedded,_links';
+    Promise.all(
+      cpts.map(cpt =>
+        fetch(`${WP_API}/${cpt}?per_page=3&orderby=date&order=desc&_embed&_fields=${fields}`)
+          .then(r => r.json())
+          .catch(() => [] as WpArticle[])
+      )
+    ).then(results => {
+      const merged: WpArticle[] = (results as WpArticle[][])
+        .flat()
+        .filter(a => a && a.id)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 3);
+      if (merged.length > 0) setArticles(merged);
+    }).finally(() => setLoadingArticles(false));
+  }, []);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -82,29 +156,7 @@ const OsservatorioLandingPage = () => {
     },
   ];
 
-  const featuredTopics = [
-    {
-      title: "ZES Unica del Mezzogiorno: Impatti sulle Operazioni di Sviluppo",
-      category: "ZES",
-      type: "Analisi",
-      date: "Marzo 2026",
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop",
-    },
-    {
-      title: "Report Q1 2026: Andamento prezzi nelle città metropolitane",
-      category: "Mercato",
-      type: "Report",
-      date: "Marzo 2026",
-      image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=800&auto=format&fit=crop",
-    },
-    {
-      title: "Rigenerazione Urbana: I casi di successo che cambiano le periferie",
-      category: "Operazioni",
-      type: "Approfondimento",
-      date: "Marzo 2026",
-      image: "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=800&auto=format&fit=crop",
-    },
-  ];
+
 
   return (
     <>
@@ -144,7 +196,9 @@ const OsservatorioLandingPage = () => {
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40">
-            <div className="max-w-3xl">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Text column */}
+            <div>
               <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-amber-500/30 bg-amber-500/5">
                 <Globe className="w-4 h-4 text-amber-400" />
                 <span className="text-amber-400 text-sm font-medium tracking-wider uppercase">
@@ -184,6 +238,27 @@ const OsservatorioLandingPage = () => {
                 </a>
               </div>
             </div>
+
+            {/* Domenico portrait */}
+            <div className="hidden lg:flex justify-center lg:justify-end">
+              <div className="relative">
+                <div className="w-72 xl:w-80 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl ring-2 ring-amber-500/20">
+                  <img
+                    src="/domenico/domenico-dentamaro-fondatore-2d-sviluppo.jpg"
+                    alt="Domenico Dentamaro — Fondatore e Direttore Editoriale, Osservatorio Sviluppo Immobiliare"
+                    className="w-full h-full object-cover object-top"
+                    loading="eager"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+                </div>
+                {/* Label overlay */}
+                <div className="absolute bottom-4 left-4 right-4 bg-slate-900/80 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                  <p className="text-white font-bold text-sm">Domenico Dentamaro</p>
+                  <p className="text-amber-400 text-xs mt-0.5">Fondatore & Direttore Editoriale</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
             {/* Stats bar */}
             <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 pt-10 border-t border-slate-700/50">
@@ -301,33 +376,77 @@ const OsservatorioLandingPage = () => {
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              {featuredTopics.map((article, i) => (
-                <article key={i} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all group">
-                  <div className="relative overflow-hidden aspect-video">
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      referrerPolicy="no-referrer"
-                      loading="lazy"
-                    />
-                    <div className="absolute top-4 left-4 flex flex-col gap-2">
-                      <span className="bg-slate-900/90 text-white text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-sm backdrop-blur-sm">
-                        {article.type}
-                      </span>
-                      <span className="bg-white/90 backdrop-blur-sm text-amber-700 text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-sm">
-                        {article.category}
-                      </span>
+              {loadingArticles ? (
+                // Skeleton loading
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 animate-pulse">
+                    <div className="aspect-video bg-slate-200" />
+                    <div className="p-6 space-y-3">
+                      <div className="h-3 bg-slate-200 rounded w-1/3" />
+                      <div className="h-5 bg-slate-200 rounded w-full" />
+                      <div className="h-5 bg-slate-200 rounded w-4/5" />
                     </div>
                   </div>
-                  <div className="p-6">
-                    <time className="text-xs text-slate-500 font-medium">{article.date}</time>
-                    <h3 className="text-lg font-serif font-bold text-slate-900 mt-2 leading-snug group-hover:text-amber-600 transition-colors">
-                      {article.title}
-                    </h3>
-                  </div>
-                </article>
-              ))}
+                ))
+              ) : articles.length > 0 ? (
+                articles.map(article => (
+                  <article key={article.id} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all group">
+                    <a href={article.link} target="_blank" rel="noopener noreferrer" className="block">
+                      <div className="relative overflow-hidden aspect-video">
+                        <img
+                          src={getFeaturedImage(article)}
+                          alt={stripHtml(article.title.rendered)}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="absolute top-4 left-4 flex flex-col gap-2">
+                          <span className="bg-slate-900/90 text-white text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-sm backdrop-blur-sm">
+                            {TYPE_LABEL[article.type] ?? article.type}
+                          </span>
+                          <span className="bg-white/90 backdrop-blur-sm text-amber-700 text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-sm">
+                            {TYPE_CATEGORY[article.type] ?? 'Osservatorio'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-6">
+                        <time className="text-xs text-slate-500 font-medium">{formatDate(article.date)}</time>
+                        <h3 className="text-lg font-serif font-bold text-slate-900 mt-2 leading-snug group-hover:text-amber-600 transition-colors line-clamp-2">
+                          {stripHtml(article.title.rendered)}
+                        </h3>
+                        {article.excerpt?.rendered && (
+                          <p className="text-sm text-slate-500 mt-2 leading-relaxed line-clamp-2">
+                            {stripHtml(article.excerpt.rendered)}
+                          </p>
+                        )}
+                      </div>
+                    </a>
+                  </article>
+                ))
+              ) : (
+                // Fallback statico se la fetch non restituisce dati
+                [
+                  { title: "ZES Unica del Mezzogiorno: Impatti sulle Operazioni di Sviluppo", type: "Analisi", category: "ZES", date: "Aprile 2026", image: FALLBACK_IMAGES.analisi },
+                  { title: "Report Q1 2026: Andamento prezzi nelle città metropolitane", type: "Report", category: "Mercato", date: "Aprile 2026", image: FALLBACK_IMAGES.report },
+                  { title: "Rigenerazione Urbana: I casi di successo che cambiano le periferie", type: "Approfondimento", category: "Normativa", date: "Aprile 2026", image: FALLBACK_IMAGES.approfondimenti },
+                ].map((a, i) => (
+                  <article key={i} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all group">
+                    <a href={OSSERVATORIO_URL} target="_blank" rel="noopener noreferrer" className="block">
+                      <div className="relative overflow-hidden aspect-video">
+                        <img src={a.image} alt={a.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" referrerPolicy="no-referrer" />
+                        <div className="absolute top-4 left-4 flex flex-col gap-2">
+                          <span className="bg-slate-900/90 text-white text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-sm backdrop-blur-sm">{a.type}</span>
+                          <span className="bg-white/90 backdrop-blur-sm text-amber-700 text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-sm">{a.category}</span>
+                        </div>
+                      </div>
+                      <div className="p-6">
+                        <time className="text-xs text-slate-500 font-medium">{a.date}</time>
+                        <h3 className="text-lg font-serif font-bold text-slate-900 mt-2 leading-snug group-hover:text-amber-600 transition-colors">{a.title}</h3>
+                      </div>
+                    </a>
+                  </article>
+                ))
+              )}
             </div>
           </div>
         </section>

@@ -1,6 +1,6 @@
 import { ExternalLink } from "lucide-react";
 
-const ecosystems = [
+const ecosystems: { name: string; role: string; desc: string; url: string; img: string; internal?: boolean }[] = [
   {
     name: "Visioni Immobiliari",
     role: "Sviluppo & Concept",
@@ -38,13 +38,13 @@ const EcosystemSection = () => {
           Un approccio integrato allo sviluppo: dalla terra nuda alla creazione di valore, attraverso brand verticali specializzati.
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {ecosystems.map((eco, i) => (
             <a
               key={eco.name}
               href={eco.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={eco.internal ? '_self' : '_blank'}
+              rel={eco.internal ? undefined : 'noopener noreferrer'}
               className="group block rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300 active:scale-[0.98]"
               style={{ transitionDelay: `${i * 80}ms` }}
             >

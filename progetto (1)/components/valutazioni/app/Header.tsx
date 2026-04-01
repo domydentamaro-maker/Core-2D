@@ -1,6 +1,6 @@
 import React from 'react';
 import { Perizia } from '@/components/valutazioni/types/perizia';
-import { Save, Eye, FileDown, Menu, CheckCircle, Clock } from 'lucide-react';
+import { Save, Eye, FileDown, Menu, CheckCircle, Clock, LogOut } from 'lucide-react';
 import { cn } from '@/components/valutazioni/lib/utils';
 
 interface HeaderProps {
@@ -10,6 +10,7 @@ interface HeaderProps {
   onPreviewPdf: () => void;
   onGeneratePdf: () => void;
   onMenuToggle: () => void;
+  onLogout?: () => void;
   isMobile?: boolean;
 }
 
@@ -20,6 +21,7 @@ export default function Header({
   onPreviewPdf,
   onGeneratePdf,
   onMenuToggle,
+  onLogout,
   isMobile = false,
 }: HeaderProps) {
   return (
@@ -99,6 +101,17 @@ export default function Header({
               <span className="hidden sm:inline">Genera PDF</span>
             </button>
           </>
+        )}
+
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            title="Esci dall'area riservata"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-source border border-slate-300 text-slate-500 hover:border-red-300 hover:text-red-500 rounded transition-all ml-1"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Esci</span>
+          </button>
         )}
       </div>
     </header>

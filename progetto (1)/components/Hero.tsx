@@ -115,9 +115,7 @@ export const Hero: React.FC<HeroProps> = ({ videoUrl, fallbackImage, title, subt
               <div className="w-full flex flex-col md:flex-row flex-wrap justify-center items-center gap-4">
                 {/* Button 1: Primary - White/Gradient */}
                 <a
-                  href="https://www.2dsviluppoimmobiliare.it/metodofilo/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/metodofilo"
                   aria-label="Scopri il Metodo F.I.L.O."
                   className="group relative inline-flex items-center justify-center px-8 py-4 overflow-hidden font-bold text-[#003366] transition duration-300 ease-out rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] bg-white hover:scale-105 min-w-[280px]"
                 >

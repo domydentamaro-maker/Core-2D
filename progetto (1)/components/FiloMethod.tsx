@@ -52,9 +52,7 @@ export const FiloMethod: React.FC = () => {
               </div>
 
               <a 
-                href="https://www.2dsviluppoimmobiliare.it/metodofilo/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/metodofilo"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl font-bold text-white hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition-all duration-300 transform hover:-translate-y-1"
               >
                 VISITA IL SITO DEL METODO

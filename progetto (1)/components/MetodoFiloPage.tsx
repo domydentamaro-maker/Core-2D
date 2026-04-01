@@ -34,7 +34,7 @@ const FiloHeader: React.FC = () => {
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="https://www.2dsviluppoimmobiliare.it/filo/" className="flex items-center gap-3" aria-label="Metodo F.I.L.O. — Home">
+        <a href="/metodofilo" className="flex items-center gap-3" aria-label="Metodo F.I.L.O. — Home">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-white font-black text-sm">F</div>
           <span className="font-bold text-white tracking-wide hidden sm:block">Metodo F.I.L.O.<span className="text-cyan-400">™</span></span>
         </a>
@@ -523,7 +523,7 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "HowTo",
-      "@id": "https://www.2dsviluppoimmobiliare.it/filo/#howto",
+      "@id": "https://www.2dsviluppoimmobiliare.it/metodofilo/#howto",
       "name": "Come Applicare il Metodo F.I.L.O.™ allo Sviluppo Immobiliare",
       "description": "Il Metodo F.I.L.O.™ è il framework operativo proprietario di Domenico Dentamaro per gestire il ciclo di vita completo di un progetto di sviluppo immobiliare in 4 fasi: Fusione, Innesco, Latenza, Orchestrazione.",
       "totalTime": "PT6M",
@@ -539,28 +539,28 @@ const jsonLd = {
           "position": 1,
           "name": "Fusione — Analisi e Fattibilità",
           "text": "Sintesi delle variabili territoriali, urbanistiche e di mercato. Analisi catastale, due diligence preliminare e stima del valore a trasformazione.",
-          "url": "https://www.2dsviluppoimmobiliare.it/filo/#fasi"
+          "url": "https://www.2dsviluppoimmobiliare.it/metodofilo/#fasi"
         },
         {
           "@type": "HowToStep",
           "position": 2,
           "name": "Innesco — Attivazione delle Leve",
           "text": "Strutturazione del veicolo finanziario, selezione dei partner tecnici, avvio pratiche autorizzative e progettazione.",
-          "url": "https://www.2dsviluppoimmobiliare.it/filo/#fasi"
+          "url": "https://www.2dsviluppoimmobiliare.it/metodofilo/#fasi"
         },
         {
           "@type": "HowToStep",
           "position": 3,
           "name": "Latenza — Maturazione Strategica",
           "text": "Gestione del periodo di attesa: monitoraggio iter autorizzativo, ottimizzazione del progetto, pre-commercializzazione.",
-          "url": "https://www.2dsviluppoimmobiliare.it/filo/#fasi"
+          "url": "https://www.2dsviluppoimmobiliare.it/metodofilo/#fasi"
         },
         {
           "@type": "HowToStep",
           "position": 4,
           "name": "Orchestrazione — Esecuzione Coordinata",
           "text": "Coordinamento di tutti gli attori del progetto per il raggiungimento degli obiettivi: costruzione, commercializzazione, closing notarile.",
-          "url": "https://www.2dsviluppoimmobiliare.it/filo/#fasi"
+          "url": "https://www.2dsviluppoimmobiliare.it/metodofilo/#fasi"
         }
       ],
       "author": {
@@ -610,7 +610,7 @@ const jsonLd = {
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.2dsviluppoimmobiliare.it/" },
-        { "@type": "ListItem", "position": 2, "name": "Metodo F.I.L.O.™", "item": "https://www.2dsviluppoimmobiliare.it/filo/" }
+        { "@type": "ListItem", "position": 2, "name": "Metodo F.I.L.O.™", "item": "https://www.2dsviluppoimmobiliare.it/metodofilo/" }
       ]
     }
   ]
@@ -624,11 +624,11 @@ const MetodoFiloPage: React.FC = () => (
     <Helmet>
       <title>Metodo F.I.L.O.™ | Sviluppo Immobiliare Bari | Domenico Dentamaro</title>
       <meta name="description" content="Metodo F.I.L.O.™ di Domenico Dentamaro: Fusione, Innesco, Latenza, Orchestrazione. La metodologia proprietaria per valorizzare terreni e sviluppare asset immobiliari in Puglia." />
-      <link rel="canonical" href="https://www.2dsviluppoimmobiliare.it/filo/" />
+      <link rel="canonical" href="https://www.2dsviluppoimmobiliare.it/metodofilo/" />
       <meta property="og:title" content="Metodo F.I.L.O.™ — Sviluppo Immobiliare Domenico Dentamaro" />
       <meta property="og:description" content="Il framework operativo in 4 fasi per trasformare terreni in asset di valore. Scarica il Manuale Avanzato." />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://www.2dsviluppoimmobiliare.it/filo/" />
+      <meta property="og:url" content="https://www.2dsviluppoimmobiliare.it/metodofilo/" />
       <meta property="og:image" content="https://www.2dsviluppoimmobiliare.it/logo.png" />
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
     </Helmet>

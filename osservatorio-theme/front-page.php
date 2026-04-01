@@ -9,9 +9,8 @@
 get_header(); ?>
 
 <!-- Hero — Authority -->
-
 <section class="hero hero--authority">
-	<div class="hero__bg-image" style="background-image: url('<?php echo esc_url( content_url( '/uploads/2026/03/mappa-comuni-zes-mezzogiorno.jpg' ) ); ?>');"></div>
+	<div class="hero__bg-image" style="background-image: url('<?php echo esc_url( content_url( '/uploads/2026/03/hero-mezzogiorno.jpg' ) ); ?>');"></div>
 	<div class="hero__bg-overlay"></div>
 	<div class="container hero__inner">
 		<div class="hero__badge">

@@ -6,9 +6,10 @@ import { Menu, X, Lock } from 'lucide-react';
 interface NavbarProps {
   logoUrl: string;
   onOpenLogin: () => void;
+  forceBackground?: boolean;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
+export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin, forceBackground = false }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -21,9 +22,11 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const solidBg = isScrolled || forceBackground;
+
   const navLinks = [
     { label: 'Domenico Dentamaro', href: '/domenico-dentamaro' },
-    { label: 'Metodo F.I.L.O', href: '/filo' },
+    { label: 'Metodo F.I.L.O', href: '/metodofilo' },
     { label: 'ZES', href: '/zes' },
     { label: 'Osservatorio', href: '/osservatorio' },
     { label: 'Permuta', href: '#permuta' },
@@ -41,22 +44,25 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
       window.scrollTo(0, 0);
       return;
     }
-    // anchor links on same page
+    // anchor links
     if (!href.startsWith('#')) {
       return;
     }
     e.preventDefault();
+    setIsMobileMenuOpen(false);
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
+    } else {
+      // Not on home page — navigate home then scroll
+      window.location.href = '/' + href;
     }
   };
 
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-[#003366]/95 backdrop-blur-xl shadow-lg py-2' : 'bg-transparent py-6'
+        solidBg ? 'bg-[#003366]/95 backdrop-blur-xl shadow-lg py-2' : 'bg-transparent py-6'
       }`}
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
@@ -92,7 +98,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
           ))}
           
           <button 
-            onClick={onOpenLogin}
+            onClick={() => { navigate('/admin'); setIsMobileMenuOpen(false); }}
             className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
               isScrolled 
                 ? 'border-white/30 text-white hover:bg-white/20' 
@@ -134,10 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenLogin }) => {
             </a>
           ))}
           <button 
-            onClick={() => {
-              onOpenLogin();
-              setIsMobileMenuOpen(false);
-            }}
+            onClick={() => { navigate('/admin'); setIsMobileMenuOpen(false); }}
             className="flex items-center justify-center gap-2 mt-4 px-6 py-3 bg-[#003366] text-white rounded-xl font-bold"
           >
             <Lock className="w-4 h-4" />

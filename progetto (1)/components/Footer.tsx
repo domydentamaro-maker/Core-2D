@@ -51,16 +51,19 @@ export const Footer: React.FC<FooterProps> = ({ logoUrl, brandName = '2D Svilupp
               <li><a href="#mission" className="hover:text-cyan-400 transition-colors">Chi Siamo</a></li>
               <li><a href="#progetti" className="hover:text-cyan-400 transition-colors">Progetti</a></li>
               <li><a href="https://materiaprima.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Materia Prima</a></li>
-              <li><a href="https://visioniimmobiliari.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Visioni Immobiliari</a></li>              <li><a href="https://www.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Gruppo 2D</a></li>            </ul>
+              <li><a href="https://visioniimmobiliari.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Visioni Immobiliari</a></li>
+              <li><a href="/osservatorio" className="hover:text-cyan-400 transition-colors">Osservatorio</a></li>
+              <li><a href="https://www.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Gruppo 2D</a></li>
+            </ul>
           </div>
 
           {/* Legal */}
           <div>
             <h4 className="text-lg font-bold mb-6 text-white">Note Legali</h4>
             <ul className="space-y-3 text-slate-400">
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Cookie Policy</a></li>
-              <li><a href="#" className="hover:text-cyan-400 transition-colors">Termini di Servizio</a></li>
+              <li><a href="/privacy-policy" className="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
+              <li><a href="/cookie-policy" className="hover:text-cyan-400 transition-colors">Cookie Policy</a></li>
+              <li><a href="/termini" className="hover:text-cyan-400 transition-colors">Termini di Servizio</a></li>
             </ul>
           </div>
         </div>

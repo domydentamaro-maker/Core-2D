@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MANUALE AVANZATO – METODO F.I.L.O.™</title>
+  <meta name="description" content="Manuale Avanzato Metodo F.I.L.O.™ - Sistema Operativo per lo Sviluppo Immobiliare" />
+  <link rel="canonical" href="https://www.2dsviluppoimmobiliare.it/metodofilo/manuale.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto; }
+    .font-serif { font-family: 'Playfair Display', serif; }
+    @media print {
+      header { display: none !important; }
+      .print\:hidden { display: none !important; }
+      section { page-break-inside: avoid; }
+      h2 { page-break-after: avoid; }
+      p, ul, ol { orphans: 3; widows: 3; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 leading-relaxed">
+  <section id="manuale" class="bg-gray-50">
+    <!-- Header with background image -->
+    <header class="relative w-full print:hidden" style="min-height:320px; background-image: url('/metodofilo/assets/header-bg-CLtYYtCg.jpeg'); background-size: cover; background-position: center;">
+      <div class="absolute inset-0 bg-black/60"></div>
+
+      <div class="relative z-10 container mx-auto px-4">
+        <div class="flex items-center justify-between py-4">
+          <a href="/metodofilo/" class="flex items-center gap-3 text-white hover:opacity-80 transition-opacity">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+            <span class="font-semibold">Torna alla Home</span>
+          </a>
+
+          <button onclick="window.print()" class="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold px-5 py-3 rounded border-0 text-sm cursor-pointer transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="inline-block mr-2 align-middle"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V3h12v6M6 14h12v7H6v-7z"/></svg>
+            Stampa / Salva PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Logo centered -->
+      <div class="relative z-10 flex items-center justify-center py-8">
+        <img src="/metodofilo/assets/logo-2d-D2RAHd7d.png" alt="2D Sviluppo Immobiliare" class="h-auto w-auto object-contain" style="max-width:280px;" />
+      </div>
+    </header>
+
+    <!-- Manual Content -->
+    <main class="container mx-auto px-4 py-12 max-w-4xl">
+      <!-- Cover -->
+      <div class="text-center mb-16 pb-16 border-b border-gray-300">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">MANUALE AVANZATO – METODO F.I.L.O.™</h1>
+        <p class="text-xl text-yellow-600 mb-2">Sistema Operativo per lo Sviluppo Immobiliare</p>
+        <p class="text-gray-500">Ideato da Domenico Dentamaro – 2D Sviluppo Immobiliare</p>
+      </div>
+
+      <!-- Table of Contents -->
+      <section class="mb-16 pb-12 border-b border-gray-300">
+        <h2 class="text-3xl font-serif font-bold text-gray-900 mb-8">INDICE COMPLETO</h2>
+        <nav class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <a href="#section-1" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">1. Prefazione</a>
+          <a href="#section-2" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">2. Introduzione</a>
+          <a href="#section-3" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">3. Perché nasce il Metodo F.I.L.O.™</a>
+          <a href="#section-4" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">4. I principi fondamentali</a>
+          <a href="#section-5" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">5. Le 4 fasi del Metodo</a>
+          <a href="#section-6" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">6. Il Ciclo di Vita del Valore</a>
+          <a href="#section-7" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">7. Strumenti operativi</a>
+          <a href="#section-8" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">8. Checklist operative</a>
+          <a href="#section-9" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">9. Applicazioni pratiche</a>
+          <a href="#section-10" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">10. Micro‑case study</a>
+          <a href="#section-11" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">11. Vantaggi per investitori e proprietari</a>
+          <a href="#section-12" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">12. Glossario tecnico</a>
+          <a href="#section-13" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">13. Domande frequenti</a>
+          <a href="#section-14" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">14. Chi è Domenico Dentamaro</a>
+          <a href="#section-15" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">15. Come applicare il Metodo F.I.L.O.™</a>
+          <a href="#section-16" class="text-gray-500 hover:text-yellow-600 transition-colors py-1">16. Contatti e risorse</a>
+        </nav>
+      </section>
+
+      <!-- Section 1 - Prefazione -->
+      <section id="section-1" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">1. Prefazione</h2>
+        <div class="space-y-4 text-gray-500">
+          <p>Il Metodo F.I.L.O.™ rappresenta la sintesi del mio approccio allo sviluppo immobiliare.</p>
+          <p>Nasce dall'esigenza di portare ordine, metodo e visione strategica in un settore dove spesso prevalgono improvvisazione, percezioni soggettive e decisioni non strutturate.</p>
+          <p>Questo manuale è pensato per offrirti un sistema operativo chiaro, replicabile e misurabile, capace di guidarti in ogni fase del processo di valorizzazione immobiliare.</p>
+          <p class="text-yellow-600 font-semibold italic">Domenico Dentamaro – Fondatore 2D Sviluppo Immobiliare</p>
+        </div>
+      </section>
+
+      <!-- Section 2 - Introduzione -->
+      <section id="section-2" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">2. Introduzione</h2>
+        <div class="space-y-4 text-gray-500">
+          <p>Il Metodo F.I.L.O.™ è un framework operativo progettato per analizzare, valorizzare e trasformare un immobile o un suolo attraverso un processo strutturato in quattro fasi: Fusione, Indagine, Linee Guida e Operatività.</p>
+          <p>È pensato per investitori, sviluppatori, proprietari, professionisti del settore e gestori di asset immobiliari.</p>
+          <p>Il suo scopo è ridurre i rischi, aumentare la chiarezza decisionale e massimizzare il valore dell'asset.</p>
+        </div>
+      </section>
+
+      <!-- Section 3 - Perché nasce -->
+      <section id="section-3" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">3. Perché nasce il Metodo F.I.L.O.™</h2>
+        <div class="space-y-4 text-gray-500">
+          <p>Il settore immobiliare presenta criticità ricorrenti: informazioni frammentate, documentazione incompleta, decisioni basate su percezioni, mancanza di un processo chiaro, rischi non valutati correttamente, assenza di una visione strategica.</p>
+          <p>Il Metodo F.I.L.O.™ nasce per risolvere questi problemi attraverso un processo lineare, una metodologia replicabile, un approccio basato sui dati e una visione strategica integrata.</p>
+        </div>
+      </section>
+
+      <!-- Section 4 - Principi fondamentali -->
+      <section id="section-4" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">4. I principi fondamentali</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <p class="text-lg font-semibold text-gray-900">1. Analisi oggettiva</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <p class="text-lg font-semibold text-gray-900">2. Processo strutturato</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <p class="text-lg font-semibold text-gray-900">3. Decisioni misurabili</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <p class="text-lg font-semibold text-gray-900">4. Valorizzazione progressiva</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5 - Le 4 Fasi -->
+      <section id="section-5" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-8">5. Le 4 Fasi del Metodo F.I.L.O.™</h2>
+        <div class="space-y-8">
+          <div class="bg-white p-8 border border-gray-300 rounded">
+            <div class="flex items-center gap-4 mb-4">
+              <span class="text-4xl font-serif font-bold text-yellow-600">F</span>
+              <h3 class="text-xl font-serif font-bold text-gray-900">Fusione</h3>
+            </div>
+            <p class="text-gray-500 mb-4">Raccolta e integrazione delle informazioni preliminari: obiettivi, vincoli, contesto, stato dell'immobile, documentazione.</p>
+            <p class="text-yellow-600 font-semibold">Output: visione unificata dell'asset.</p>
+          </div>
+
+          <div class="bg-white p-8 border border-gray-300 rounded">
+            <div class="flex items-center gap-4 mb-4">
+              <span class="text-4xl font-serif font-bold text-yellow-600">I</span>
+              <h3 class="text-xl font-serif font-bold text-gray-900">Indagine</h3>
+            </div>
+            <p class="text-gray-500 mb-4">Due diligence documentale, analisi urbanistica, studio di mercato, valutazione dei rischi, analisi costi/tempi, verifiche catastali e legali.</p>
+            <p class="text-yellow-600 font-semibold">Output: fotografia completa dell'immobile.</p>
+          </div>
+
+          <div class="bg-white p-8 border border-gray-300 rounded">
+            <div class="flex items-center gap-4 mb-4">
+              <span class="text-4xl font-serif font-bold text-yellow-600">L</span>
+              <h3 class="text-xl font-serif font-bold text-gray-900">Linee Guida</h3>
+            </div>
+            <p class="text-gray-500 mb-4">Concept progettuale, scenari di sviluppo, strategie di valorizzazione, alternative operative, criteri decisionali, analisi costi/benefici.</p>
+            <p class="text-yellow-600 font-semibold">Output: strategia chiara e misurabile.</p>
+          </div>
+
+          <div class="bg-white p-8 border border-gray-300 rounded">
+            <div class="flex items-center gap-4 mb-4">
+              <span class="text-4xl font-serif font-bold text-yellow-600">O</span>
+              <h3 class="text-xl font-serif font-bold text-gray-900">Operatività</h3>
+            </div>
+            <p class="text-gray-500 mb-4">Implementazione, gestione operativa, monitoraggio, controllo qualità, adattamento strategico.</p>
+            <p class="text-yellow-600 font-semibold">Output: realizzazione concreta del progetto.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6 - Ciclo di Vita -->
+      <section id="section-6" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">6. Il Ciclo di Vita del Valore</h2>
+        <div class="flex flex-wrap items-center justify-center gap-4 text-lg">
+          <div class="flex items-center gap-4">
+            <span class="bg-yellow-600 text-black px-4 py-2 rounded font-semibold">Analisi</span>
+            <span class="text-yellow-600 text-2xl">→</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="bg-yellow-600 text-black px-4 py-2 rounded font-semibold">Strategia</span>
+            <span class="text-yellow-600 text-2xl">→</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="bg-yellow-600 text-black px-4 py-2 rounded font-semibold">Implementazione</span>
+            <span class="text-yellow-600 text-2xl">→</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="bg-yellow-600 text-black px-4 py-2 rounded font-semibold">Valorizzazione</span>
+            <span class="text-yellow-600 text-2xl">→</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="bg-yellow-600 text-black px-4 py-2 rounded font-semibold">Revisione</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 7 - Strumenti operativi -->
+      <section id="section-7" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">7. Strumenti operativi</h2>
+        <div class="space-y-6">
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Matrice dei rischi</h3>
+            <p class="text-gray-500">Strumento per identificare, classificare e prioritizzare i rischi legati all'operazione immobiliare, valutando probabilità e impatto di ogni fattore critico.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Analisi SWOT</h3>
+            <p class="text-gray-500">Framework per valutare punti di forza, debolezze, opportunità e minacce dell'asset, fornendo una visione strategica completa del contesto operativo.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Modello di due diligence</h3>
+            <p class="text-gray-500">Procedura strutturata per la verifica documentale, legale, urbanistica, catastale e tecnica dell'immobile, garantendo trasparenza e conformità.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Scheda scenari</h3>
+            <p class="text-gray-500">Documento di sintesi che presenta le diverse alternative di sviluppo dell'asset, con analisi comparativa di costi, tempi e rendimenti attesi.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Concept progettuale</h3>
+            <p class="text-gray-500">Elaborato che definisce la visione strategica del progetto, includendo destinazione d'uso, target di mercato, positioning e linee guida progettuali.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Piano operativo</h3>
+            <p class="text-gray-500">Cronoprogramma dettagliato delle attività, con milestone, responsabilità, budget e indicatori di performance per il monitoraggio dell'avanzamento.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 8 - Checklist operative -->
+      <section id="section-8" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">8. Checklist operative</h2>
+        <div class="space-y-6">
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">F – Fusione</h3>
+            <ul class="text-gray-500 space-y-2 list-disc list-inside">
+              <li>Raccolta di tutta la documentazione disponibile sull'immobile</li>
+              <li>Definizione chiara degli obiettivi del committente o investitore</li>
+              <li>Analisi preliminare del contesto territoriale e di mercato</li>
+              <li>Identificazione dei vincoli noti e delle criticità evidenti</li>
+              <li>Sintesi delle informazioni in una visione unificata dell'asset</li>
+            </ul>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">I – Indagine</h3>
+            <ul class="text-gray-500 space-y-2 list-disc list-inside">
+              <li>Due diligence documentale completa (titoli, contratti, gravami)</li>
+              <li>Verifica urbanistica e conformità edilizia</li>
+              <li>Analisi catastale e verifica della corrispondenza</li>
+              <li>Studio di mercato e benchmarking competitivo</li>
+              <li>Valutazione dei rischi e delle opportunità</li>
+            </ul>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">L – Linee Guida</h3>
+            <ul class="text-gray-500 space-y-2 list-disc list-inside">
+              <li>Elaborazione del concept progettuale</li>
+              <li>Definizione degli scenari di sviluppo alternativi</li>
+              <li>Analisi costi/benefici per ogni scenario</li>
+              <li>Identificazione della strategia ottimale</li>
+              <li>Definizione dei criteri decisionali e dei KPI</li>
+            </ul>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">O – Operatività</h3>
+            <ul class="text-gray-500 space-y-2 list-disc list-inside">
+              <li>Implementazione del piano operativo</li>
+              <li>Gestione e coordinamento delle attività</li>
+              <li>Monitoraggio continuo dell'avanzamento</li>
+              <li>Controllo qualità e conformità</li>
+              <li>Adattamento strategico in base ai risultati</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 9 - Applicazioni pratiche -->
+      <section id="section-9" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">9. Applicazioni pratiche</h2>
+        <div class="space-y-6">
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Valorizzazione residenziale</h3>
+            <p class="text-gray-500">Applicazione del metodo per trasformare e valorizzare immobili residenziali, ottimizzando il rapporto tra investimento e valore finale attraverso interventi mirati di riqualificazione.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Sviluppo suoli</h3>
+            <p class="text-gray-500">Processo strutturato per l'analisi e lo sviluppo di terreni edificabili, dalla valutazione del potenziale edificatorio alla definizione del progetto di sviluppo ottimale.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Rigenerazione urbana</h3>
+            <p class="text-gray-500">Approccio integrato per progetti di riqualificazione di aree urbane degradate o sottoutilizzate, con focus sulla sostenibilità e sul valore sociale dell'intervento.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Gestione asset</h3>
+            <p class="text-gray-500">Framework per la gestione strategica di portafogli immobiliari, con ottimizzazione delle performance e pianificazione degli interventi di manutenzione e valorizzazione.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Investimenti</h3>
+            <p class="text-gray-500">Metodologia per la valutazione di opportunità di investimento immobiliare, con analisi del rischio/rendimento e definizione della strategia di acquisizione.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Exit strategy</h3>
+            <p class="text-gray-500">Pianificazione delle modalità di dismissione dell'asset, con ottimizzazione dei tempi e delle condizioni di vendita per massimizzare il ritorno sull'investimento.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 10 - Micro-case study -->
+      <section id="section-10" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">10. Micro‑case study</h2>
+        <div class="space-y-6">
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Caso 1: Immobile con vincoli urbanistici</h3>
+            <div class="text-gray-500 space-y-3">
+              <p><strong class="text-gray-900">Situazione iniziale:</strong> Immobile storico nel centro città con vincoli della Soprintendenza e destinazione d'uso non conforme alle esigenze del proprietario.</p>
+              <p><strong class="text-gray-900">Applicazione del Metodo F.I.L.O.™:</strong></p>
+              <ul class="list-disc list-inside space-y-1 ml-4">
+                <li><em>Fusione:</em> Raccolta documentazione storica, vincoli esistenti, obiettivi di valorizzazione.</li>
+                <li><em>Indagine:</em> Verifica puntuale dei vincoli, analisi delle possibilità di intervento consentite, studio di mercato per destinazioni compatibili.</li>
+                <li><em>Linee Guida:</em> Definizione di uno scenario di recupero conservativo con cambio di destinazione d'uso compatibile.</li>
+                <li><em>Operatività:</em> Gestione dell'iter autorizzativo, coordinamento con la Soprintendenza, realizzazione dell'intervento.</li>
+              </ul>
+              <p><strong class="text-gray-900">Risultato:</strong> Valorizzazione del 40% rispetto al valore iniziale, con preservazione del carattere storico dell'immobile.</p>
+            </div>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Caso 2: Suolo edificabile in area periferica</h3>
+            <div class="text-gray-500 space-y-3">
+              <p><strong class="text-gray-900">Situazione iniziale:</strong> Terreno edificabile in zona di espansione urbana, con potenziale inespresso e incertezza sulla migliore destinazione d'uso.</p>
+              <p><strong class="text-gray-900">Applicazione del Metodo F.I.L.O.™:</strong></p>
+              <ul class="list-disc list-inside space-y-1 ml-4">
+                <li><em>Fusione:</em> Analisi del contesto urbanistico, verifica delle previsioni del PRG, obiettivi dell'investitore.</li>
+                <li><em>Indagine:</em> Studio di mercato approfondito, analisi della domanda locale, valutazione dei costi di urbanizzazione.</li>
+                <li><em>Linee Guida:</em> Confronto tra scenari (residenziale, commerciale, misto) con analisi costi/benefici dettagliata.</li>
+                <li><em>Operatività:</em> Sviluppo del progetto scelto, gestione delle autorizzazioni, commercializzazione.</li>
+              </ul>
+              <p><strong class="text-gray-900">Risultato:</strong> Sviluppo residenziale con marginalità superiore del 25% rispetto alle previsioni iniziali grazie alla corretta identificazione del target di mercato.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 11 - Vantaggi -->
+      <section id="section-11" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">11. Vantaggi per investitori e proprietari</h2>
+        <div class="space-y-6">
+          <div class="bg-white p-6 border border-yellow-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Riduzione rischi</h3>
+            <p class="text-gray-500">L'approccio strutturato del Metodo F.I.L.O.™ permette di identificare e mitigare i rischi fin dalle prime fasi, evitando sorprese costose durante lo sviluppo del progetto.</p>
+          </div>
+          <div class="bg-white p-6 border border-yellow-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Decisioni basate su dati</h3>
+            <p class="text-gray-500">Ogni decisione viene presa sulla base di analisi oggettive e dati verificati, eliminando l'improvvisazione e le scelte basate su percezioni soggettive.</p>
+          </div>
+          <div class="bg-white p-6 border border-yellow-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Valorizzazione progressiva</h3>
+            <p class="text-gray-500">Il metodo accompagna l'asset in ogni fase del suo ciclo di vita, garantendo un incremento costante del valore attraverso interventi mirati e strategici.</p>
+          </div>
+          <div class="bg-white p-6 border border-yellow-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Visione chiara</h3>
+            <p class="text-gray-500">Il processo strutturato fornisce una roadmap chiara e condivisa, permettendo a tutti gli stakeholder di comprendere obiettivi, tempistiche e risultati attesi.</p>
+          </div>
+          <div class="bg-white p-6 border border-yellow-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Controllo operativo</h3>
+            <p class="text-gray-500">Strumenti di monitoraggio e checklist operative garantiscono il controllo costante dell'avanzamento, permettendo interventi correttivi tempestivi quando necessario.</p>
+          </div>
+          <div class="bg-white p-6 border border-yellow-300 rounded">
+            <h3 class="text-lg font-serif font-bold text-yellow-600 mb-3">Aumento valore finale</h3>
+            <p class="text-gray-500">L'applicazione sistematica del metodo porta a risultati misurabili, con incrementi di valore documentati e superiori alla media di mercato.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 12 - Glossario -->
+      <section id="section-12" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">12. Glossario tecnico</h2>
+        <div class="space-y-6">
+          <div class="py-4 border-b border-gray-300">
+            <h3 class="text-lg font-semibold text-yellow-600 mb-2">Due diligence</h3>
+            <p class="text-gray-500">Processo di analisi e verifica approfondita di un immobile o di un'operazione immobiliare, che comprende aspetti legali, urbanistici, catastali, tecnici ed economici. Obiettivo: identificare rischi, criticità e opportunità prima di procedere con l'investimento.</p>
+          </div>
+          <div class="py-4 border-b border-gray-300">
+            <h3 class="text-lg font-semibold text-yellow-600 mb-2">Exit strategy</h3>
+            <p class="text-gray-500">Strategia di uscita dall'investimento immobiliare, che definisce tempi, modalità e condizioni per la dismissione dell'asset. Include la pianificazione della vendita, della locazione o di altre forme di monetizzazione del valore creato.</p>
+          </div>
+          <div class="py-4 border-b border-gray-300">
+            <h3 class="text-lg font-semibold text-yellow-600 mb-2">Concept progettuale</h3>
+            <p class="text-gray-500">Documento strategico che definisce la visione complessiva del progetto immobiliare, includendo destinazione d'uso, target di mercato, posizionamento, linee guida architettoniche e funzionali. Rappresenta la sintesi tra analisi di mercato e potenziale dell'asset.</p>
+          </div>
+          <div class="py-4 border-b border-gray-300">
+            <h3 class="text-lg font-semibold text-yellow-600 mb-2">Valorizzazione</h3>
+            <p class="text-gray-500">Processo di incremento del valore di un asset immobiliare attraverso interventi strategici, che possono includere riqualificazione fisica, cambio di destinazione d'uso, ottimizzazione gestionale o riposizionamento sul mercato.</p>
+          </div>
+          <div class="py-4">
+            <h3 class="text-lg font-semibold text-yellow-600 mb-2">Asset management</h3>
+            <p class="text-gray-500">Gestione strategica di un patrimonio immobiliare con l'obiettivo di massimizzarne il valore nel tempo. Comprende la pianificazione degli interventi, l'ottimizzazione dei costi, la gestione dei contratti e il monitoraggio delle performance.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 13 - FAQ -->
+      <section id="section-13" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">13. Domande frequenti</h2>
+        <div class="space-y-6">
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Cos'è il Metodo F.I.L.O.™?</h3>
+            <p class="text-gray-500">Il Metodo F.I.L.O.™ è un framework operativo strutturato in quattro fasi (Fusione, Indagine, Linee Guida, Operatività) progettato per analizzare, valorizzare e trasformare asset immobiliari riducendo i rischi e massimizzando il valore.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">A chi è rivolto il Metodo F.I.L.O.™?</h3>
+            <p class="text-gray-500">Il metodo è pensato per investitori, sviluppatori, proprietari immobiliari, professionisti del settore e gestori di asset che desiderano un approccio strutturato e basato sui dati per le loro operazioni immobiliari.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Quanto tempo richiede l'applicazione del metodo?</h3>
+            <p class="text-gray-500">I tempi variano in base alla complessità dell'asset e dell'operazione. Le fasi di Fusione e Indagine richiedono generalmente dalle 2 alle 6 settimane, mentre Linee Guida e Operatività dipendono dalla tipologia di intervento pianificato.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Il metodo è applicabile a qualsiasi tipo di immobile?</h3>
+            <p class="text-gray-500">Sì, il Metodo F.I.L.O.™ è flessibile e adattabile a diverse tipologie di asset: residenziale, commerciale, industriale, terreni edificabili, immobili storici e progetti di rigenerazione urbana.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Quali risultati posso aspettarmi?</h3>
+            <p class="text-gray-500">L'applicazione del metodo porta a decisioni più consapevoli, riduzione dei rischi operativi, ottimizzazione dei costi e, in ultima analisi, a una valorizzazione dell'asset superiore rispetto ad approcci non strutturati.</p>
+          </div>
+          <div class="bg-white p-6 border border-gray-300 rounded">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Come posso applicare il Metodo F.I.L.O.™ ai miei progetti?</h3>
+            <p class="text-gray-500">Puoi contattare direttamente 2D Sviluppo Immobiliare per una consulenza personalizzata. Valuteremo insieme le caratteristiche del tuo asset e definiremo il percorso più adatto alle tue esigenze.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 14 - Chi è Domenico -->
+      <section id="section-14" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">14. Chi è Domenico Dentamaro</h2>
+        <div class="bg-white p-8 border border-gray-300 rounded">
+          <div class="space-y-4 text-gray-500">
+            <p><strong class="text-yellow-600">Domenico Dentamaro</strong> è il fondatore di 2D Sviluppo Immobiliare e ideatore del Metodo F.I.L.O.™.</p>
+            <p>Con oltre 15 anni di esperienza nel settore immobiliare, ha maturato competenze trasversali in ambito di sviluppo, valorizzazione, asset management e consulenza strategica.</p>
+            <p>La sua visione nasce dalla convinzione che il settore immobiliare necessiti di un approccio più strutturato, basato sui dati e orientato alla creazione di valore misurabile.</p>
+            <p>Ha collaborato con investitori istituzionali, family office, sviluppatori e proprietari privati, gestendo operazioni di diverse dimensioni e complessità.</p>
+            <p>Il Metodo F.I.L.O.™ rappresenta la sintesi della sua esperienza professionale: un sistema operativo che trasforma l'intuizione in processo e le percezioni in decisioni misurabili.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 15 - Come applicare -->
+      <section id="section-15" class="mb-12 pb-12 border-b border-gray-300">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">15. Come applicare il Metodo F.I.L.O.™</h2>
+        <div class="bg-black text-gray-100 p-8 rounded">
+          <div class="text-center space-y-6">
+            <p class="text-xl text-yellow-600 font-serif">Vuoi applicare il Metodo F.I.L.O.™ ai tuoi progetti immobiliari?</p>
+            <p class="text-gray-300 max-w-2xl mx-auto">Contatta 2D Sviluppo Immobiliare per una consulenza personalizzata. Analizzeremo insieme il tuo asset, identificheremo le opportunità di valorizzazione e definiremo un percorso strutturato per massimizzare il valore del tuo investimento.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+              <a href="mailto:info@2dsviluppoimmobiliare.it" class="inline-flex items-center justify-center bg-yellow-600 text-black px-8 py-4 font-semibold hover:bg-yellow-700 transition-colors">
+                Richiedi una Consulenza
+              </a>
+              <a href="https://www.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center border border-yellow-600 text-yellow-600 px-8 py-4 font-semibold hover:bg-yellow-600 hover:text-black transition-colors">
+                Visita il Sito
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 16 - Contatti -->
+      <section id="section-16" class="mb-12">
+        <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">16. Contatti e risorse</h2>
+        <div class="bg-black text-gray-100 p-8 rounded">
+          <div class="text-center">
+            <img src="/metodofilo/assets/logo-2d-D2RAHd7d.png" alt="2D Sviluppo Immobiliare" class="h-16 w-auto mx-auto mb-4" />
+            <p class="text-yellow-600 font-semibold mb-2">2D Sviluppo Immobiliare</p>
+            <p class="text-gray-400 text-sm mb-1">Via Domenico Di Venere, 22/D – Ceglie del Campo, Bari</p>
+            <p class="text-gray-400 text-sm mb-1">info@2dsviluppoimmobiliare.it</p>
+            <p class="text-gray-400 text-sm mb-4">+39 340 803 9322</p>
+            <a href="https://www.2dsviluppoimmobiliare.it" target="_blank" rel="noopener noreferrer" class="text-yellow-600 hover:underline">
+              www.2dsviluppoimmobiliare.it
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Print Button at bottom -->
+      <div class="text-center mt-16 print:hidden">
+        <button onclick="window.print()" class="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold text-lg px-8 py-6 rounded cursor-pointer transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="inline-block mr-2"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+          Scarica / Stampa come PDF
+        </button>
+      </div>
+    </main>
+
+    <!-- Footer - Yellow band -->
+    <footer class="bg-yellow-600 py-8 print:hidden">
+      <div class="container mx-auto px-4 text-center">
+        <p class="text-black font-semibold text-lg">Metodo F.I.L.O.™</p>
+        <p class="text-black/80 mt-2">© 2D Sviluppo Immobiliare – Tutti i diritti riservati</p>
+      </div>
+    </footer>
+  </section>
+</body>
+</html>

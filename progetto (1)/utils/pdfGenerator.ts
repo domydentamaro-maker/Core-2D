@@ -123,7 +123,7 @@ Il "Metodo F.I.L.O." di 2D Sviluppo Immobiliare ha identificato 3 macro-aree dov
   
   yPos += 10;
   tableData.forEach((row, i) => {
-    doc.setFillColor(i % 2 === 0 ? 255 : 245);
+    doc.setFillColor(i % 2 === 0 ? 255 : 245, i % 2 === 0 ? 255 : 245, i % 2 === 0 ? 255 : 245);
     doc.rect(margin, yPos, 170, 10, 'F');
     doc.text(row.zone, margin + 5, yPos + 7);
     doc.text(row.price, margin + 70, yPos + 7);

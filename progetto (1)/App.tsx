@@ -1,5 +1,5 @@
 
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -23,13 +23,19 @@ const Founder = lazy(() => import('./components/Founder').then(module => ({ defa
 const Stats = lazy(() => import('./components/Stats').then(module => ({ default: module.Stats })));
 const ZesPage = lazy(() => import('./components/ZesPage').then(module => ({ default: module.ZesPage })));
 const DomenicoPage = lazy(() => import('./components/DomenicoPage').then(module => ({ default: module.DomenicoPage })));
-const MetodoFiloPage = lazy(() => import('./components/MetodoFiloPage').then(module => ({ default: module.default })));
+const MetodoFiloOriginal = lazy(() => import('./components/filoOriginal/MetodoFiloOriginal').then(module => ({ default: module.default })));
+const ManualeFiloOriginal = lazy(() => import('./components/filoOriginal/ManualeFiloOriginal').then(module => ({ default: module.default })));
 const Footer = lazy(() => import('./components/Footer').then(module => ({ default: module.Footer })));
 const FloatingContact = lazy(() => import('./components/FloatingContact').then(module => ({ default: module.FloatingContact })));
 const ScrollToTop = lazy(() => import('./components/ScrollToTop').then(module => ({ default: module.ScrollToTop })));const CookieBanner = lazy(() => import('./components/CookieBanner').then(module => ({ default: module.CookieBanner })));
 const LoginModal = lazy(() => import('./components/LoginModal').then(module => ({ default: module.LoginModal })));
 const Dashboard = lazy(() => import('./components/Dashboard').then(module => ({ default: module.Dashboard })));
 const ValutazioniGuard = lazy(() => import('./components/valutazioni/ValutazioniGuard'));
+const OsservatorioLandingPage = lazy(() => import('./components/OsservatorioLandingPage'));
+const ZesManualePage = lazy(() => import('./components/ZesManualePage'));
+const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'));
+const CookiePolicyPage = lazy(() => import('./components/CookiePolicyPage'));
+const TerminiPage = lazy(() => import('./components/TerminiPage'));
 
 // --- Static Definitions ---
 const svgString = `
@@ -64,6 +70,21 @@ const App: React.FC = () => {
   const [loginForAdmin, setLoginForAdmin] = useState(false);
   const location = useLocation();
   const pathname = location.pathname.replace(/\/$/, '') || '/'; // Normalize pathname
+
+  // Scroll to hash anchor after SPA navigation (e.g. /#permuta from another page)
+  useEffect(() => {
+    const hash = location.hash;
+    if (!hash) return;
+    const tryScroll = (attempts = 0) => {
+      const el = document.querySelector(hash);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+      } else if (attempts < 10) {
+        setTimeout(() => tryScroll(attempts + 1), 150);
+      }
+    };
+    tryScroll();
+  }, [location.hash, pathname]);
 
   // Render helpers for different pages
   const renderHome = () => (
@@ -136,8 +157,51 @@ const App: React.FC = () => {
     switch (pathname) {
       case '/filo':
         return (
+          <Suspense fallback={<div className="min-h-screen bg-[#001a33]" />}>
+            <MetodoFiloOriginal />
+          </Suspense>
+        );
+      case '/metodofilo':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#001a33]" />}>
+            <MetodoFiloOriginal />
+          </Suspense>
+        );
+      case '/metodofilo/manuale':
+      case '/manuale':
+        return (
           <Suspense fallback={<div className="min-h-screen bg-white" />}>
-            <MetodoFiloPage />
+            <ManualeFiloOriginal />
+          </Suspense>
+        );
+      case '/osservatorio':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-white" />}>
+            <OsservatorioLandingPage />
+          </Suspense>
+        );
+      case '/zes/manuale':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#0a1628]" />}>
+            <ZesManualePage />
+          </Suspense>
+        );
+      case '/privacy-policy':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-white" />}>
+            <PrivacyPolicyPage />
+          </Suspense>
+        );
+      case '/cookie-policy':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-white" />}>
+            <CookiePolicyPage />
+          </Suspense>
+        );
+      case '/termini':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-white" />}>
+            <TerminiPage />
           </Suspense>
         );
       case '/contact':
@@ -171,14 +235,19 @@ const App: React.FC = () => {
     }
   };
 
-  const isZesPage = pathname === '/zes' || pathname === '/domenico-dentamaro' || pathname === '/filo' || pathname === '/admin';
+  const isZesPage = pathname === '/zes'
+    || pathname === '/admin'
+    || pathname === '/metodofilo'
+    || pathname === '/filo'
+    || pathname === '/manuale'
+    || pathname.startsWith('/metodofilo/');
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 antialiased overflow-x-hidden">
         <div className="animate-fade-in relative">
           <Seo />
           {!isZesPage && <ProgressBar />}
-          {!isZesPage && <Navbar logoUrl={LOGO_URL} onOpenLogin={() => setIsLoginOpen(true)} />}
+          {!isZesPage && <Navbar logoUrl={LOGO_URL} onOpenLogin={() => setIsLoginOpen(true)} forceBackground={pathname !== '/'} />}
           
           <main>
             {getMainContent()}
