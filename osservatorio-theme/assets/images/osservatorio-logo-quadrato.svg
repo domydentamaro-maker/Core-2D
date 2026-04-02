@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="goldGradSq" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4AF6E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B8964E;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="400" fill="#1A1A1A" rx="20"/>
+
+  <!-- Bordo oro sottile -->
+  <rect x="10" y="10" width="380" height="380" fill="none" stroke="#C8A96E" stroke-width="1" opacity="0.3" rx="14"/>
+
+  <!-- Icon: cupola osservatorio centrata -->
+  <g transform="translate(140, 52)">
+    <!-- Stella polare -->
+    <circle cx="60" cy="14" r="5" fill="#C8A96E"/>
+    <line x1="60" y1="6" x2="60" y2="22" stroke="#C8A96E" stroke-width="2"/>
+    <line x1="52" y1="14" x2="68" y2="14" stroke="#C8A96E" stroke-width="2"/>
+    <!-- Raggi diagonali stella -->
+    <line x1="54.3" y1="8.3" x2="65.7" y2="19.7" stroke="#C8A96E" stroke-width="1" opacity="0.5"/>
+    <line x1="65.7" y1="8.3" x2="54.3" y2="19.7" stroke="#C8A96E" stroke-width="1" opacity="0.5"/>
+
+    <!-- Asse verticale cupola -->
+    <line x1="60" y1="22" x2="60" y2="82" stroke="#C8A96E" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+
+    <!-- Cupola -->
+    <path d="M2,82 Q60,22 118,82" fill="none" stroke="#C8A96E" stroke-width="3"/>
+    <!-- Fill interno cupola -->
+    <path d="M14,82 Q60,38 106,82" fill="#C8A96E" opacity="0.08"/>
+
+    <!-- Corpo edificio -->
+    <rect x="2" y="82" width="116" height="36" fill="none" stroke="#C8A96E" stroke-width="2"/>
+    <!-- Colonne -->
+    <line x1="18" y1="82" x2="18" y2="118" stroke="#C8A96E" stroke-width="2"/>
+    <line x1="36" y1="82" x2="36" y2="118" stroke="#C8A96E" stroke-width="2"/>
+    <line x1="84" y1="82" x2="84" y2="118" stroke="#C8A96E" stroke-width="2"/>
+    <line x1="102" y1="82" x2="102" y2="118" stroke="#C8A96E" stroke-width="2"/>
+    <!-- Portale centrale -->
+    <rect x="46" y="96" width="28" height="22" fill="#C8A96E" opacity="0.2" rx="2"/>
+
+    <!-- Gradini -->
+    <rect x="-4" y="118" width="128" height="7" fill="#C8A96E" opacity="0.5" rx="1"/>
+    <rect x="-10" y="125" width="140" height="6" fill="#C8A96E" opacity="0.25" rx="1"/>
+  </g>
+
+  <!-- Linea oro sotto icona -->
+  <line x1="50" y1="228" x2="350" y2="228" stroke="#C8A96E" stroke-width="1" opacity="0.4"/>
+
+  <!-- OSSERVATORIO -->
+  <text x="200" y="262"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="13"
+    font-weight="400"
+    fill="#C8A96E"
+    letter-spacing="5">OSSERVATORIO</text>
+
+  <!-- SVILUPPO -->
+  <text x="200" y="294"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="22"
+    font-weight="700"
+    fill="#F5F0E8"
+    letter-spacing="3">SVILUPPO</text>
+
+  <!-- IMMOBILIARE -->
+  <text x="200" y="322"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="22"
+    font-weight="700"
+    fill="#F5F0E8"
+    letter-spacing="3">IMMOBILIARE</text>
+
+  <!-- Linea decorativa -->
+  <line x1="80" y1="334" x2="320" y2="334" stroke="#C8A96E" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- by 2D -->
+  <text x="200" y="354"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="10"
+    fill="#666666"
+    letter-spacing="2">by 2D Sviluppo Immobiliare</text>
+
+  <!-- Angoli decorativi -->
+  <path d="M20,20 L44,20 M20,20 L20,44" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/>
+  <path d="M380,20 L356,20 M380,20 L380,44" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/>
+  <path d="M20,380 L44,380 M20,380 L20,356" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/>
+  <path d="M380,380 L356,380 M380,380 L380,356" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/>
+</svg>

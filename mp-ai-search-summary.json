@@ -1,0 +1,81 @@
+{
+  "purpose": "AI Search Mode Optimization",
+  "total_articles": 47,
+  "articles_by_status": {
+    "published": 3,
+    "scheduled": 44
+  },
+  "content_quality_avg": {
+    "word_count": 482,
+    "headings": 4,
+    "images": 2
+  },
+  "seo_coverage": {
+    "with_focus_keyword": 47,
+    "with_og_title": 32,
+    "with_schema": 32
+  },
+  "categories": [
+    {
+      "name": "Normativa",
+      "slug": "normativa",
+      "description": "",
+      "count": 1
+    },
+    {
+      "name": "Suolo e territorio",
+      "slug": "suolo-e-territorio",
+      "description": "",
+      "count": 2
+    }
+  ],
+  "ai_optimization_fields": {
+    "focus_keywords": "Used for semantic search matching",
+    "headings_structure": "Topic hierarchy for AI comprehension",
+    "word_count_target": "700-1000 words for deep understanding",
+    "internal_links": "For knowledge graph connections",
+    "categories": "For topic clustering and recommendations"
+  },
+  "sample_articles": [
+    {
+      "title": "Sviluppo Immobiliare al Sud: I 7 Fattori che Decidono il Successo di un Progetto",
+      "focus_keyword": "sviluppo immobiliare Sud Italia fattori successo",
+      "categories": [
+        "Metodologia"
+      ],
+      "word_count": 757
+    },
+    {
+      "title": "Ristrutturazione Immobiliare in Puglia: Costi Reali, Bonus Fiscali e Strategia 2026",
+      "focus_keyword": "ristrutturazione immobiliare Puglia costi 2026",
+      "categories": [
+        "Guide"
+      ],
+      "word_count": 545
+    },
+    {
+      "title": "Indice di Edificabilità e Cubatura: Come Capire il Potenziale di un Terreno in Puglia",
+      "focus_keyword": "indice edificabilità cubatura terreno Puglia",
+      "categories": [
+        "Guide"
+      ],
+      "word_count": 603
+    },
+    {
+      "title": "Come Negoziare il Prezzo di un Immobile in Puglia: Tecniche e Strategie 2026",
+      "focus_keyword": "negoziare prezzo immobile Puglia",
+      "categories": [
+        "Guide"
+      ],
+      "word_count": 674
+    },
+    {
+      "title": "Immobiliare nella Provincia BAT: Barletta, Andria e Trani tra Crescita e Potenziale",
+      "focus_keyword": "immobiliare BAT Barletta Andria Trani",
+      "categories": [
+        "Mercati"
+      ],
+      "word_count": 457
+    }
+  ]
+}

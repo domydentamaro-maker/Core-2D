@@ -36,6 +36,19 @@ const ZesManualePage = lazy(() => import('./components/ZesManualePage'));
 const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'));
 const CookiePolicyPage = lazy(() => import('./components/CookiePolicyPage'));
 const TerminiPage = lazy(() => import('./components/TerminiPage'));
+const RadarPage = lazy(() => import('./src/features/radar/Radar'));
+const AnticipaPage = lazy(() => import('./src/features/anticipa/Anticipa'));
+const EreditaPage = lazy(() => import('./src/features/eredita/Eredita'));
+const DistrettoPage = lazy(() => import('./src/features/distretto/Distretto'));
+const LivePage = lazy(() => import('./src/features/live/Live'));
+const ProfeziaPage = lazy(() => import('./src/features/profezia/Profezia'));
+const MyAreaPage = lazy(() => import('./src/pages/MyArea/MyArea'));
+const MemoriaPage = lazy(() => import('./src/features/memoria/Memoria'));
+const AdvisorPage = lazy(() => import('./src/features/advisor/Advisor'));
+const CantierePage = lazy(() => import('./src/features/cantiere/Cantiere'));
+const VicinatoPage = lazy(() => import('./src/features/vicinato/Vicinato'));
+const AmbassadorPage = lazy(() => import('./src/features/ambassador/Ambassador'));
+const PlatformHubPage = lazy(() => import('./src/pages/Platform/Platform'));
 
 // --- Static Definitions ---
 const svgString = `
@@ -204,6 +217,84 @@ const App: React.FC = () => {
             <TerminiPage />
           </Suspense>
         );
+      case '/platform':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <PlatformHubPage />
+          </Suspense>
+        );
+      case '/radar':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <RadarPage />
+          </Suspense>
+        );
+      case '/anticipa':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <AnticipaPage />
+          </Suspense>
+        );
+      case '/eredita':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <EreditaPage />
+          </Suspense>
+        );
+      case '/distretto':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <DistrettoPage />
+          </Suspense>
+        );
+      case '/live':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <LivePage />
+          </Suspense>
+        );
+      case '/profezia':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <ProfeziaPage />
+          </Suspense>
+        );
+      case '/my-area':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <MyAreaPage />
+          </Suspense>
+        );
+      case '/my-area/memoria':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <MemoriaPage />
+          </Suspense>
+        );
+      case '/my-area/advisor':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <AdvisorPage />
+          </Suspense>
+        );
+      case '/my-area/vicinato':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <VicinatoPage />
+          </Suspense>
+        );
+      case '/my-area/ambassador':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <AmbassadorPage />
+          </Suspense>
+        );
+      case '/my-area/live':
+        return (
+          <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+            <LivePage />
+          </Suspense>
+        );
       case '/contact':
         return renderContactPage();
       case '/glossario':
@@ -231,6 +322,20 @@ const App: React.FC = () => {
           </Suspense>
         );
       default:
+        if (pathname.startsWith('/distretto/')) {
+          return (
+            <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+              <DistrettoPage />
+            </Suspense>
+          );
+        }
+        if (pathname.startsWith('/my-area/cantiere/')) {
+          return (
+            <Suspense fallback={<div className="min-h-screen bg-[#F5F0E8]" />}>
+              <CantierePage />
+            </Suspense>
+          );
+        }
         return renderHome();
     }
   };

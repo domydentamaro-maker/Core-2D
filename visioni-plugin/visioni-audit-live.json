@@ -1,0 +1,1470 @@
+{
+    "site_url": "https://visioniimmobiliari.2dsviluppoimmobiliare.it",
+    "theme": "hello-child",
+    "post_types": {
+        "post": {
+            "label": "Articoli",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "editor",
+                "author",
+                "thumbnail",
+                "excerpt",
+                "trackbacks",
+                "custom-fields",
+                "comments",
+                "revisions",
+                "post-formats",
+                "autosave"
+            ],
+            "taxonomies": [
+                "category",
+                "post_tag",
+                "post_format"
+            ],
+            "menu_icon": "dashicons-admin-post"
+        },
+        "page": {
+            "label": "Pagine",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "editor",
+                "author",
+                "thumbnail",
+                "page-attributes",
+                "custom-fields",
+                "comments",
+                "revisions",
+                "autosave",
+                "excerpt"
+            ],
+            "taxonomies": [],
+            "menu_icon": "dashicons-admin-page"
+        },
+        "attachment": {
+            "label": "Media",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "author",
+                "comments"
+            ],
+            "taxonomies": [],
+            "menu_icon": "dashicons-admin-media"
+        },
+        "revision": {
+            "label": "Revisioni",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "author"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "nav_menu_item": {
+            "label": "Voci del menu di navigazione",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "editor",
+                "autosave"
+            ],
+            "taxonomies": [
+                "nav_menu"
+            ],
+            "menu_icon": null
+        },
+        "custom_css": {
+            "label": "CSS personalizzato",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "revisions"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "customize_changeset": {
+            "label": "Changeset",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "author"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "oembed_cache": {
+            "label": "Risposte oEmbed",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "editor",
+                "autosave"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "user_request": {
+            "label": "Richieste utente",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "editor",
+                "autosave"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "wp_block": {
+            "label": "Pattern",
+            "public": false,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "excerpt",
+                "editor",
+                "revisions",
+                "custom-fields",
+                "autosave"
+            ],
+            "taxonomies": [
+                "wp_pattern_category"
+            ],
+            "menu_icon": null
+        },
+        "wp_template": {
+            "label": "Template",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "slug",
+                "excerpt",
+                "editor",
+                "revisions",
+                "author",
+                "autosave"
+            ],
+            "taxonomies": [
+                "wp_theme"
+            ],
+            "menu_icon": null
+        },
+        "wp_template_part": {
+            "label": "Parti del template",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "slug",
+                "excerpt",
+                "editor",
+                "revisions",
+                "author",
+                "autosave"
+            ],
+            "taxonomies": [
+                "wp_theme",
+                "wp_template_part_area"
+            ],
+            "menu_icon": null
+        },
+        "wp_global_styles": {
+            "label": "Stili globali",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "editor",
+                "revisions"
+            ],
+            "taxonomies": [
+                "wp_theme"
+            ],
+            "menu_icon": null
+        },
+        "wp_navigation": {
+            "label": "Menu di navigazione",
+            "public": false,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title",
+                "editor",
+                "revisions",
+                "autosave"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "wp_font_family": {
+            "label": "Famiglie di font",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "wp_font_face": {
+            "label": "Font",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "acf-taxonomy": {
+            "label": "Tassonomie",
+            "public": false,
+            "show_ui": true,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "acf-post-type": {
+            "label": "Post type",
+            "public": false,
+            "show_ui": true,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "acf-field-group": {
+            "label": "Gruppi di campi",
+            "public": false,
+            "show_ui": true,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "acf-field": {
+            "label": "Campi",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "title"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "immobili": {
+            "label": "Immobili",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": true,
+            "rewrite": {
+                "slug": "immobili",
+                "with_front": false,
+                "pages": true,
+                "feeds": true,
+                "ep_mask": 1
+            },
+            "supports": [
+                "title",
+                "editor",
+                "thumbnail",
+                "autosave",
+                "excerpt",
+                "custom-fields"
+            ],
+            "taxonomies": [
+                "category",
+                "post_tag",
+                "zona",
+                "tipologie"
+            ],
+            "menu_icon": "dashicons-admin-home"
+        },
+        "cantieri": {
+            "label": "Cantieri",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": true,
+            "rewrite": {
+                "slug": "cantieri",
+                "with_front": false,
+                "pages": true,
+                "feeds": true,
+                "ep_mask": 1
+            },
+            "supports": [
+                "title",
+                "editor",
+                "thumbnail",
+                "autosave",
+                "excerpt",
+                "custom-fields"
+            ],
+            "taxonomies": [
+                "category",
+                "post_tag",
+                "zona"
+            ],
+            "menu_icon": "dashicons-hammer"
+        },
+        "cliente": {
+            "label": "Clienti",
+            "public": false,
+            "show_ui": true,
+            "show_in_rest": false,
+            "has_archive": false,
+            "rewrite": {
+                "slug": "cliente",
+                "with_front": true,
+                "pages": true,
+                "feeds": false,
+                "ep_mask": 1
+            },
+            "supports": [
+                "title",
+                "editor",
+                "autosave"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "terreno": {
+            "label": "Terreni",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": {
+                "slug": "terreno",
+                "with_front": true,
+                "pages": true,
+                "feeds": false,
+                "ep_mask": 1
+            },
+            "supports": [
+                "title",
+                "editor",
+                "autosave"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        },
+        "terreni": {
+            "label": "Terreni",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": true,
+            "rewrite": {
+                "slug": "terreni",
+                "with_front": false,
+                "pages": true,
+                "feeds": true,
+                "ep_mask": 1
+            },
+            "supports": [
+                "title",
+                "editor",
+                "thumbnail",
+                "excerpt",
+                "custom-fields",
+                "autosave"
+            ],
+            "taxonomies": [
+                "category",
+                "post_tag"
+            ],
+            "menu_icon": "dashicons-location-alt"
+        },
+        "operazioni": {
+            "label": "Operazioni Immobiliari",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "has_archive": true,
+            "rewrite": {
+                "slug": "operazioni",
+                "with_front": false,
+                "pages": true,
+                "feeds": true,
+                "ep_mask": 1
+            },
+            "supports": [
+                "title",
+                "editor",
+                "thumbnail",
+                "excerpt",
+                "custom-fields",
+                "autosave"
+            ],
+            "taxonomies": [
+                "category",
+                "post_tag"
+            ],
+            "menu_icon": "dashicons-chart-line"
+        },
+        "rm_content_editor": {
+            "label": "RM Content Editor",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": true,
+            "has_archive": false,
+            "rewrite": false,
+            "supports": [
+                "editor",
+                "autosave"
+            ],
+            "taxonomies": [],
+            "menu_icon": null
+        }
+    },
+    "taxonomies": {
+        "category": {
+            "label": "Categorie",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "hierarchical": true,
+            "object_type": [
+                "post",
+                "immobili",
+                "cantieri",
+                "terreni",
+                "operazioni"
+            ],
+            "rewrite": {
+                "with_front": true,
+                "hierarchical": true,
+                "ep_mask": 512,
+                "slug": "category"
+            }
+        },
+        "post_tag": {
+            "label": "Tag",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "hierarchical": false,
+            "object_type": [
+                "post",
+                "immobili",
+                "cantieri",
+                "terreni",
+                "operazioni"
+            ],
+            "rewrite": {
+                "with_front": true,
+                "hierarchical": false,
+                "ep_mask": 1024,
+                "slug": "tag"
+            }
+        },
+        "nav_menu": {
+            "label": "Menu di navigazione",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": true,
+            "hierarchical": false,
+            "object_type": [
+                "nav_menu_item"
+            ],
+            "rewrite": false
+        },
+        "link_category": {
+            "label": "Categorie dei link",
+            "public": false,
+            "show_ui": true,
+            "show_in_rest": false,
+            "hierarchical": false,
+            "object_type": [
+                "link"
+            ],
+            "rewrite": false
+        },
+        "post_format": {
+            "label": "Formati",
+            "public": true,
+            "show_ui": false,
+            "show_in_rest": false,
+            "hierarchical": false,
+            "object_type": [
+                "post"
+            ],
+            "rewrite": {
+                "with_front": true,
+                "hierarchical": false,
+                "ep_mask": 0,
+                "slug": "type"
+            }
+        },
+        "wp_theme": {
+            "label": "Temi",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": false,
+            "hierarchical": false,
+            "object_type": [
+                "wp_template",
+                "wp_template_part",
+                "wp_global_styles"
+            ],
+            "rewrite": false
+        },
+        "wp_template_part_area": {
+            "label": "Aree della parte del template",
+            "public": false,
+            "show_ui": false,
+            "show_in_rest": false,
+            "hierarchical": false,
+            "object_type": [
+                "wp_template_part"
+            ],
+            "rewrite": false
+        },
+        "wp_pattern_category": {
+            "label": "Categorie di pattern",
+            "public": false,
+            "show_ui": true,
+            "show_in_rest": true,
+            "hierarchical": false,
+            "object_type": [
+                "wp_block"
+            ],
+            "rewrite": false
+        },
+        "zona": {
+            "label": "Zone",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "hierarchical": false,
+            "object_type": [
+                "immobili",
+                "cantieri"
+            ],
+            "rewrite": {
+                "with_front": true,
+                "hierarchical": false,
+                "ep_mask": 0,
+                "slug": "zona"
+            }
+        },
+        "tipologie": {
+            "label": "tipologie",
+            "public": true,
+            "show_ui": true,
+            "show_in_rest": true,
+            "hierarchical": false,
+            "object_type": [
+                "immobili"
+            ],
+            "rewrite": {
+                "with_front": true,
+                "hierarchical": false,
+                "ep_mask": 0,
+                "slug": "tipologie"
+            }
+        }
+    },
+    "acf_groups": [
+        {
+            "key": "group_698f1915d544d",
+            "title": "Campi cantiere",
+            "active": true,
+            "position": "normal",
+            "style": "default",
+            "label_placement": "top",
+            "instruction_placement": "label",
+            "menu_order": 0,
+            "location": [
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "cantieri"
+                    }
+                ]
+            ],
+            "fields": [
+                {
+                    "key": "field_698f1916432bb",
+                    "name": "immagine_principale",
+                    "label": "Immagine principale",
+                    "type": "image",
+                    "required": true,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698f1bdae958e",
+                    "name": "galleria_immagini",
+                    "label": "Galleria Immagini",
+                    "type": "photo_gallery",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698f1cdee603a",
+                    "name": "descrizione_",
+                    "label": "Descrizione del progetto",
+                    "type": "wysiwyg",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698f1d160f271",
+                    "name": "stato_avanzamento_lavori",
+                    "label": "Stato avanzamento lavori",
+                    "type": "select",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": false,
+                    "choices": {
+                        "- In progettazione": "- In progettazione",
+                        "- In costruzione": "- In costruzione",
+                        "- In consegna": "- In consegna",
+                        "- Completato": "- Completato"
+                    },
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698f1e6e02124",
+                    "name": "indirizzo_mappa_",
+                    "label": "Indirizzo mappa",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698f1eac65f28",
+                    "name": "url_landing",
+                    "label": "Url Landing Ufficiale",
+                    "type": "url",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698f1ede65f29",
+                    "name": "documenti",
+                    "label": "Documenti",
+                    "type": "file",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698f1f1065f2a",
+                    "name": "video",
+                    "label": "Video",
+                    "type": "url",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b2ad6b0d3",
+                    "name": "in_evidenza",
+                    "label": "In evidenza",
+                    "type": "true_false",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": 0,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b2c36b0d4",
+                    "name": "priorita",
+                    "label": "Priorità",
+                    "type": "number",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": 10,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b2eb7e5f5",
+                    "name": "stato_lavori",
+                    "label": "Stato lavori",
+                    "type": "select",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": false,
+                    "choices": {
+                        "In costruzione": "In costruzione",
+                        "Consegna 2025": "Consegna 2025",
+                        "Consegna 2026": "Consegna 2026",
+                        "Ultime disponibilità": "Ultime disponibilità"
+                    },
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b33d7e5f6",
+                    "name": "tipologie",
+                    "label": "Tipologie disponibili",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                }
+            ]
+        },
+        {
+            "key": "group_69a085ec61cc9",
+            "title": "Campi Clienti – Profilo e richieste",
+            "active": true,
+            "position": "normal",
+            "style": "default",
+            "label_placement": "top",
+            "instruction_placement": "label",
+            "menu_order": 0,
+            "location": [
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "cliente"
+                    }
+                ]
+            ],
+            "fields": [
+                {
+                    "key": "field_69a085edec4ef",
+                    "name": "tipo_cliente",
+                    "label": "Tipo Cliente",
+                    "type": "select",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": [],
+                    "choices": {
+                        "Privato": "Privato",
+                        "Investitore": "Investitore",
+                        "Azienda": "Azienda"
+                    },
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69a08642ec4f0",
+                    "name": "zona_di_interesse",
+                    "label": "Zona di interesse",
+                    "type": "select",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": false,
+                    "choices": [],
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69a08679ec4f1",
+                    "name": "budget_massimo",
+                    "label": "Budget massimo",
+                    "type": "number",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69a086a67b0c0",
+                    "name": "preferenze",
+                    "label": "Preferenze",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69a0875fa1922",
+                    "name": "zona_interesse",
+                    "label": "Zona di interesse",
+                    "type": "relationship",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                }
+            ]
+        },
+        {
+            "key": "group_698777956717e",
+            "title": "campi immobili",
+            "active": true,
+            "position": "normal",
+            "style": "default",
+            "label_placement": "top",
+            "instruction_placement": "label",
+            "menu_order": 0,
+            "location": [
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "immobili"
+                    }
+                ]
+            ],
+            "fields": [
+                {
+                    "key": "field_698777929fe10",
+                    "name": "contratto",
+                    "label": "Contratto",
+                    "type": "select",
+                    "required": true,
+                    "instructions": "",
+                    "default_value": false,
+                    "choices": {
+                        "Vendita": "Vendita",
+                        "Affitto": "Affitto"
+                    },
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6987785a0474c",
+                    "name": "zona",
+                    "label": "Zona",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698778860474d",
+                    "name": "tipologia",
+                    "label": "Tipologia",
+                    "type": "select",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": false,
+                    "choices": {
+                        "appartamento": "appartamento",
+                        "villa": "villa",
+                        "attico": "attico",
+                        "locale commerciale": "locale commerciale",
+                        "terreno": "terreno",
+                        "altro": "altro"
+                    },
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698778c40474e",
+                    "name": "subtipologia",
+                    "label": "Subtipologia",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698778e4fd5e5",
+                    "name": "prezzo",
+                    "label": "Prezzo",
+                    "type": "number",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698778faac12f",
+                    "name": "rif_immobile",
+                    "label": "Riferimento Immobile",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6987792a59bf2",
+                    "name": "superficie",
+                    "label": "Superficie",
+                    "type": "number",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6987793fd8aa3",
+                    "name": "stato_immobile",
+                    "label": "Stato Immobile",
+                    "type": "select",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": false,
+                    "choices": {
+                        "Disponibile": "Disponibile",
+                        "Venduto": "Venduto",
+                        "In trattativa": "In trattativa",
+                        "Nuovo": "Nuovo",
+                        "Ribassato": "Ribassato"
+                    },
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69877973681bb",
+                    "name": "immagine_principale",
+                    "label": "Immagine Principale",
+                    "type": "image",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69877aa0681bd",
+                    "name": "immagine_2",
+                    "label": "Immagine 2",
+                    "type": "image",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69877acc681bf",
+                    "name": "immagine_3",
+                    "label": "Immagine 3",
+                    "type": "image",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69877ad3681c0",
+                    "name": "immagine_4",
+                    "label": "Immagine 4",
+                    "type": "image",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69877ad5681c1",
+                    "name": "immagine_5",
+                    "label": "Immagine 5",
+                    "type": "image",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69877ad8681c2",
+                    "name": "immagine_6",
+                    "label": "Immagine 6",
+                    "type": "image",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69877b43681c3",
+                    "name": "descrizione_tecnica",
+                    "label": "Descrizione tecnica",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69877b9de8431",
+                    "name": "planimetrie",
+                    "label": "Planimetrie",
+                    "type": "file",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": null,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69878243bddb4",
+                    "name": "localita",
+                    "label": "Località",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69878280b3289",
+                    "name": "in_vetrina",
+                    "label": "In vetrina",
+                    "type": "true_false",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": 0,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698b74912b712",
+                    "name": "telefono_agenzia",
+                    "label": "Telefono",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698b74b933362",
+                    "name": "whatsapp_agenzia",
+                    "label": "WhatsApp",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698b74f90c9af",
+                    "name": "email",
+                    "label": "Email",
+                    "type": "email",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b19879376",
+                    "name": "indirizzo",
+                    "label": "Indirizzo",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b1ad79377",
+                    "name": "priorita",
+                    "label": "priorità",
+                    "type": "number",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": 10,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b1d979378",
+                    "name": "in_evidenza",
+                    "label": "In evidenza",
+                    "type": "true_false",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": 0,
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b1f979379",
+                    "name": "piano",
+                    "label": "Piano",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b2127937a",
+                    "name": "vani",
+                    "label": "Vani",
+                    "type": "number",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_6990b2267937b",
+                    "name": "metratura",
+                    "label": "Metratura",
+                    "type": "number",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                }
+            ]
+        },
+        {
+            "key": "group_69a0842d82735",
+            "title": "Campi Terreni – Gestione commerciale",
+            "active": true,
+            "position": "normal",
+            "style": "default",
+            "label_placement": "top",
+            "instruction_placement": "label",
+            "menu_order": 0,
+            "location": [
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "terreno"
+                    }
+                ]
+            ],
+            "fields": [
+                {
+                    "key": "field_69a0842e549b6",
+                    "name": "stato_commerciale",
+                    "label": "Stato commerciale",
+                    "type": "select",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "interno",
+                    "choices": {
+                        "Interno": "Interno",
+                        "In vendita": "In vendita",
+                        "Riservato": "Riservato",
+                        "Off-market": "Off-market"
+                    },
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_69a0845d549b7",
+                    "name": "",
+                    "label": "",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                }
+            ]
+        },
+        {
+            "key": "group_69a30cc4909d4",
+            "title": "Codice gestionale",
+            "active": true,
+            "position": "normal",
+            "style": "default",
+            "label_placement": "top",
+            "instruction_placement": "label",
+            "menu_order": 0,
+            "location": [
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "immobili"
+                    }
+                ],
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "cantieri"
+                    }
+                ],
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "terreni"
+                    }
+                ]
+            ],
+            "fields": [
+                {
+                    "key": "field_69a30cc727a6d",
+                    "name": "codice_gestionale",
+                    "label": "Codice gestionale",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                }
+            ]
+        },
+        {
+            "key": "group_698b75661193b",
+            "title": "Impostazioni Agenzia",
+            "active": true,
+            "position": "normal",
+            "style": "default",
+            "label_placement": "top",
+            "instruction_placement": "label",
+            "menu_order": 0,
+            "location": [
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "post"
+                    }
+                ]
+            ],
+            "fields": [
+                {
+                    "key": "field_698b756034971",
+                    "name": "whatsapp_agenzia",
+                    "label": "WhatsApp",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698b7587e5a35",
+                    "name": "telefono_agenzia",
+                    "label": "Telefono",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                },
+                {
+                    "key": "field_698b75c1a6448",
+                    "name": "email_agenzia",
+                    "label": "Email",
+                    "type": "text",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "",
+                    "choices": null,
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                }
+            ]
+        },
+        {
+            "key": "group_69a3118c39bda",
+            "title": "Stato commerciale – Core",
+            "active": true,
+            "position": "normal",
+            "style": "default",
+            "label_placement": "top",
+            "instruction_placement": "label",
+            "menu_order": 0,
+            "location": [
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "cantieri"
+                    }
+                ],
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "immobili"
+                    }
+                ],
+                [
+                    {
+                        "param": "post_type",
+                        "operator": "==",
+                        "value": "terreno"
+                    }
+                ]
+            ],
+            "fields": [
+                {
+                    "key": "field_69a3118d76036",
+                    "name": "stato_commerciale",
+                    "label": "Stato Commerciale",
+                    "type": "select",
+                    "required": false,
+                    "instructions": "",
+                    "default_value": "interno",
+                    "choices": {
+                        "interno": "Interno",
+                        "in_vendita": "In vendita",
+                        "off_market": "Off-market",
+                        "riservato": "Riservato"
+                    },
+                    "conditional_logic": 0,
+                    "sub_fields": []
+                }
+            ]
+        }
+    ]
+}

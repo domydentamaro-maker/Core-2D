@@ -27,16 +27,32 @@
 <!-- Header -->
 <header class="site-header" role="banner">
 	<div class="container">
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-brand" aria-label="Homepage">
-			<?php if ( has_custom_logo() ) : ?>
+		<?php $theme_logo_path = OSSERVATORIO_DIR . '/assets/images/osservatorio-logo-orizzontale.svg'; ?>
+		<?php if ( file_exists( $theme_logo_path ) ) : ?>
+			<div class="site-brand" aria-label="Homepage">
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-brand__logo-link" aria-label="Homepage">
+					<img
+						src="<?php echo esc_url( OSSERVATORIO_URI . '/assets/images/osservatorio-logo-orizzontale.svg' ); ?>"
+						alt="<?php bloginfo( 'name' ); ?>"
+						class="site-brand__logo"
+						width="300"
+						height="80"
+						decoding="async"
+					>
+				</a>
+			</div>
+		<?php elseif ( has_custom_logo() ) : ?>
+			<div class="site-brand" aria-label="Homepage">
 				<?php the_custom_logo(); ?>
-			<?php else : ?>
+			</div>
+		<?php else : ?>
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-brand" aria-label="Homepage">
 				<div class="site-brand__text">
 					<div class="site-brand__name">Osservatorio</div>
 					<div class="site-brand__tagline">Sviluppo Immobiliare del Mezzogiorno</div>
 				</div>
-			<?php endif; ?>
-		</a>
+			</a>
+		<?php endif; ?>
 
 		<button class="nav-toggle" id="nav-toggle" aria-label="Apri menu" aria-expanded="false" type="button">
 			<span class="nav-toggle__bar"></span>
@@ -72,9 +88,9 @@
 						<li><a href="<?php echo esc_url( get_permalink( $chi_siamo ) ); ?>">Chi Siamo</a></li>
 					<?php endif; ?>
 					<?php
-					$fondatore = get_page_by_path( 'fondatore' );
+					$fondatore = get_page_by_path( 'domenico-dentamaro' );
 					if ( $fondatore ) : ?>
-						<li><a href="<?php echo esc_url( get_permalink( $fondatore ) ); ?>">Fondatore</a></li>
+						<li><a href="<?php echo esc_url( get_permalink( $fondatore ) ); ?>">Domenico Dentamaro</a></li>
 					<?php endif; ?>
 				</ul>
 				<?php

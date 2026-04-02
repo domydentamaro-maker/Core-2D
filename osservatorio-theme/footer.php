@@ -58,9 +58,9 @@
 						<li><a href="<?php echo esc_url( get_permalink( $chi_siamo ) ); ?>">Chi Siamo</a></li>
 					<?php endif; ?>
 					<?php
-					$fondatore = get_page_by_path( 'fondatore' );
+					$fondatore = get_page_by_path( 'domenico-dentamaro' );
 					if ( $fondatore ) : ?>
-						<li><a href="<?php echo esc_url( get_permalink( $fondatore ) ); ?>">Il Fondatore</a></li>
+						<li><a href="<?php echo esc_url( get_permalink( $fondatore ) ); ?>">Domenico Dentamaro</a></li>
 					<?php endif; ?>
 					<li><a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>">Privacy Policy</a></li>
 					<li><a href="<?php echo esc_url( home_url( '/cookie-policy/' ) ); ?>">Cookie Policy</a></li>

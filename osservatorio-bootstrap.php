@@ -90,8 +90,21 @@ if ( $current_theme->get_stylesheet() === 'osservatorio-theme' ) {
 }
 
 // ─── 4. Importa articoli WXR ─────────────────────────────
-$xml_file = WP_CONTENT_DIR . '/uploads/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml';
-if ( file_exists( $xml_file ) ) {
+$xml_candidates = array(
+	WP_CONTENT_DIR . '/uploads/2026/04/OSS_TUTTI_30_ARTICOLI_READY.xml',
+	WP_CONTENT_DIR . '/uploads/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml',
+);
+
+$xml_file = '';
+foreach ( $xml_candidates as $candidate ) {
+	if ( file_exists( $candidate ) ) {
+		$xml_file = $candidate;
+		break;
+	}
+}
+
+if ( $xml_file ) {
+	$log[] = '[INFO] File import selezionato: ' . str_replace( ABSPATH, '', $xml_file );
 	// Carica la classe dell'importatore
 	$importer_file = WP_PLUGIN_DIR . '/wordpress-importer/class-wp-import.php';
 	if ( file_exists( $importer_file ) ) {
@@ -147,7 +160,7 @@ if ( file_exists( $xml_file ) ) {
 		$log[] = '[ERRORE] WordPress Importer non trovato per importazione.';
 	}
 } else {
-	$log[] = '[SKIP] File XML non trovato: ' . $xml_file;
+	$log[] = '[SKIP] Nessun file XML trovato nei path previsti.';
 }
 
 // ─── 5. Flush rewrite rules ──────────────────────────────

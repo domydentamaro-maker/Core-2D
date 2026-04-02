@@ -282,6 +282,10 @@ add_action( 'widgets_init', 'osservatorio_register_widgets' );
    ═══════════════════════════════════════════════════════════ */
 
 function osservatorio_json_ld() {
+	if ( defined( 'RANK_MATH_VERSION' ) ) {
+		return;
+	}
+
 	if ( is_singular( array( 'analisi', 'report', 'approfondimenti', 'post' ) ) ) {
 		global $post;
 		$schema = array(
@@ -316,6 +320,7 @@ function osservatorio_json_ld() {
 
 	// Schema Organization su homepage
 	if ( is_front_page() ) {
+		$home_logo = osservatorio_get_home_social_image_url();
 		$org = array(
 			'@context'    => 'https://schema.org',
 			'@type'       => 'Organization',
@@ -328,6 +333,11 @@ function osservatorio_json_ld() {
 				'url'   => 'https://www.2dsviluppoimmobiliare.it',
 			),
 		);
+
+		if ( $home_logo ) {
+			$org['logo'] = $home_logo;
+		}
+
 		echo '<script type="application/ld+json">' . wp_json_encode( $org, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>' . "\n";
 	}
 }
@@ -353,6 +363,121 @@ function osservatorio_meta_description() {
 	}
 }
 add_action( 'wp_head', 'osservatorio_meta_description', 1 );
+
+/**
+ * Restituisce l'immagine social quadrata per la homepage.
+ */
+function osservatorio_get_home_social_image_url() {
+	static $cached_url = null;
+
+	if ( null !== $cached_url ) {
+		return $cached_url;
+	}
+
+	$upload_dir = wp_get_upload_dir();
+	if ( empty( $upload_dir['error'] ) && ! empty( $upload_dir['basedir'] ) && ! empty( $upload_dir['baseurl'] ) ) {
+		$preferred_files = array_merge(
+			glob( trailingslashit( $upload_dir['basedir'] ) . '*/*/osservatorio-logo-quadrato.png' ) ?: array(),
+			glob( trailingslashit( $upload_dir['basedir'] ) . '*/*/osservatorio-logo-quadrato.jpg' ) ?: array(),
+			glob( trailingslashit( $upload_dir['basedir'] ) . '*/*/osservatorio-logo-quadrato.jpeg' ) ?: array()
+		);
+
+		if ( ! empty( $preferred_files ) ) {
+			usort(
+				$preferred_files,
+				static function( $a, $b ) {
+					return filemtime( $b ) <=> filemtime( $a );
+				}
+			);
+
+			$selected_file = $preferred_files[0];
+			$cached_url    = str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $selected_file );
+			return $cached_url;
+		}
+	}
+
+	$media_slugs = array(
+		'osservatorio-logo-quadrato',
+		'logo-osservatorio-quadrato',
+		'osservatorio-logo-square',
+	);
+
+	foreach ( $media_slugs as $slug ) {
+		$attachment = get_page_by_path( $slug, OBJECT, 'attachment' );
+		if ( $attachment ) {
+			$image_url = wp_get_attachment_image_url( (int) $attachment->ID, 'full' );
+			if ( $image_url ) {
+				$cached_url = $image_url;
+				return $cached_url;
+			}
+		}
+	}
+
+	$theme_logo_path = OSSERVATORIO_DIR . '/assets/images/osservatorio-logo-quadrato.svg';
+	if ( file_exists( $theme_logo_path ) ) {
+		$cached_url = OSSERVATORIO_URI . '/assets/images/osservatorio-logo-quadrato.svg';
+		return $cached_url;
+	}
+
+	if ( has_custom_logo() ) {
+		$custom_logo_id = get_theme_mod( 'custom_logo' );
+		$image_url      = wp_get_attachment_image_url( $custom_logo_id, 'full' );
+		if ( $image_url ) {
+			$cached_url = $image_url;
+			return $cached_url;
+		}
+	}
+
+	$cached_url = '';
+	return $cached_url;
+}
+
+/**
+ * Forza immagine social quadrata solo in homepage quando Rank Math e attivo.
+ */
+function osservatorio_rank_math_home_social_image( $image ) {
+	if ( ! is_front_page() ) {
+		return $image;
+	}
+
+	$home_image = osservatorio_get_home_social_image_url();
+	return $home_image ? $home_image : $image;
+}
+add_filter( 'rank_math/opengraph/facebook/image', 'osservatorio_rank_math_home_social_image', 20 );
+add_filter( 'rank_math/opengraph/twitter/image', 'osservatorio_rank_math_home_social_image', 20 );
+
+/**
+ * Fallback OG/Twitter meta se Rank Math non e attivo.
+ */
+function osservatorio_home_social_meta_fallback() {
+	if ( ! is_front_page() || defined( 'RANK_MATH_VERSION' ) ) {
+		return;
+	}
+
+	$home_image = osservatorio_get_home_social_image_url();
+	if ( ! $home_image ) {
+		return;
+	}
+
+	$image_type = 'image/png';
+	$extension  = strtolower( pathinfo( wp_parse_url( $home_image, PHP_URL_PATH ), PATHINFO_EXTENSION ) );
+	if ( 'svg' === $extension ) {
+		$image_type = 'image/svg+xml';
+	} elseif ( 'jpg' === $extension || 'jpeg' === $extension ) {
+		$image_type = 'image/jpeg';
+	} elseif ( 'webp' === $extension ) {
+		$image_type = 'image/webp';
+	}
+
+	echo '<meta property="og:image" content="' . esc_url( $home_image ) . '">' . "\n";
+	echo '<meta property="og:image:secure_url" content="' . esc_url( $home_image ) . '">' . "\n";
+	echo '<meta property="og:image:type" content="' . esc_attr( $image_type ) . '">' . "\n";
+	echo '<meta property="og:image:width" content="1200">' . "\n";
+	echo '<meta property="og:image:height" content="1200">' . "\n";
+	echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
+	echo '<meta name="twitter:image" content="' . esc_url( $home_image ) . '">' . "\n";
+}
+add_action( 'wp_head', 'osservatorio_home_social_meta_fallback', 2 );
 
 /* ═══════════════════════════════════════════════════════════
    HELPERS

@@ -10,7 +10,7 @@ get_header(); ?>
 
 <!-- Hero — Authority -->
 <section class="hero hero--authority">
-	<div class="hero__bg-image" style="background-image: url('<?php echo esc_url( content_url( '/uploads/2026/03/hero-mezzogiorno.jpg' ) ); ?>');"></div>
+	<div class="hero__bg-image" style="background-image: url('<?php echo esc_url( content_url( '/uploads/2026/03/mappa-comuni-zes-mezzogiorno.jpg' ) ); ?>');"></div>
 	<div class="hero__bg-overlay"></div>
 	<div class="container hero__inner">
 		<div class="hero__badge">
@@ -86,19 +86,60 @@ get_header(); ?>
 		</div>
 
 		<?php
-		// Query: ultimi contenuti da tutti i CPT
+		// Query: ultimi contenuti da tutti i CPT (pool ampio per filtrare eventuali titoli duplicati)
 		$latest = new WP_Query( array(
 			'post_type'      => array( 'analisi', 'report', 'approfondimenti' ),
-			'posts_per_page' => 7,
+			'post_status'    => array( 'publish' ),
+			'posts_per_page' => 50,
 			'orderby'        => 'date',
 			'order'          => 'DESC',
 		) );
 
 		if ( $latest->have_posts() ) : ?>
-			<div class="posts-grid posts-grid--featured">
-				<?php $count = 0; while ( $latest->have_posts() ) : $latest->the_post(); $count++; ?>
-					<?php get_template_part( 'template-parts/post-card' ); ?>
-				<?php endwhile; ?>
+			<div class="posts-grid posts-grid--home-latest">
+				<?php
+				$selected_posts = array();
+				$selected_ids   = array();
+				$seen_titles    = array();
+
+				// Prima passata: priorita a titoli unici.
+				foreach ( $latest->posts as $candidate ) {
+					$key = sanitize_title( wp_strip_all_tags( $candidate->post_title ) );
+
+					if ( isset( $seen_titles[ $key ] ) ) {
+						continue;
+					}
+
+					$seen_titles[ $key ] = true;
+					$selected_posts[]    = $candidate;
+					$selected_ids[]      = (int) $candidate->ID;
+
+					if ( count( $selected_posts ) >= 4 ) {
+						break;
+					}
+				}
+
+				// Seconda passata: se i titoli unici non bastano, completa fino a 4.
+				if ( count( $selected_posts ) < 4 ) {
+					foreach ( $latest->posts as $candidate ) {
+						if ( in_array( (int) $candidate->ID, $selected_ids, true ) ) {
+							continue;
+						}
+
+						$selected_posts[] = $candidate;
+						$selected_ids[]   = (int) $candidate->ID;
+
+						if ( count( $selected_posts ) >= 4 ) {
+							break;
+						}
+					}
+				}
+
+				foreach ( $selected_posts as $post ) {
+					setup_postdata( $post );
+					get_template_part( 'template-parts/post-card' );
+				}
+				?>
 			</div>
 		<?php else : ?>
 			<p class="text-center" style="color: var(--color-gray-500);">I contenuti saranno pubblicati a breve. Torna presto!</p>

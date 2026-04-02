@@ -1,0 +1,8 @@
+.visioni-platform-app { max-width: 980px; margin: 24px auto; padding: 20px; border: 1px solid #e6dcc7; border-radius: 14px; background: #f5f0e8; color: #1a1a1a; }
+.visioni-platform-app__header h2 { margin: 6px 0 10px; }
+.visioni-platform-app__eyebrow { margin: 0; letter-spacing: .2em; text-transform: uppercase; font-size: 11px; font-weight: 700; color: #c8a96e; }
+.visioni-platform-app__install { margin-top: 12px; border: 0; border-radius: 8px; padding: 10px 14px; background: #1a1a1a; color: #f5f0e8; cursor: pointer; }
+.visioni-platform-app__grid { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.visioni-platform-app__grid a { display: block; text-decoration: none; border: 1px solid #e3d6b6; border-radius: 10px; background: #fff; padding: 12px; color: #1a1a1a; font-weight: 600; }
+.visioni-module { max-width: 840px; margin: 20px auto; padding: 20px; border-radius: 12px; border: 1px solid #e6dcc7; background: #fff; }
+.visioni-module code { background: #f5f0e8; padding: 2px 6px; border-radius: 4px; }
