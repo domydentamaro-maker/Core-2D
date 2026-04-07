@@ -34,8 +34,11 @@ export interface DatiImmobile {
   conformitaUrbanistica: boolean;
   dettagliUrbanistica: string;
   conformitaCatastale: boolean;
+  dettagliCatastale: string;
   abusiEdilizi: boolean;
+  dettagliAbusiEdilizi: string;
   agibilita: boolean;
+  dettagliAgibilita: string;
 }
 
 export interface SchedaTecnica {
@@ -72,22 +75,41 @@ export interface SchedaTecnica {
   altezzaUtile: number;
   accessiNote: string;
   impiantiIndustriali: string;
+  dettaglioSuperfici: DettaglioSuperficie[];
   noteAggiuntive: string;
 }
 
 export interface ComparabileTx {
+  fonte: string;
+  url: string;
   indirizzo: string;
   superficie: number;
   prezzo: number;
   note: string;
 }
 
+export interface DettaglioSuperficie {
+  id: string;
+  ambiente: string;
+  criterio: string;
+  coefficiente: number;
+  lunghezza: number;
+  larghezza: number;
+  superficie: number;
+  note: string;
+}
+
 export interface AnalisiMercato {
   descrizioneMercato: string;
   prezzoMedioMq: number;
+  prezzoOmiMq: number;
+  prezzoStoricoMq: number;
   prezzoMin: number;
   prezzoMax: number;
   fonteDati: string;
+  usaFonteOmi: boolean;
+  usaFonteWeb: boolean;
+  usaFonteStorico: boolean;
   trimestreOMI: string;
   annoOMI: string;
   comparabili: ComparabileTx[];
@@ -282,7 +304,7 @@ export const DEFAULT_SEZIONI_TESTUALI: SezioneTestuale[] = [
 
 export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroPratica?: string): Perizia {
   const now = new Date().toISOString().split('T')[0];
-  const pratica = numeroPratica || `2D-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+  const pratica = numeroPratica || `2D-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-001`;
   
   return {
     id: crypto.randomUUID(),
@@ -300,7 +322,7 @@ export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroP
       finalita: [],
       finalitaAltro: '',
       peritoNome: 'Domenico Dentamaro',
-      peritoQualifica: 'Perito Immobiliare — Agente Immobiliare',
+      peritoQualifica: 'Agente Immobiliare',
       firmaUrl: '',
     },
     datiImmobile: {
@@ -310,7 +332,9 @@ export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroP
       tipoProprietà: 'Piena proprietà', annoProvenienza: '',
       ipoteche: false, dettagliIpoteche: '',
       conformitaUrbanistica: true, dettagliUrbanistica: '',
-      conformitaCatastale: true, abusiEdilizi: false, agibilita: true,
+      conformitaCatastale: true, dettagliCatastale: '',
+      abusiEdilizi: false, dettagliAbusiEdilizi: '',
+      agibilita: true, dettagliAgibilita: '',
     },
     schedaTecnica: {
       tipologia,
@@ -323,17 +347,21 @@ export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroP
       superficieTerreno: 0, destinazioneUrbanistica: '', indiceEdificabilita: 0,
       superficieVetrine: 0, visibilitaNote: '',
       altezzaUtile: 0, accessiNote: '', impiantiIndustriali: '',
+      dettaglioSuperfici: [],
       noteAggiuntive: '',
     },
     analisiMercato: {
       descrizioneMercato: '',
-      prezzoMedioMq: 0, prezzoMin: 0, prezzoMax: 0,
-      fonteDati: 'OMI',
-      trimestreOMI: '1° trimestre', annoOMI: String(new Date().getFullYear()),
+      prezzoMedioMq: 0, prezzoOmiMq: 0, prezzoStoricoMq: 0, prezzoMin: 0, prezzoMax: 0,
+      fonteDati: 'OMI + Web + Storico',
+      usaFonteOmi: true,
+      usaFonteWeb: true,
+      usaFonteStorico: true,
+      trimestreOMI: '1° semestre', annoOMI: String(new Date().getFullYear()),
       comparabili: [
-        { indirizzo: '', superficie: 0, prezzo: 0, note: '' },
-        { indirizzo: '', superficie: 0, prezzo: 0, note: '' },
-        { indirizzo: '', superficie: 0, prezzo: 0, note: '' },
+        { fonte: '', url: '', indirizzo: '', superficie: 0, prezzo: 0, note: '' },
+        { fonte: '', url: '', indirizzo: '', superficie: 0, prezzo: 0, note: '' },
+        { fonte: '', url: '', indirizzo: '', superficie: 0, prezzo: 0, note: '' },
       ],
       tendenzaMercato: 'Stabile', tempiMediVendita: '3-6 mesi',
       domanda: 'Media', liquidabilita: 'Media',

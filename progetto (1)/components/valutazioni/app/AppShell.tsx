@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Perizia, TipologiaImmobile, createDefaultPerizia } from '@/components/valutazioni/types/perizia';
 import {
   loadPerizie, savePerizia, deletePerizia, duplicatePerizia,
-  exportPeriziaJSON, scheduleAutosave, calcCompletamento
+  exportPeriziaJSON, scheduleAutosave, calcCompletamento, calcSuperficieCommercialeDettaglio, generateNumeroPratica
 } from '@/components/valutazioni/lib/storage';
 import { dbSavePerizia, dbDeletePerizia, dbLoadAndMerge } from '@/components/valutazioni/lib/db';
 import Sidebar from './Sidebar';
@@ -29,9 +29,10 @@ function syncComparativoReferences(next: Perizia, previous?: Perizia | null): Pe
   const prevSurface = previous?.metodiValutazione.comparativo.superficieCommerciale ?? 0;
   const prevPrice = previous?.metodiValutazione.comparativo.prezzeMedioMq ?? 0;
 
+  const dettaglioSurface = calcSuperficieCommercialeDettaglio(updated.schedaTecnica.dettaglioSuperfici || []);
   const suggestedSurface = updated.schedaTecnica.tipologia === 'D'
     ? updated.schedaTecnica.superficieTerreno
-    : updated.schedaTecnica.superficieCommerciale;
+    : (updated.schedaTecnica.superficieCommerciale > 0 ? updated.schedaTecnica.superficieCommerciale : dettaglioSurface);
   const suggestedPrice = updated.analisiMercato.prezzoMedioMq;
 
   if (suggestedSurface > 0 && (comparativo.superficieCommerciale <= 0 || comparativo.superficieCommerciale === prevSurface)) {
@@ -81,6 +82,12 @@ export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
       ...periziaCorrente,
       ...updates,
     };
+    if (updates.datiIncarico?.numeroPratica) {
+      merged.numeroPratica = updates.datiIncarico.numeroPratica;
+    }
+    if (updates.numeroPratica) {
+      merged.datiIncarico = { ...merged.datiIncarico, numeroPratica: updates.numeroPratica };
+    }
     const updated = syncComparativoReferences(merged, periziaCorrente);
     updated.completamento = calcCompletamento(updated);
     setPeriziaCorrente(updated);
@@ -88,7 +95,7 @@ export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
   }, [periziaCorrente, triggerAutosave]);
 
   const handleNuovaPerizia = (tipologia: TipologiaImmobile) => {
-    const nuova = createDefaultPerizia(tipologia);
+    const nuova = createDefaultPerizia(tipologia, generateNumeroPratica(perizie));
     setPeriziaCorrente(nuova);
     setSezioneAttiva('incarico');
     setSaveStatus('unsaved');
@@ -128,7 +135,7 @@ export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
   };
 
   const handleDuplica = (perizia: Perizia) => {
-    const copia = duplicatePerizia(perizia);
+    const copia = duplicatePerizia(perizia, perizie);
     const updated = savePerizia(copia);
     setPerizie(updated);
     setPeriziaCorrente({ ...copia, completamento: calcCompletamento(copia) });

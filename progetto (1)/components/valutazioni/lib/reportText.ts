@@ -1,5 +1,5 @@
 import { DEFAULT_SEZIONI_TESTUALI, Perizia, SezioneTestuale } from '@/components/valutazioni/types/perizia';
-import { calcValoreFinale, formatCurrency } from '@/components/valutazioni/lib/storage';
+import { calcFontiMercatoAttive, calcMediaPrezzoMqComparabili, calcPrezzoMqFontiSelezionate, calcValoreFinale, formatCurrency } from '@/components/valutazioni/lib/storage';
 
 export function isDraftableSection(id: string): boolean {
   return [
@@ -43,6 +43,9 @@ export function generateSectionDraft(perizia: Perizia, id: string): string {
   const rangeMercato = mercato.prezzoMin > 0 && mercato.prezzoMax > 0
     ? `con un range di mercato rilevato compreso tra ${formatCurrency(mercato.prezzoMin)}/mq e ${formatCurrency(mercato.prezzoMax)}/mq`
     : '';
+  const fontiMercato = calcFontiMercatoAttive(mercato);
+  const prezzoWeb = calcMediaPrezzoMqComparabili(mercato.comparabili);
+  const prezzoFontiSelezionate = calcPrezzoMqFontiSelezionate(mercato);
   const valoreStimato = valoreFinale > 0 ? formatCurrency(valoreFinale) : 'valore non ancora determinato';
   const metodiAttivi = valori.map(v => v.metodo);
 
@@ -72,9 +75,14 @@ ${scheda.noteAggiuntive ? `Ulteriori note tecniche rilevanti: ${scheda.noteAggiu
 Le condizioni manutentive e funzionali del bene sono state considerate nella scelta dei coefficienti correttivi applicati ai metodi di stima.`.trim();
 
     case 'analisi-mercato-testo':
-      return `L'analisi del mercato immobiliare locale è stata sviluppata assumendo come riferimento le quotazioni ${mercato.fonteDati || 'di mercato'}${mercato.fonteDati === 'OMI' && mercato.annoOMI ? ` aggiornate all'anno ${mercato.annoOMI}` : ''}, integrate dalle rilevazioni disponibili sul contesto territoriale di ${comune}.
+      return `L'analisi del mercato immobiliare locale è stata sviluppata assumendo come riferimento un report articolato su fonti OMI, rete web e storico interno delle perizie archiviate per il contesto territoriale di ${comune}.
 
-Per il segmento di mercato di riferimento è emerso un valore medio pari a ${mercato.prezzoMedioMq > 0 ? `${formatCurrency(mercato.prezzoMedioMq)}/mq` : 'dato da definire'} ${rangeMercato}.
+    Le fonti attualmente selezionate ai fini comparativi sono: ${fontiMercato.length > 0 ? fontiMercato.join(', ') : 'nessuna fonte selezionata'}. Il valore medio unitario finale assunto nella pratica è pari a ${mercato.prezzoMedioMq > 0 ? `${formatCurrency(mercato.prezzoMedioMq)}/mq` : 'dato da definire'} ${rangeMercato}.
+
+    ${mercato.prezzoOmiMq > 0 ? `Il benchmark OMI rilevato per il semestre ${mercato.trimestreOMI || 'di riferimento'} ${mercato.annoOMI || ''} è pari a ${formatCurrency(mercato.prezzoOmiMq)}/mq.` : ''}
+    ${prezzoWeb > 0 ? `La media dei comparabili web inseriti nella pratica è pari a ${formatCurrency(prezzoWeb)}/mq.` : ''}
+    ${mercato.prezzoStoricoMq > 0 ? `La media derivante dallo storico delle pratiche archiviate in zona è pari a ${formatCurrency(mercato.prezzoStoricoMq)}/mq.` : ''}
+    ${prezzoFontiSelezionate > 0 ? `La media combinata delle fonti attive restituisce ${formatCurrency(prezzoFontiSelezionate)}/mq.` : ''}
 
 La tendenza del mercato è stata valutata come ${mercato.tendenzaMercato || 'non indicata'}, con tempi medi di vendita stimati in ${mercato.tempiMediVendita || 'dato non disponibile'}, livello di domanda ${mercato.domanda || 'non definito'} e liquidabilità ${mercato.liquidabilita || 'non definita'}.
 ${mercato.comparabili.length > 0 ? `L'analisi è stata inoltre supportata da ${mercato.comparabili.length} comparabili inseriti manualmente nella pratica.` : ''}

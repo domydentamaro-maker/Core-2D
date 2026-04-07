@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DatiImmobile, CATEGORIE_CATASTALI, COMUNI_PUGLIA } from '@/components/valutazioni/types/perizia';
-import { SectionHeader, SectionCard, FormField, Input, SelectField, ToggleField, FormGrid } from './FormComponents';
+import { SectionHeader, SectionCard, FormField, Input, SelectField, ToggleField, FormGrid, TextareaField } from './FormComponents';
 import { cn } from '@/components/valutazioni/lib/utils';
 
 interface Sezione2Props {
@@ -151,52 +151,80 @@ export default function Sezione2({ data, onChange }: Sezione2Props) {
               onChange={v => update('ipoteche', v)}
               description="Presenza di gravami, ipoteche o vincoli sull'immobile"
             />
-            {data.ipoteche && (
-              <div className="pl-4 pb-3 border-b border-[#D4C9B0]/50">
-                <FormField label="Dettagli ipoteche / vincoli">
-                  <Input
-                    value={data.dettagliIpoteche}
-                    onChange={e => update('dettagliIpoteche', e.target.value)}
-                    placeholder="Descrivi i vincoli presenti..."
-                  />
-                </FormField>
-              </div>
-            )}
+            <div className="pl-4 pb-3 border-b border-[#D4C9B0]/50">
+              <FormField label="Annotazioni su ipoteche / vincoli" hint="Compilabile sempre, anche per specificare assenza di gravami o note di provenienza.">
+                <TextareaField
+                  value={data.dettagliIpoteche}
+                  onChange={e => update('dettagliIpoteche', e.target.value)}
+                  placeholder={data.ipoteche ? 'Descrivi i vincoli presenti...' : 'Inserisci eventuali annotazioni o precisazioni anche in assenza di vincoli...'}
+                  rows={3}
+                />
+              </FormField>
+            </div>
             <ToggleField
               label="Conformità Urbanistica"
               value={data.conformitaUrbanistica}
               onChange={v => update('conformitaUrbanistica', v)}
               description="Immobile conforme alle norme urbanistiche"
             />
-            {!data.conformitaUrbanistica && (
-              <div className="pl-4 pb-3 border-b border-[#D4C9B0]/50">
-                <FormField label="Note urbanistiche">
-                  <Input
-                    value={data.dettagliUrbanistica}
-                    onChange={e => update('dettagliUrbanistica', e.target.value)}
-                    placeholder="Descrivi le difformità..."
-                  />
-                </FormField>
-              </div>
-            )}
+            <div className="pl-4 pb-3 border-b border-[#D4C9B0]/50">
+              <FormField label="Note urbanistiche" hint="Compilabile sempre, sia per descrivere criticità sia per riportare regolarità, titoli e riferimenti urbanistici.">
+                <TextareaField
+                  value={data.dettagliUrbanistica}
+                  onChange={e => update('dettagliUrbanistica', e.target.value)}
+                  placeholder={data.conformitaUrbanistica ? 'Inserisci note su titoli edilizi, conformità, pratiche, agibilità o altre annotazioni utili...' : 'Descrivi difformità, pratiche in sanatoria o altre criticità urbanistiche...'}
+                  rows={4}
+                />
+              </FormField>
+            </div>
             <ToggleField
               label="Conformità Catastale"
               value={data.conformitaCatastale}
               onChange={v => update('conformitaCatastale', v)}
               description="Planimetria catastale conforme allo stato dei luoghi"
             />
+            <div className="pl-4 pb-3 border-b border-[#D4C9B0]/50">
+              <FormField label="Note catastali" hint="Compilabile sempre, per descrivere conformità, scostamenti minimi, planimetrie mancanti o aggiornamenti Docfa da eseguire.">
+                <TextareaField
+                  value={data.dettagliCatastale}
+                  onChange={e => update('dettagliCatastale', e.target.value)}
+                  placeholder={data.conformitaCatastale ? 'Indica estremi planimetria, eventuali aggiornamenti catastali, data visura o altre annotazioni utili...' : 'Descrivi le difformità catastali riscontrate e le attività necessarie per la regolarizzazione...'}
+                  rows={3}
+                />
+              </FormField>
+            </div>
             <ToggleField
               label="Abusi Edilizi Sanati"
               value={data.abusiEdilizi}
               onChange={v => update('abusiEdilizi', v)}
               description="Presenza di condoni edilizi o sanatorie"
             />
+            <div className="pl-4 pb-3 border-b border-[#D4C9B0]/50">
+              <FormField label="Note su condoni e sanatorie" hint="Compilabile sempre, anche per riportare espressamente assenza di condoni o riferimenti a pratiche edilizie pregresse.">
+                <TextareaField
+                  value={data.dettagliAbusiEdilizi}
+                  onChange={e => update('dettagliAbusiEdilizi', e.target.value)}
+                  placeholder={data.abusiEdilizi ? 'Indica numero pratica, anno, estremi della sanatoria o del condono e relativo stato...' : 'Annota l’assenza di sanatorie oppure eventuali verifiche ancora da approfondire...'}
+                  rows={3}
+                />
+              </FormField>
+            </div>
             <ToggleField
               label="Agibilità / Abitabilità"
               value={data.agibilita}
               onChange={v => update('agibilita', v)}
               description="Certificato di agibilità presente"
             />
+            <div className="pl-4 pt-0">
+              <FormField label="Note su agibilità / abitabilità" hint="Compilabile sempre, per indicare certificati esistenti, SCA, pratiche in corso o eventuali assenze documentali.">
+                <TextareaField
+                  value={data.dettagliAgibilita}
+                  onChange={e => update('dettagliAgibilita', e.target.value)}
+                  placeholder={data.agibilita ? 'Riporta estremi del certificato, SCA o altra documentazione utile...' : 'Descrivi l’assenza del certificato, la documentazione reperita o le verifiche da eseguire...'}
+                  rows={3}
+                />
+              </FormField>
+            </div>
           </div>
         </SectionCard>
       </div>

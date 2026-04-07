@@ -4,6 +4,8 @@ import { SectionHeader } from './FormComponents';
 import { RefreshCw, Lock, ChevronDown } from 'lucide-react';
 import { cn } from '@/components/valutazioni/lib/utils';
 import { generateSectionDraft, isDraftableSection } from '@/components/valutazioni/lib/reportText';
+import { dbGenerateAiDraft } from '@/components/valutazioni/lib/db';
+import { toast } from 'sonner';
 
 interface Sezione7Props {
   sezioni: SezioneTestuale[];
@@ -29,6 +31,8 @@ function RichTextEditor({ value, onChange, placeholder }: {
 
 export default function Sezione7({ sezioni, perizia, onChange }: Sezione7Props) {
   const [openSezioni, setOpenSezioni] = useState<Set<string>>(new Set(['premessa', 'descrizione']));
+  const [aiLoadingSection, setAiLoadingSection] = useState<string | null>(null);
+  const [aiLoadingFull, setAiLoadingFull] = useState(false);
 
   const toggleOpen = (id: string) => {
     const next = new Set(openSezioni);
@@ -55,6 +59,38 @@ export default function Sezione7({ sezioni, perizia, onChange }: Sezione7Props) 
     onChange(next);
   };
 
+  const rigeneraSezioneAi = async (id: string) => {
+    try {
+      setAiLoadingSection(id);
+      const result = await dbGenerateAiDraft({ perizia, sectionId: id });
+      if (!result.text) throw new Error('Testo AI non disponibile');
+      updateSezione(id, result.text);
+      toast.success('Sezione generata con AI');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Errore nella generazione AI');
+    } finally {
+      setAiLoadingSection(null);
+    }
+  };
+
+  const rigeneraRelazioneCompletaAi = async () => {
+    try {
+      setAiLoadingFull(true);
+      const result = await dbGenerateAiDraft({ perizia });
+      if (!result.sections?.length) throw new Error('Bozza AI non disponibile');
+      const next = sezioni.map((sezione) => {
+        const found = result.sections?.find((item) => item.id === sezione.id);
+        return found ? { ...sezione, contenuto: found.contenuto } : sezione;
+      });
+      onChange(next);
+      toast.success('Relazione generata con AI');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Errore nella generazione AI');
+    } finally {
+      setAiLoadingFull(false);
+    }
+  };
+
   const AVVERTENZA_LEGALE = `La presente perizia è stata redatta da Domenico Dentamaro – Agente Immobiliare e Consulente del settore – con sede in Bari (BA), Puglia.
 Il valore stimato espresso nella presente perizia si riferisce alla data di sopralluogo indicata e alle condizioni di mercato rilevate in tale data. Qualsiasi variazione del mercato immobiliare successiva alla data di perizia non è imputabile al perito. Il valore di mercato espresso è una stima professionale effettuata secondo i principi IVS (International Valuation Standards) e le Linee Guida Tecnoborsa. La presente perizia non costituisce garanzia né responsabilità per le parti terze. Tutti i dati tecnici e catastali sono stati forniti dal committente o ricavati da documentazione ufficiale. Il perito si riserva la facoltà di rettificare la presente stima in caso di informazioni errate o incomplete fornite dal committente.
 — 2D Sviluppo Immobiliare, Domenico Dentamaro — Bari, Puglia`;
@@ -72,8 +108,17 @@ Il valore stimato espresso nella presente perizia si riferisce alla data di sopr
           <RefreshCw className="w-4 h-4" />
           Genera bozza completa
         </button>
+        <button
+          type="button"
+          onClick={rigeneraRelazioneCompletaAi}
+          disabled={aiLoadingFull}
+          className="flex items-center gap-2 px-4 py-2 bg-[#C8A96E] text-[#1A1A1A] rounded hover:bg-[#B8996E] transition-colors text-sm font-source disabled:opacity-60"
+        >
+          <RefreshCw className={cn('w-4 h-4', aiLoadingFull && 'animate-spin')} />
+          {aiLoadingFull ? 'Generazione AI...' : 'Genera con AI'}
+        </button>
         <p className="text-xs font-source text-[#5C5346]/70 self-center">
-          Compila automaticamente i testi descrittivi partendo dai dati inseriti nella perizia.
+          Compila automaticamente i testi descrittivi partendo dai dati inseriti nella perizia. Il pulsante AI usa un provider esterno configurato lato server.
         </p>
       </div>
 
@@ -100,13 +145,23 @@ Il valore stimato espresso nella presente perizia si riferisce alla data di sopr
                 </div>
                 <div className="flex items-center gap-2">
                   {isGenerabile && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); rigeneraSezione(sezione.id); }}
-                      className="flex items-center gap-1.5 text-xs font-source text-[#C8A96E] hover:text-[#1A1A1A] border border-[#C8A96E]/30 px-2.5 py-1 rounded hover:bg-[#C8A96E]/10 transition-all"
-                    >
-                      <RefreshCw className="w-3 h-3" />
-                      Rigenera
-                    </button>
+                    <>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); rigeneraSezione(sezione.id); }}
+                        className="flex items-center gap-1.5 text-xs font-source text-[#C8A96E] hover:text-[#1A1A1A] border border-[#C8A96E]/30 px-2.5 py-1 rounded hover:bg-[#C8A96E]/10 transition-all"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        Rigenera
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); rigeneraSezioneAi(sezione.id); }}
+                        disabled={aiLoadingSection === sezione.id}
+                        className="flex items-center gap-1.5 text-xs font-source text-[#1A1A1A] border border-[#D4C9B0] px-2.5 py-1 rounded hover:border-[#C8A96E] hover:bg-[#C8A96E]/10 transition-all disabled:opacity-60"
+                      >
+                        <RefreshCw className={cn('w-3 h-3', aiLoadingSection === sezione.id && 'animate-spin')} />
+                        {aiLoadingSection === sezione.id ? 'AI...' : 'AI'}
+                      </button>
+                    </>
                   )}
                   <ChevronDown className={cn('w-4 h-4 text-[#C8A96E] transition-transform', isOpen ? 'rotate-180' : '')} />
                 </div>

@@ -1,4 +1,4 @@
-import { Perizia, MetodiValutazione } from '@/components/valutazioni/types/perizia';
+import { AnalisiMercato, Perizia, MetodiValutazione, ComparabileTx, DettaglioSuperficie } from '@/components/valutazioni/types/perizia';
 
 const STORAGE_KEY = '2d-valuta-pro-perizie';
 const AUTOSAVE_DELAY = 2000;
@@ -17,6 +17,20 @@ export function loadPerizie(): Perizia[] {
 
 export function savePerizie(perizie: Perizia[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(perizie));
+}
+
+export function generateNumeroPratica(perizie: Perizia[], referenceDate: Date = new Date()): string {
+  const year = referenceDate.getFullYear();
+  const month = String(referenceDate.getMonth() + 1).padStart(2, '0');
+  const regex = new RegExp(`^2D-${year}-${month}-(\\d+)$`);
+
+  const sequence = perizie.reduce((max, perizia) => {
+    const match = perizia.numeroPratica.match(regex);
+    if (!match) return max;
+    return Math.max(max, parseInt(match[1], 10));
+  }, 0) + 1;
+
+  return `2D-${year}-${month}-${String(sequence).padStart(3, '0')}`;
 }
 
 export function savePerizia(perizia: Perizia): Perizia[] {
@@ -38,10 +52,9 @@ export function deletePerizia(id: string): Perizia[] {
   return perizie;
 }
 
-export function duplicatePerizia(perizia: Perizia): Perizia {
+export function duplicatePerizia(perizia: Perizia, perizieEsistenti: Perizia[] = []): Perizia {
   const now = new Date().toISOString().split('T')[0];
-  const year = new Date().getFullYear();
-  const newPratica = `2D-${year}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+  const newPratica = generateNumeroPratica(perizieEsistenti, new Date());
   return {
     ...JSON.parse(JSON.stringify(perizia)),
     id: crypto.randomUUID(),
@@ -139,6 +152,72 @@ export function calcValoreFinale(mv: MetodiValutazione): { valori: { metodo: str
   return { valori: risultati, valoreFinale };
 }
 
+export function calcDettaglioSuperficie(item: DettaglioSuperficie): number {
+  if (item.superficie > 0) return item.superficie;
+  if (item.lunghezza > 0 && item.larghezza > 0) {
+    return Number((item.lunghezza * item.larghezza).toFixed(2));
+  }
+  return 0;
+}
+
+export function calcSuperficieLordaDettaglio(items: DettaglioSuperficie[]): number {
+  return Number(items.reduce((sum, item) => sum + calcDettaglioSuperficie(item), 0).toFixed(2));
+}
+
+export function calcSuperficieCommercialeDettaglio(items: DettaglioSuperficie[]): number {
+  return Number(items.reduce((sum, item) => sum + (calcDettaglioSuperficie(item) * (item.coefficiente || 0)), 0).toFixed(2));
+}
+
+export function calcPrezzoMqComparabile(item: ComparabileTx): number {
+  if (item.superficie <= 0 || item.prezzo <= 0) return 0;
+  return Number((item.prezzo / item.superficie).toFixed(2));
+}
+
+export function calcMediaPrezzoMqComparabili(items: ComparabileTx[]): number {
+  const values = items.map(calcPrezzoMqComparabile).filter((value) => value > 0);
+  if (values.length === 0) return 0;
+  return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+}
+
+export function calcMedianaPrezzoMqComparabili(items: ComparabileTx[]): number {
+  const values = items.map(calcPrezzoMqComparabile).filter((value) => value > 0).sort((a, b) => a - b);
+  if (values.length === 0) return 0;
+  const mid = Math.floor(values.length / 2);
+  if (values.length % 2 === 0) {
+    return Math.round((values[mid - 1] + values[mid]) / 2);
+  }
+  return Math.round(values[mid]);
+}
+
+export function calcPrezzoMqIntegrato(prezzoOmi: number, items: ComparabileTx[]): number {
+  const mediaComparabili = calcMediaPrezzoMqComparabili(items);
+  if (prezzoOmi > 0 && mediaComparabili > 0) {
+    return Math.round((prezzoOmi + mediaComparabili) / 2);
+  }
+  return prezzoOmi > 0 ? prezzoOmi : mediaComparabili;
+}
+
+export function calcFontiMercatoAttive(mercato: AnalisiMercato): string[] {
+  return [
+    mercato.usaFonteOmi ? 'OMI' : '',
+    mercato.usaFonteWeb ? 'Web' : '',
+    mercato.usaFonteStorico ? 'Storico' : '',
+  ].filter(Boolean);
+}
+
+export function calcPrezzoMqFontiSelezionate(mercato: AnalisiMercato, storicoOverride?: number): number {
+  const valori: number[] = [];
+  const prezzoWebMq = calcMediaPrezzoMqComparabili(mercato.comparabili);
+  const prezzoStorico = storicoOverride && storicoOverride > 0 ? storicoOverride : mercato.prezzoStoricoMq;
+
+  if (mercato.usaFonteOmi && mercato.prezzoOmiMq > 0) valori.push(mercato.prezzoOmiMq);
+  if (mercato.usaFonteWeb && prezzoWebMq > 0) valori.push(prezzoWebMq);
+  if (mercato.usaFonteStorico && prezzoStorico > 0) valori.push(prezzoStorico);
+
+  if (valori.length === 0) return 0;
+  return Math.round(valori.reduce((sum, value) => sum + value, 0) / valori.length);
+}
+
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
 }
@@ -168,14 +247,14 @@ function calcCompletamentoImmobile(p: Perizia): number {
 
 function calcCompletamentoTecnica(p: Perizia): number {
   const s = p.schedaTecnica;
-  const fields = [s.superficieCommerciale > 0, s.annoCostruzione > 0, s.statoConservazione];
+  const fields = [s.superficieCommerciale > 0 || calcSuperficieCommercialeDettaglio(s.dettaglioSuperfici || []) > 0, s.annoCostruzione > 0, s.statoConservazione];
   const filled = fields.filter(Boolean).length;
   return Math.round((filled / fields.length) * 100);
 }
 
 function calcCompletamentoMercato(p: Perizia): number {
   const m = p.analisiMercato;
-  const fields = [m.prezzoMedioMq > 0, m.fonteDati, m.tendenzaMercato];
+  const fields = [m.prezzoMedioMq > 0, calcFontiMercatoAttive(m).length > 0, m.tendenzaMercato];
   const filled = fields.filter(Boolean).length;
   return Math.round((filled / fields.length) * 100);
 }

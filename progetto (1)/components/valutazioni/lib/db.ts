@@ -1,10 +1,10 @@
 /**
  * lib/db.ts — Client API per il backend PHP (MariaDB)
- * Source of truth: https://osservatorio.2dsviluppoimmobiliare.it/2d-perizie-api.php
+ * Source of truth: API perizie servita nella stessa area riservata.
  */
 import { Perizia } from '@/components/valutazioni/types/perizia';
 
-const API_URL   = (import.meta.env.VITE_API_URL   as string) || 'https://osservatorio.2dsviluppoimmobiliare.it/2d-perizie-api.php';
+const API_URL   = (import.meta.env.VITE_API_URL   as string) || '/2d-perizie-api.php';
 const API_TOKEN = (import.meta.env.VITE_API_TOKEN as string) || '';
 
 function headers(): HeadersInit {
@@ -91,6 +91,45 @@ export interface GeoResult {
   cap: string;
 }
 
+export interface MarketHistoryItem {
+  observed_at: string;
+  source_type: string;
+  source_name: string;
+  indirizzo: string;
+  prezzo_totale: number | null;
+  superficie: number | null;
+  prezzo_mq: number | null;
+  source_url: string;
+  note: string;
+}
+
+export interface MarketHistorySeriesPoint {
+  periodo: string;
+  avg_prezzo_mq: number;
+  osservazioni: number;
+}
+
+export interface MarketHistoryResult {
+  comune: string;
+  provincia: string;
+  tipologia: string;
+  summary: {
+    osservazioni: number;
+    mediaPrezzoMq: number;
+    medianaPrezzoMq: number;
+    minPrezzoMq: number;
+    maxPrezzoMq: number;
+  };
+  projection: {
+    ultimoPrezzoMq: number;
+    trendMensile: number;
+    proiezione3Mesi: number;
+    proiezione6Mesi: number;
+  };
+  series: MarketHistorySeriesPoint[];
+  items: MarketHistoryItem[];
+}
+
 /**
  * Consulta quotazioni OMI (Osservatorio Mercato Immobiliare — Agenzia Entrate)
  * tramite proxy PHP che fetcha e cachea i dati open data.
@@ -147,6 +186,38 @@ export async function dbResolveAddress(params: {
   } catch {
     return null;
   }
+}
+
+export async function dbGetMarketHistory(params: {
+  comune: string;
+  provincia?: string;
+  tipologia?: string;
+  limit?: number;
+}): Promise<MarketHistoryResult | null> {
+  try {
+    const q = new URLSearchParams({
+      action: 'market-history',
+      comune: params.comune.toUpperCase(),
+      tipologia: (params.tipologia || 'A').toUpperCase(),
+      limit: String(params.limit || 20),
+    });
+    if (params.provincia?.trim()) q.set('provincia', params.provincia.trim().toUpperCase());
+    const res = await apiFetch(`${API_URL}?${q.toString()}`);
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function dbGenerateAiDraft(params: {
+  perizia: Perizia;
+  sectionId?: string;
+}): Promise<{ text?: string; sections?: Array<{ id: string; contenuto: string }> }> {
+  const res = await apiFetch(`${API_URL}?action=ai-draft`, {
+    method: 'POST',
+    body: JSON.stringify(params),
+  });
+  return res.json();
 }
 
 // ─── SYNC UTILITY ───────────────────────────────────────────────

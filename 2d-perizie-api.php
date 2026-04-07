@@ -20,6 +20,13 @@ define('DB_NAME', 'dbs15508924');
 define('DB_USER', 'dbu4428002');
 define('DB_PASS', 'passwordinterna12');
 define('API_TOKEN', '2dVPro_gK9mP3xW8nQ_2026');   // uguale a VITE_API_TOKEN
+define('AI_PROVIDER', 'openrouter');
+define('AI_BASE_URL', 'https://openrouter.ai/api/v1/chat/completions');
+define('AI_MODEL', 'google/gemma-3-12b-it:free');
+define('AI_FALLBACK_MODEL', 'google/gemma-3n-e4b-it:free');
+define('AI_API_KEY', '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');
+define('AI_SITE_URL', 'https://www.2dsviluppoimmobiliare.it');
+define('AI_SITE_NAME', '2D Valuta Pro');
 
 // CORS — domini autorizzati
 $allowed_origins = [
@@ -110,6 +117,33 @@ function ensureSchema(): void {
             INDEX idx_lookup (comune_nome, anno, semestre, tipologia)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
+
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS quotazioni_storiche (
+            id                   INT AUTO_INCREMENT PRIMARY KEY,
+            perizia_id            VARCHAR(36)  NOT NULL,
+            observed_at           DATE         NOT NULL,
+            comune                VARCHAR(100) NOT NULL,
+            provincia             VARCHAR(10),
+            cap                   VARCHAR(10),
+            tipologia             CHAR(3)      NOT NULL,
+            categoria             VARCHAR(20),
+            indirizzo             VARCHAR(255),
+            source_type           VARCHAR(30)  NOT NULL,
+            source_name           VARCHAR(80)  NOT NULL,
+            source_url            VARCHAR(500),
+            prezzo_totale         DECIMAL(12,2),
+            superficie            DECIMAL(10,2),
+            prezzo_mq             DECIMAL(10,2),
+            anno_riferimento      SMALLINT,
+            semestre_riferimento  TINYINT,
+            note                  TEXT,
+            created_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_market_lookup (comune, provincia, tipologia, observed_at),
+            INDEX idx_market_source (source_type, source_name),
+            UNIQUE KEY uniq_perizia_source (perizia_id, source_type, source_name, indirizzo(120))
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
 }
 
 // ─────────────────────────────────────────────
@@ -138,6 +172,14 @@ try {
 
         case 'omi':
             if ($method === 'GET')  { omiLookup(); break; }
+            break;
+
+        case 'market-history':
+            if ($method === 'GET')  { ensureSchema(); marketHistory(); break; }
+            break;
+
+        case 'ai-draft':
+            if ($method === 'POST') { aiDraft(); break; }
             break;
 
         case 'geocode':
@@ -219,7 +261,206 @@ function savePerizia(): void {
         ':json' => $raw,
     ]);
 
+    storeHistoricalQuotes($db, $data);
+
     echo json_encode(['ok' => true, 'id' => $data['id']]);
+}
+
+function storeHistoricalQuotes(PDO $db, array $data): void {
+    $periziaId = trim((string)($data['id'] ?? ''));
+    if ($periziaId === '') {
+        return;
+    }
+
+    $immobile = $data['datiImmobile'] ?? [];
+    $mercato = $data['analisiMercato'] ?? [];
+    $scheda = $data['schedaTecnica'] ?? [];
+    $comune = strtoupper(trim((string)($immobile['comune'] ?? '')));
+
+    if ($comune === '') {
+        return;
+    }
+
+    $provincia = strtoupper(trim((string)($immobile['provincia'] ?? '')));
+    $cap = trim((string)($immobile['cap'] ?? ''));
+    $indirizzo = trim(implode(', ', array_filter([
+        trim((string)($immobile['via'] ?? '')),
+        trim((string)($immobile['civico'] ?? '')),
+    ])));
+    $tipologia = strtoupper(trim((string)($scheda['tipologia'] ?? 'A')));
+    $categoria = trim((string)($immobile['categoria'] ?? ''));
+    $observedAt = normalizeObservationDate((string)($data['dataModifica'] ?? $data['dataCreazione'] ?? date('Y-m-d')));
+    $annoRiferimento = (int)($mercato['annoOMI'] ?? 0);
+    $semestreRiferimento = resolveHistoricalSemester((string)($mercato['trimestreOMI'] ?? ''));
+
+    $delete = $db->prepare("DELETE FROM quotazioni_storiche WHERE perizia_id = ?");
+    $delete->execute([$periziaId]);
+
+    $insert = $db->prepare("
+        INSERT INTO quotazioni_storiche (
+            perizia_id, observed_at, comune, provincia, cap, tipologia, categoria, indirizzo,
+            source_type, source_name, source_url, prezzo_totale, superficie, prezzo_mq,
+            anno_riferimento, semestre_riferimento, note
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    $prezzoMedioMq = (float)($mercato['prezzoMedioMq'] ?? 0);
+    if ($prezzoMedioMq > 0) {
+        $insert->execute([
+            $periziaId,
+            $observedAt,
+            $comune,
+            $provincia,
+            $cap,
+            $tipologia,
+            $categoria,
+            $indirizzo,
+            'benchmark',
+            trim((string)($mercato['fonteDati'] ?? 'OMI')) ?: 'OMI',
+            '',
+            null,
+            null,
+            $prezzoMedioMq,
+            $annoRiferimento > 0 ? $annoRiferimento : null,
+            $semestreRiferimento,
+            trim((string)($mercato['descrizioneMercato'] ?? '')),
+        ]);
+    }
+
+    foreach (($mercato['comparabili'] ?? []) as $item) {
+        $superficie = (float)($item['superficie'] ?? 0);
+        $prezzo = (float)($item['prezzo'] ?? 0);
+        $prezzoMq = $superficie > 0 && $prezzo > 0 ? round($prezzo / $superficie, 2) : 0;
+
+        if ($prezzoMq <= 0) {
+            continue;
+        }
+
+        $insert->execute([
+            $periziaId,
+            $observedAt,
+            $comune,
+            $provincia,
+            $cap,
+            $tipologia,
+            $categoria,
+            trim((string)($item['indirizzo'] ?? '')) ?: $indirizzo,
+            'comparabile',
+            trim((string)($item['fonte'] ?? 'Portale')) ?: 'Portale',
+            trim((string)($item['url'] ?? '')),
+            $prezzo > 0 ? $prezzo : null,
+            $superficie > 0 ? $superficie : null,
+            $prezzoMq,
+            $annoRiferimento > 0 ? $annoRiferimento : null,
+            $semestreRiferimento,
+            trim((string)($item['note'] ?? '')),
+        ]);
+    }
+}
+
+function marketHistory(): void {
+    $comune = strtoupper(trim((string)($_GET['comune'] ?? '')));
+    $provincia = strtoupper(trim((string)($_GET['provincia'] ?? '')));
+    $tipologia = strtoupper(trim((string)($_GET['tipologia'] ?? 'A')));
+    $limit = max(1, min(60, (int)($_GET['limit'] ?? 20)));
+
+    if ($comune === '') {
+        http_response_code(400);
+        echo json_encode(['error' => 'Missing comune']);
+        return;
+    }
+
+    $db = getDb();
+    $params = [$comune, $tipologia];
+    $provinceSql = '';
+    if ($provincia !== '') {
+        $provinceSql = ' AND provincia = ?';
+        $params[] = $provincia;
+    }
+
+    $stmt = $db->prepare("
+        SELECT observed_at, source_type, source_name, indirizzo, prezzo_totale, superficie, prezzo_mq, source_url, note
+        FROM quotazioni_storiche
+        WHERE comune = ? AND tipologia = ?{$provinceSql} AND prezzo_mq IS NOT NULL AND prezzo_mq > 0
+        ORDER BY observed_at DESC, id DESC
+        LIMIT {$limit}
+    ");
+    $stmt->execute($params);
+    $items = $stmt->fetchAll();
+
+    $seriesStmt = $db->prepare("
+        SELECT DATE_FORMAT(observed_at, '%Y-%m') AS periodo,
+               ROUND(AVG(prezzo_mq), 2) AS avg_prezzo_mq,
+               COUNT(*) AS osservazioni
+        FROM quotazioni_storiche
+        WHERE comune = ? AND tipologia = ?{$provinceSql} AND prezzo_mq IS NOT NULL AND prezzo_mq > 0
+        GROUP BY DATE_FORMAT(observed_at, '%Y-%m')
+        ORDER BY periodo ASC
+        LIMIT 24
+    ");
+    $seriesStmt->execute($params);
+    $series = $seriesStmt->fetchAll();
+
+    $values = array_map(static fn(array $row): float => (float)$row['prezzo_mq'], $items);
+    sort($values);
+    $count = count($values);
+    $media = $count > 0 ? round(array_sum($values) / $count, 2) : 0;
+    $mediana = 0;
+    if ($count > 0) {
+        $mid = intdiv($count, 2);
+        $mediana = $count % 2 === 0
+            ? round(($values[$mid - 1] + $values[$mid]) / 2, 2)
+            : round($values[$mid], 2);
+    }
+
+    $trendMensile = 0;
+    $ultimoPrezzo = $count > 0 ? round((float)$values[$count - 1], 2) : 0;
+    if (count($series) >= 2) {
+        $first = (float)$series[0]['avg_prezzo_mq'];
+        $last = (float)$series[count($series) - 1]['avg_prezzo_mq'];
+        $steps = max(1, count($series) - 1);
+        $trendMensile = round(($last - $first) / $steps, 2);
+        $ultimoPrezzo = round($last, 2);
+    }
+
+    echo json_encode([
+        'comune' => $comune,
+        'provincia' => $provincia,
+        'tipologia' => $tipologia,
+        'summary' => [
+            'osservazioni' => $count,
+            'mediaPrezzoMq' => $media,
+            'medianaPrezzoMq' => $mediana,
+            'minPrezzoMq' => $count > 0 ? round((float)$values[0], 2) : 0,
+            'maxPrezzoMq' => $count > 0 ? round((float)$values[$count - 1], 2) : 0,
+        ],
+        'projection' => [
+            'ultimoPrezzoMq' => $ultimoPrezzo,
+            'trendMensile' => $trendMensile,
+            'proiezione3Mesi' => $ultimoPrezzo > 0 ? round($ultimoPrezzo + ($trendMensile * 3), 2) : 0,
+            'proiezione6Mesi' => $ultimoPrezzo > 0 ? round($ultimoPrezzo + ($trendMensile * 6), 2) : 0,
+        ],
+        'series' => $series,
+        'items' => $items,
+    ]);
+}
+
+function normalizeObservationDate(string $value): string {
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1) {
+        return $value;
+    }
+
+    $ts = strtotime($value);
+    return $ts ? date('Y-m-d', $ts) : date('Y-m-d');
+}
+
+function resolveHistoricalSemester(string $value): ?int {
+    $normalized = strtolower(trim($value));
+    if ($normalized === '') {
+        return null;
+    }
+
+    return (str_contains($normalized, '2') || str_contains($normalized, '3') || str_contains($normalized, '4')) ? 2 : 1;
 }
 
 function deletePerizia(): void {
@@ -227,6 +468,7 @@ function deletePerizia(): void {
     if (!$id) { http_response_code(400); echo json_encode(['error' => 'Missing id']); return; }
 
     $db   = getDb();
+    $db->prepare("DELETE FROM quotazioni_storiche WHERE perizia_id = ?")->execute([$id]);
     $stmt = $db->prepare("DELETE FROM perizie WHERE id = ?");
     $stmt->execute([$id]);
     echo json_encode(['ok' => true]);
@@ -367,6 +609,239 @@ function httpGetJson(string $url, int $timeout = 30): ?array {
 
     $data = json_decode($res['body'], true);
     return is_array($data) ? $data : null;
+}
+
+function httpPostJson(string $url, array $payload, array $headers = [], int $timeout = 60): array {
+    $userAgent = '2D-Perizie-App/1.2 (+https://www.2dsviluppoimmobiliare.it)';
+    $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $baseHeaders = array_merge([
+        'Content-Type: application/json',
+        'Accept: application/json',
+    ], $headers);
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS      => 3,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT        => $timeout,
+            CURLOPT_USERAGENT      => $userAgent,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $json,
+            CURLOPT_HTTPHEADER     => $baseHeaders,
+        ]);
+
+        $body = curl_exec($ch);
+        $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err  = curl_error($ch);
+        curl_close($ch);
+
+        return [
+            'ok'     => $body !== false && $code >= 200 && $code < 400,
+            'status' => $code,
+            'body'   => $body === false ? '' : $body,
+            'error'  => $err ?: null,
+        ];
+    }
+
+    return [
+        'ok' => false,
+        'status' => 0,
+        'body' => '',
+        'error' => 'cURL required for AI provider requests',
+    ];
+}
+
+function aiDraft(): void {
+    if (AI_API_KEY === '') {
+        http_response_code(503);
+        echo json_encode(['error' => 'AI provider non configurato. Inserisci la chiave API server-side.']);
+        return;
+    }
+
+    $payload = json_decode(file_get_contents('php://input'), true);
+    $perizia = $payload['perizia'] ?? null;
+    $sectionId = trim((string)($payload['sectionId'] ?? ''));
+    $mode = $sectionId !== '' ? 'section' : 'full';
+
+    if (!is_array($perizia)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Payload AI non valido']);
+        return;
+    }
+
+    $messages = buildAiMessages($perizia, $sectionId);
+    $models = array_values(array_unique(array_filter([AI_MODEL, AI_FALLBACK_MODEL])));
+    $response = null;
+    $usedModel = AI_MODEL;
+
+    foreach ($models as $candidateModel) {
+        $usedModel = $candidateModel;
+        $candidateMessages = prepareAiMessagesForModel($messages, $candidateModel);
+        $response = httpPostJson(AI_BASE_URL, [
+            'model' => $candidateModel,
+            'temperature' => 0.4,
+            'messages' => $candidateMessages,
+        ], [
+            'Authorization: Bearer ' . AI_API_KEY,
+            'HTTP-Referer: ' . AI_SITE_URL,
+            'X-Title: ' . AI_SITE_NAME,
+        ], 90);
+
+        if ($response['ok']) {
+            break;
+        }
+    }
+
+    if (!$response || !$response['ok']) {
+        $status = (int)($response['status'] ?? 0);
+        $providerBody = json_decode((string)($response['body'] ?? ''), true);
+        $providerMessage = trim((string)($providerBody['error']['metadata']['raw'] ?? $providerBody['error']['message'] ?? $response['error'] ?? ''));
+        http_response_code($status >= 400 ? $status : 502);
+        echo json_encode([
+            'error' => 'Provider AI non disponibile',
+            'details' => $providerMessage !== '' ? $providerMessage : 'Richiesta AI non completata',
+            'providerStatus' => $status,
+            'providerModel' => $usedModel,
+        ]);
+        return;
+    }
+
+    $data = json_decode($response['body'], true);
+    $content = trim((string)($data['choices'][0]['message']['content'] ?? ''));
+    if ($content === '') {
+        http_response_code(502);
+        echo json_encode(['error' => 'Risposta AI vuota']);
+        return;
+    }
+
+    if ($mode === 'section') {
+        echo json_encode(['text' => cleanupAiText($content)]);
+        return;
+    }
+
+    $parsed = extractAiSectionsJson($content);
+    if (!$parsed) {
+        http_response_code(502);
+        echo json_encode(['error' => 'Formato AI non valido']);
+        return;
+    }
+
+    echo json_encode(['sections' => $parsed]);
+}
+
+function buildAiMessages(array $perizia, string $sectionId = ''): array {
+    $draftableTitles = [
+        'premessa' => 'Premessa e Incarico',
+        'descrizione' => 'Descrizione dell\'Immobile',
+        'stato-conservazione' => 'Stato di Conservazione',
+        'analisi-mercato-testo' => 'Analisi di Mercato',
+        'metodologia' => 'Metodologia di Valutazione',
+        'calcoli' => 'Calcoli e Risultati',
+        'conclusioni' => 'Conclusioni',
+        'dichiarazioni' => 'Dichiarazioni del Perito',
+    ];
+
+    $context = json_encode([
+        'numeroPratica' => $perizia['numeroPratica'] ?? '',
+        'datiIncarico' => $perizia['datiIncarico'] ?? [],
+        'datiImmobile' => $perizia['datiImmobile'] ?? [],
+        'schedaTecnica' => $perizia['schedaTecnica'] ?? [],
+        'analisiMercato' => $perizia['analisiMercato'] ?? [],
+        'metodiValutazione' => $perizia['metodiValutazione'] ?? [],
+    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+    $system = 'Sei un redattore tecnico estimativo immobiliare italiano. Scrivi in italiano professionale, sobrio, concreto, senza toni commerciali. Non inventare dati mancanti. Se un dato non esiste, omettilo. Mantieni coerenza con una perizia immobiliare professionale.';
+
+    if ($sectionId !== '') {
+        $title = $draftableTitles[$sectionId] ?? $sectionId;
+        $user = "Usa esclusivamente i dati della perizia seguente e genera solo il testo finale della sezione {$title}, senza titolo, senza elenchi markdown, senza premesse metatestuali.\n\nDATI PERIZIA:\n{$context}";
+        return [
+            ['role' => 'system', 'content' => $system],
+            ['role' => 'user', 'content' => $user],
+        ];
+    }
+
+    $sectionsList = [];
+    foreach ($draftableTitles as $id => $title) {
+        $sectionsList[] = ['id' => $id, 'titolo' => $title];
+    }
+    $sectionsJson = json_encode($sectionsList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $user = "Usa esclusivamente i dati della perizia seguente e genera i testi finali delle sezioni richieste. Rispondi solo con JSON valido nel formato {\"sections\":[{\"id\":\"...\",\"contenuto\":\"...\"}]}. Nessun commento fuori dal JSON.\n\nSEZIONI:\n{$sectionsJson}\n\nDATI PERIZIA:\n{$context}";
+
+    return [
+        ['role' => 'system', 'content' => $system],
+        ['role' => 'user', 'content' => $user],
+    ];
+}
+
+function prepareAiMessagesForModel(array $messages, string $model): array {
+    if (preg_match('/google\/gemma-3(?:n)?-(?:4b|e2b|e4b)-it:free/i', $model) !== 1) {
+        return $messages;
+    }
+
+    $systemParts = [];
+    $otherParts = [];
+    foreach ($messages as $message) {
+        $role = (string)($message['role'] ?? 'user');
+        $content = trim((string)($message['content'] ?? ''));
+        if ($content === '') {
+            continue;
+        }
+
+        if ($role === 'system') {
+            $systemParts[] = $content;
+            continue;
+        }
+
+        $otherParts[] = $content;
+    }
+
+    $merged = trim(implode("\n\n", array_filter([
+        $systemParts ? implode("\n\n", $systemParts) : '',
+        $otherParts ? implode("\n\n", $otherParts) : '',
+    ])));
+
+    return $merged !== ''
+        ? [['role' => 'user', 'content' => $merged]]
+        : $messages;
+}
+
+function cleanupAiText(string $text): string {
+    $text = preg_replace('/^```[a-zA-Z]*\s*/', '', $text) ?? $text;
+    $text = preg_replace('/```$/', '', $text) ?? $text;
+    return trim($text);
+}
+
+function extractAiSectionsJson(string $text): ?array {
+    $clean = cleanupAiText($text);
+    $start = strpos($clean, '{');
+    $end = strrpos($clean, '}');
+    if ($start === false || $end === false || $end <= $start) {
+        return null;
+    }
+
+    $json = substr($clean, $start, $end - $start + 1);
+    $data = json_decode($json, true);
+    if (!is_array($data) || !isset($data['sections']) || !is_array($data['sections'])) {
+        return null;
+    }
+
+    $sections = [];
+    foreach ($data['sections'] as $section) {
+        if (!is_array($section)) {
+            continue;
+        }
+        $id = trim((string)($section['id'] ?? ''));
+        $content = trim((string)($section['contenuto'] ?? ''));
+        if ($id !== '' && $content !== '') {
+            $sections[] = ['id' => $id, 'contenuto' => $content];
+        }
+    }
+
+    return $sections ?: null;
 }
 
 function normalizeLookupValue(string $value): string {

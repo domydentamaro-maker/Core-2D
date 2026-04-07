@@ -1,8 +1,9 @@
 import React from 'react';
 import { SchedaTecnica, TIPOLOGIE_IMMOBILE, TipologiaImmobile } from '@/components/valutazioni/types/perizia';
 import { SectionHeader, SectionCard, FormField, Input, SelectField, TextareaField, FormGrid } from './FormComponents';
-import { Home, Hammer, Building, TreePine, Store, Factory } from 'lucide-react';
+import { Home, Hammer, Building, TreePine, Store, Factory, Plus, Trash2, Calculator } from 'lucide-react';
 import { cn } from '@/components/valutazioni/lib/utils';
+import { calcDettaglioSuperficie, calcSuperficieCommercialeDettaglio, calcSuperficieLordaDettaglio } from '@/components/valutazioni/lib/storage';
 
 interface Sezione3Props {
   data: SchedaTecnica;
@@ -15,10 +16,63 @@ const STATI_CONSERVAZIONE = ['Ottimo', 'Buono', 'Discreto', 'Mediocre', 'Da rist
 const CLASSI_ENERGETICHE = ['A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G'];
 const IMPIANTI_OPTIONS = ['Elettrico', 'Idraulico', 'Gas', 'Riscaldamento autonomo', 'Riscaldamento centralizzato', 'Climatizzazione', 'Antifurto', 'Videocitofonìa', 'Pannelli solari'];
 const DEST_URB_OPTIONS = ['Residenziale', 'Produttivo', 'Commerciale', 'Agricolo', 'Misto'];
+const CRITERI_SUPERFICIE = [
+  { value: 'Interna 100%', label: 'Interna al 100%', coefficiente: 1 },
+  { value: 'Esterna 1/3', label: 'Esterna al 1/3', coefficiente: 1 / 3 },
+  { value: 'Esterna 1/5', label: 'Esterna al 1/5', coefficiente: 1 / 5 },
+  { value: 'Esterna 1/10', label: 'Esterna al 1/10', coefficiente: 1 / 10 },
+  { value: 'Interrata 1/2', label: 'Cantina / interrato al 1/2', coefficiente: 1 / 2 },
+  { value: 'Copertura 1/3', label: 'Terrazzo di copertura al 1/3', coefficiente: 1 / 3 },
+  { value: 'Altro', label: 'Altro coefficiente personalizzato', coefficiente: 1 },
+];
 
 export default function Sezione3({ data, onChange }: Sezione3Props) {
   const update = (field: keyof SchedaTecnica, value: any) => {
     onChange({ ...data, [field]: value });
+  };
+
+  const updateDettaglioSuperficie = (id: string, field: string, value: any) => {
+    const next = (data.dettaglioSuperfici || []).map((item) => item.id === id ? { ...item, [field]: value } : item);
+    update('dettaglioSuperfici', next);
+  };
+
+  const handleCriterioChange = (id: string, criterio: string) => {
+    const preset = CRITERI_SUPERFICIE.find((item) => item.value === criterio);
+    const next = (data.dettaglioSuperfici || []).map((item) => item.id === id
+      ? { ...item, criterio, coefficiente: preset ? Number(preset.coefficiente.toFixed(2)) : item.coefficiente }
+      : item);
+    update('dettaglioSuperfici', next);
+  };
+
+  const addDettaglioSuperficie = () => {
+    update('dettaglioSuperfici', [
+      ...(data.dettaglioSuperfici || []),
+      {
+        id: crypto.randomUUID(),
+        ambiente: '',
+        criterio: 'Interna 100%',
+        coefficiente: 1,
+        lunghezza: 0,
+        larghezza: 0,
+        superficie: 0,
+        note: '',
+      },
+    ]);
+  };
+
+  const removeDettaglioSuperficie = (id: string) => {
+    update('dettaglioSuperfici', (data.dettaglioSuperfici || []).filter((item) => item.id !== id));
+  };
+
+  const totaleLordaDettaglio = calcSuperficieLordaDettaglio(data.dettaglioSuperfici || []);
+  const totaleCommercialeDettaglio = calcSuperficieCommercialeDettaglio(data.dettaglioSuperfici || []);
+
+  const applyDettaglioToSuperfici = () => {
+    onChange({
+      ...data,
+      superficieLorda: totaleLordaDettaglio > 0 ? totaleLordaDettaglio : data.superficieLorda,
+      superficieCommerciale: totaleCommercialeDettaglio > 0 ? totaleCommercialeDettaglio : data.superficieCommerciale,
+    });
   };
 
   const toggleImpianto = (imp: string) => {
@@ -67,16 +121,164 @@ export default function Sezione3({ data, onChange }: Sezione3Props) {
         {(data.tipologia === 'A' || data.tipologia === 'B' || data.tipologia === 'C' || data.tipologia === 'E') && (
           <SectionCard title="Superfici" collapsible defaultOpen>
             <FormGrid cols={3}>
-              <FormField label="Sup. Commerciale" required>
+              <FormField label="Sup. Commerciale" required hint="Puoi compilarla manualmente oppure derivarla dal dettaglio superfici qui sotto.">
                 <Input type="number" value={data.superficieCommerciale || ''} onChange={e => update('superficieCommerciale', +e.target.value)} unit="mq" />
               </FormField>
-              <FormField label="Sup. Lorda">
+              <FormField label="Sup. Lorda" hint="Valore di sintesi dell'involucro misurato.">
                 <Input type="number" value={data.superficieLorda || ''} onChange={e => update('superficieLorda', +e.target.value)} unit="mq" />
               </FormField>
               <FormField label="Sup. Netta">
                 <Input type="number" value={data.superficieNetta || ''} onChange={e => update('superficieNetta', +e.target.value)} unit="mq" />
               </FormField>
             </FormGrid>
+
+            <div className="mt-6 border-t border-[#D4C9B0] pt-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h4 className="font-playfair text-base font-bold text-[#1A1A1A]">Dettaglio superfici e criteri di ragguaglio</h4>
+                  <p className="text-xs font-source text-[#5C5346]/70 mt-1">
+                    Inserisci i vani o gli spazi misurati e specifica il criterio: interni al 100%, esterni a 1/3, 1/5 o 1/10, cantine/interrati a 1/2, terrazzi di copertura al dettaglio.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={addDettaglioSuperficie}
+                  className="flex items-center gap-2 px-3 py-2 bg-[#1A1A1A] text-[#C8A96E] rounded text-xs font-source hover:bg-[#2A2A2A] transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Aggiungi voce
+                </button>
+              </div>
+
+              {(data.dettaglioSuperfici || []).length > 0 ? (
+                <div className="space-y-3">
+                  <div className="overflow-x-auto border border-[#D4C9B0] rounded">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-[#1A1A1A]">
+                          {['Ambiente', 'Criterio', 'Coeff.', 'Lungh.', 'Largh.', 'Sup. reale', 'Sup. comm.', 'Note', ''].map((label) => (
+                            <th key={label} className="px-3 py-2 text-left text-xs font-source text-[#C8A96E] uppercase tracking-wide">{label}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(data.dettaglioSuperfici || []).map((item, index) => {
+                          const superficieReale = calcDettaglioSuperficie(item);
+                          const superficieCommerciale = Number((superficieReale * (item.coefficiente || 0)).toFixed(2));
+                          return (
+                            <tr key={item.id} className={index % 2 === 0 ? 'bg-[#F5F0E8]' : 'bg-[#FDFAF4]'}>
+                              <td className="px-3 py-2 align-top">
+                                <input
+                                  type="text"
+                                  value={item.ambiente}
+                                  onChange={e => updateDettaglioSuperficie(item.id, 'ambiente', e.target.value)}
+                                  className="w-36 bg-transparent border-0 border-b border-[#D4C9B0] focus:outline-none focus:border-[#C8A96E] font-source text-[#1A1A1A]"
+                                  placeholder="Es. soggiorno, balcone"
+                                />
+                              </td>
+                              <td className="px-3 py-2 align-top">
+                                <select
+                                  value={item.criterio}
+                                  onChange={e => handleCriterioChange(item.id, e.target.value)}
+                                  className="w-40 bg-transparent border-0 border-b border-[#D4C9B0] focus:outline-none focus:border-[#C8A96E] font-source text-[#1A1A1A]"
+                                >
+                                  {CRITERI_SUPERFICIE.map((criterio) => (
+                                    <option key={criterio.value} value={criterio.value}>{criterio.label}</option>
+                                  ))}
+                                </select>
+                              </td>
+                              <td className="px-3 py-2 align-top">
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={item.coefficiente || ''}
+                                  onChange={e => updateDettaglioSuperficie(item.id, 'coefficiente', +e.target.value)}
+                                  className="w-16 bg-transparent border-0 border-b border-[#D4C9B0] focus:outline-none focus:border-[#C8A96E] font-source text-[#1A1A1A] text-right"
+                                />
+                              </td>
+                              <td className="px-3 py-2 align-top">
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={item.lunghezza || ''}
+                                  onChange={e => updateDettaglioSuperficie(item.id, 'lunghezza', +e.target.value)}
+                                  className="w-20 bg-transparent border-0 border-b border-[#D4C9B0] focus:outline-none focus:border-[#C8A96E] font-source text-[#1A1A1A] text-right"
+                                />
+                              </td>
+                              <td className="px-3 py-2 align-top">
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={item.larghezza || ''}
+                                  onChange={e => updateDettaglioSuperficie(item.id, 'larghezza', +e.target.value)}
+                                  className="w-20 bg-transparent border-0 border-b border-[#D4C9B0] focus:outline-none focus:border-[#C8A96E] font-source text-[#1A1A1A] text-right"
+                                />
+                              </td>
+                              <td className="px-3 py-2 align-top">
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={item.superficie || ''}
+                                  onChange={e => updateDettaglioSuperficie(item.id, 'superficie', +e.target.value)}
+                                  className="w-20 bg-transparent border-0 border-b border-[#D4C9B0] focus:outline-none focus:border-[#C8A96E] font-source text-[#1A1A1A] text-right"
+                                  placeholder={superficieReale > 0 ? String(superficieReale) : 'mq'}
+                                />
+                              </td>
+                              <td className="px-3 py-2 align-top text-right font-source font-700 text-[#1A1A1A]">
+                                {superficieCommerciale > 0 ? superficieCommerciale.toFixed(2) : '—'}
+                              </td>
+                              <td className="px-3 py-2 align-top">
+                                <input
+                                  type="text"
+                                  value={item.note}
+                                  onChange={e => updateDettaglioSuperficie(item.id, 'note', e.target.value)}
+                                  className="w-40 bg-transparent border-0 border-b border-[#D4C9B0] focus:outline-none focus:border-[#C8A96E] font-source text-[#1A1A1A]"
+                                  placeholder="Es. terrazzo, quota 1/5"
+                                />
+                              </td>
+                              <td className="px-3 py-2 align-top">
+                                <button
+                                  type="button"
+                                  onClick={() => removeDettaglioSuperficie(item.id)}
+                                  className="text-[#5C5346] hover:text-red-600 transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
+                      <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Totale superfici reali</p>
+                      <p className="font-playfair text-2xl text-[#1A1A1A]">{totaleLordaDettaglio > 0 ? `${totaleLordaDettaglio.toFixed(2)} mq` : '—'}</p>
+                    </div>
+                    <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
+                      <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Totale commerciale</p>
+                      <p className="font-playfair text-2xl text-[#1A1A1A]">{totaleCommercialeDettaglio > 0 ? `${totaleCommercialeDettaglio.toFixed(2)} mq` : '—'}</p>
+                    </div>
+                    <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8] flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={applyDettaglioToSuperfici}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#C8A96E] text-[#1A1A1A] rounded text-sm font-source font-600 hover:bg-[#B8996E] transition-colors"
+                      >
+                        <Calculator className="w-4 h-4" />
+                        Applica ai totali
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="border border-dashed border-[#D4C9B0] rounded p-4 bg-[#F5F0E8]">
+                  <p className="text-sm font-source text-[#5C5346]">Nessun dettaglio inserito. Aggiungi i vani e gli spazi per documentare come si arriva alla superficie lorda e commerciale.</p>
+                </div>
+              )}
+            </div>
           </SectionCard>
         )}
 

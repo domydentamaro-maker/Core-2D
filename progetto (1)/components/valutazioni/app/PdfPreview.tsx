@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Perizia } from '@/components/valutazioni/types/perizia';
-import { calcValoreFinale, formatCurrency } from '@/components/valutazioni/lib/storage';
+import { calcValoreFinale, formatCurrency, calcDettaglioSuperficie, calcFontiMercatoAttive, calcMediaPrezzoMqComparabili, calcMedianaPrezzoMqComparabili, calcPrezzoMqComparabile, calcPrezzoMqFontiSelezionate } from '@/components/valutazioni/lib/storage';
 import { resolvePdfSections } from '@/components/valutazioni/lib/reportText';
 import { X, Download, Loader2 } from 'lucide-react';
 
@@ -20,6 +20,16 @@ export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewP
     includiSezione5: true,
     includiSezione6: true,
     includiSezione7: true,
+    mostraCommittente: true,
+    mostraPerito: true,
+    mostraLocalizzazione: true,
+    mostraCatasto: true,
+    mostraRegolarita: true,
+    mostraDettaglioSuperfici: true,
+    mostraFonteOmi: true,
+    mostraFonteWeb: true,
+    mostraFonteStorico: true,
+    mostraValoreFinale: true,
     qualitaFoto: 'alta' as 'alta' | 'media',
   });
 
@@ -78,6 +88,32 @@ export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewP
               <span className="text-sm font-source text-[#1A1A1A]">{label}</span>
             </label>
           ))}
+
+          <div className="pt-2 border-t border-[#D4C9B0] space-y-2">
+            <p className="text-xs font-source text-[#5C5346] uppercase tracking-wider mb-1">Blocchi da mostrare</p>
+            {[
+              { key: 'mostraCommittente', label: 'Committente' },
+              { key: 'mostraPerito', label: 'Perito' },
+              { key: 'mostraLocalizzazione', label: 'Localizzazione' },
+              { key: 'mostraCatasto', label: 'Dati catastali' },
+              { key: 'mostraRegolarita', label: 'Regolarità documentale' },
+              { key: 'mostraDettaglioSuperfici', label: 'Dettaglio superfici' },
+              { key: 'mostraFonteOmi', label: 'Fonte OMI' },
+              { key: 'mostraFonteWeb', label: 'Fonte rete web' },
+              { key: 'mostraFonteStorico', label: 'Fonte storico database' },
+              { key: 'mostraValoreFinale', label: 'Valore finale' },
+            ].map(({ key, label }) => (
+              <label key={key} className="flex items-center gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={(options as any)[key]}
+                  onChange={e => setOptions({ ...options, [key]: e.target.checked })}
+                  className="accent-[#C8A96E]"
+                />
+                <span className="text-sm font-source text-[#1A1A1A]">{label}</span>
+              </label>
+            ))}
+          </div>
 
           <div className="pt-2 border-t border-[#D4C9B0]">
             <p className="text-xs font-source text-[#5C5346] uppercase tracking-wider mb-3">Qualità Foto</p>
@@ -227,6 +263,23 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   const { valori } = calcValoreFinale(perizia.metodiValutazione);
   const sezioni = resolvePdfSections(perizia);
   const comparabili = mercato.comparabili.filter((item) => item.indirizzo || item.superficie || item.prezzo || item.note);
+  const dettaglioSuperfici = (s.dettaglioSuperfici || []).filter((item) => item.ambiente || item.superficie || (item.lunghezza && item.larghezza));
+  const fontiMercato = calcFontiMercatoAttive(mercato);
+  const mediaComparabili = calcMediaPrezzoMqComparabili(mercato.comparabili);
+  const medianaComparabili = calcMedianaPrezzoMqComparabili(mercato.comparabili);
+  const valoreFontiSelezionate = calcPrezzoMqFontiSelezionate(mercato);
+  const footerHtml = `
+    <div class="page-footer">
+      <div>
+        <strong>2D Sviluppo Immobiliare di Dentamaro Domenico</strong><br/>
+        Viale De Laurentis 21/F Bari
+      </div>
+      <div class="page-footer-right">
+        P.IVA 07535940725<br/>
+        REA BA-564522
+      </div>
+    </div>
+  `;
 
   const superficiLabel = s.tipologia === 'D' ? 'Superficie terreno' : 'Superficie commerciale';
   const superficiValue = s.tipologia === 'D' ? valueOrDash(s.superficieTerreno) : valueOrDash(s.superficieCommerciale);
@@ -236,6 +289,13 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
     `Agibilità: ${formatBool(imm.agibilita)}`,
     `Vincoli/ipoteche: ${formatBool(imm.ipoteche)}`,
   ].join(' · ');
+  const noteRegolarita = [
+    imm.dettagliUrbanistica ? `Note urbanistiche: ${escapeHtml(imm.dettagliUrbanistica)}` : '',
+    imm.dettagliCatastale ? `Note catastali: ${escapeHtml(imm.dettagliCatastale)}` : '',
+    imm.dettagliAbusiEdilizi ? `Condoni / sanatorie: ${escapeHtml(imm.dettagliAbusiEdilizi)}` : '',
+    imm.dettagliAgibilita ? `Agibilità / abitabilità: ${escapeHtml(imm.dettagliAgibilita)}` : '',
+    imm.dettagliIpoteche ? `Dettagli vincoli/ipoteche: ${escapeHtml(imm.dettagliIpoteche)}` : '',
+  ].filter(Boolean).join('<br/><br/>');
 
   return `<!DOCTYPE html>
 <html lang="it">
@@ -262,10 +322,12 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   .cover-value-box .label { color: #5C5346; font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em; }
   .cover-value-box .value { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: #1A1A1A; margin-top: 8px; }
   .cover-footer { display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px; color: #5C5346; }
-  .page { background: #F8F4EC; padding: 34px 38px 42px; page-break-after: always; }
+  .page { position: relative; background: #F8F4EC; padding: 34px 38px 92px; page-break-after: always; }
   .page-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #C8A96E; padding-bottom: 12px; margin-bottom: 24px; }
   .page-header h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: #1A1A1A; }
   .page-header span { font-size: 10px; color: #5C5346; }
+  .page-footer { position: absolute; left: 38px; right: 38px; bottom: 22px; border-top: 1px solid #C8A96E; padding-top: 10px; display: flex; justify-content: space-between; gap: 24px; font-size: 10px; color: #5C5346; line-height: 1.45; }
+  .page-footer-right { text-align: right; }
   .field { margin-bottom: 16px; }
   .field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #5C5346; display: block; margin-bottom: 4px; }
   .field p { font-size: 13px; font-weight: 600; color: #1A1A1A; border-bottom: 1px solid #D4C9B0; padding-bottom: 6px; min-height: 24px; }
@@ -321,16 +383,16 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
         <div class="label">Immobile</div>
         <div class="value">${escapeHtml([imm.via, imm.civico].filter(Boolean).join(' ') || 'Indirizzo da completare')}<br/>${escapeHtml(imm.comune || 'Comune da completare')} (${escapeHtml(imm.provincia || '—')})</div>
       </div>
-      <div class="cover-card">
+      ${options.mostraCommittente ? `<div class="cover-card">
         <div class="label">Incarico</div>
         <div class="value">Committente: ${escapeHtml(d.committenteNome || '—')}<br/>Finalità: ${escapeHtml(d.finalita.join(', ') || '—')}</div>
-      </div>
+      </div>` : ''}
     </div>
-    ${valoreFinale > 0 ? `<div class="cover-value-box"><p class="label">Valore di Stima</p><p class="value">${formatCurrency(valoreFinale)}</p></div>` : `<div class="empty-box"><p>Valore finale non ancora determinato. Il documento riporta comunque il quadro tecnico, documentale e di mercato disponibile.</p></div>`}
+    ${options.mostraValoreFinale ? (valoreFinale > 0 ? `<div class="cover-value-box"><p class="label">Valore di Stima</p><p class="value">${formatCurrency(valoreFinale)}</p></div>` : `<div class="empty-box"><p>Valore finale non ancora determinato. Il documento riporta comunque il quadro tecnico, documentale e di mercato disponibile.</p></div>`) : ''}
   </div>
   <div class="cover-footer">
-    <div>Perito: ${escapeHtml(d.peritoNome || 'Domenico Dentamaro')} · ${escapeHtml(d.peritoQualifica || 'Perito Immobiliare')}</div>
-    <div>Documento riservato</div>
+    <div>2D Sviluppo Immobiliare di Dentamaro Domenico<br/>Viale De Laurentis 21/F Bari</div>
+    <div>P.IVA 07535940725<br/>REA BA-564522</div>
   </div>
 </div>
 
@@ -344,12 +406,13 @@ ${options.includiSezione1 ? `
   <div class="grid-2">
     <div class="field"><label>Data Perizia</label><p>${escapeHtml(d.dataPerizia || dataIT)}</p></div>
     <div class="field"><label>Data Sopralluogo</label><p>${escapeHtml(d.dataSopralluogo || '—')}</p></div>
-    <div class="field"><label>Committente</label><p>${escapeHtml(d.committenteNome || '—')}</p></div>
+    ${options.mostraCommittente ? `<div class="field"><label>Committente</label><p>${escapeHtml(d.committenteNome || '—')}</p></div>
     <div class="field"><label>Indirizzo Committente</label><p>${escapeHtml(d.committenteIndirizzo || '—')}</p></div>
-    <div class="field"><label>CF / P.IVA</label><p>${escapeHtml(d.committenteCfPiva || '—')}</p></div>
+    <div class="field"><label>CF / P.IVA</label><p>${escapeHtml(d.committenteCfPiva || '—')}</p></div>` : ''}
     <div class="field"><label>Finalità</label><p>${escapeHtml(d.finalita.join(', ') || '—')}</p></div>
-    <div class="field"><label>Perito</label><p>${escapeHtml(`${d.peritoNome} · ${d.peritoQualifica}`)}</p></div>
+    ${options.mostraPerito ? `<div class="field"><label>Perito</label><p>${escapeHtml(`${d.peritoNome} · ${d.peritoQualifica}`)}</p></div>` : ''}
   </div>
+  ${footerHtml}
 </div>` : ''}
 
 ${options.includiSezione2 ? `
@@ -359,15 +422,15 @@ ${options.includiSezione2 ? `
     <h2>Dati Identificativi Immobile</h2>
     <span>2D Valuta Pro · ${dataIT}</span>
   </div>
-  <div class="section-card">
+  ${options.mostraLocalizzazione ? `<div class="section-card">
     <h3>Localizzazione</h3>
     <div class="grid-3">
       <div class="field"><label>Indirizzo</label><p>${escapeHtml([imm.via, imm.civico].filter(Boolean).join(' ') || '—')}</p></div>
       <div class="field"><label>Comune</label><p>${escapeHtml(imm.comune || '—')}</p></div>
       <div class="field"><label>CAP / Provincia</label><p>${escapeHtml(`${valueOrDash(imm.cap)} · ${valueOrDash(imm.provincia)}`)}</p></div>
     </div>
-  </div>
-  <div class="section-card">
+  </div>` : ''}
+  ${options.mostraCatasto ? `<div class="section-card">
     <h3>Dati Catastali e Provenienza</h3>
     <div class="grid-3">
       <div class="field"><label>Foglio</label><p>${escapeHtml(valueOrDash(imm.foglio))}</p></div>
@@ -377,8 +440,9 @@ ${options.includiSezione2 ? `
       <div class="field"><label>Classe / Rendita</label><p>${escapeHtml(`${valueOrDash(imm.classe)} · ${valueOrDash(imm.rendita)}`)}</p></div>
       <div class="field"><label>Tipo Proprietà</label><p>${escapeHtml(valueOrDash(imm.tipoProprietà))}</p></div>
     </div>
-  </div>
-  <div class="note-box"><p>${escapeHtml(statoUrbanistico)}${imm.dettagliUrbanistica ? `<br/>Note urbanistiche: ${escapeHtml(imm.dettagliUrbanistica)}` : ''}${imm.dettagliIpoteche ? `<br/>Dettagli vincoli/ipoteche: ${escapeHtml(imm.dettagliIpoteche)}` : ''}</p></div>
+  </div>` : ''}
+  ${options.mostraRegolarita ? `<div class="note-box"><p>${escapeHtml(statoUrbanistico)}${noteRegolarita ? `<br/><br/>${noteRegolarita}` : ''}</p></div>` : ''}
+  ${footerHtml}
 </div>` : ''}
 
 ${options.includiSezione3 ? `
@@ -408,6 +472,21 @@ ${options.includiSezione3 ? `
   ${s.tipologia === 'D' ? `<div class="note-box"><p>Destinazione urbanistica: ${escapeHtml(valueOrDash(s.destinazioneUrbanistica))}. Indice di edificabilità: ${escapeHtml(valueOrDash(s.indiceEdificabilita))} mc/mq.</p></div>` : ''}
   ${s.tipologia === 'E' ? `<div class="note-box"><p>Superficie vetrine: ${escapeHtml(valueOrDash(s.superficieVetrine))} ml. Visibilità e posizionamento: ${escapeHtml(valueOrDash(s.visibilitaNote))}.</p></div>` : ''}
   ${s.tipologia === 'F' ? `<div class="note-box"><p>Altezza utile: ${escapeHtml(valueOrDash(s.altezzaUtile))} m. Accessi: ${escapeHtml(valueOrDash(s.accessiNote))}. Impianti industriali: ${escapeHtml(valueOrDash(s.impiantiIndustriali))}.</p></div>` : ''}
+  ${options.mostraDettaglioSuperfici && dettaglioSuperfici.length > 0 ? `
+  <div class="section-card">
+    <h3>Dettaglio Superfici e Ragguagli</h3>
+    <table>
+      <thead><tr><th>Ambiente</th><th>Criterio</th><th>Sup. reale</th><th>Coeff.</th><th>Sup. commerciale</th><th>Note</th></tr></thead>
+      <tbody>
+        ${dettaglioSuperfici.map((item) => {
+          const superficieReale = calcDettaglioSuperficie(item);
+          const superficieCommerciale = Number((superficieReale * (item.coefficiente || 0)).toFixed(2));
+          return `<tr><td>${escapeHtml(item.ambiente || '—')}</td><td>${escapeHtml(item.criterio || '—')}</td><td>${superficieReale > 0 ? `${escapeHtml(superficieReale.toFixed(2))} mq` : '—'}</td><td>${escapeHtml((item.coefficiente || 0).toFixed(2))}</td><td>${superficieCommerciale > 0 ? `${escapeHtml(superficieCommerciale.toFixed(2))} mq` : '—'}</td><td>${escapeHtml(item.note || '—')}</td></tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>` : ''}
+  ${footerHtml}
 </div>` : ''}
 
 ${options.includiSezione4 ? `
@@ -420,24 +499,37 @@ ${options.includiSezione4 ? `
   <div class="grid-4">
     <div class="metric"><div class="k">Prezzo medio</div><div class="v">${mercato.prezzoMedioMq > 0 ? escapeHtml(formatCurrency(mercato.prezzoMedioMq)) : '—'}</div><div class="s">per metro quadrato</div></div>
     <div class="metric"><div class="k">Range OMI / mercato</div><div class="v">${mercato.prezzoMin > 0 ? escapeHtml(formatCurrency(mercato.prezzoMin)) : '—'} - ${mercato.prezzoMax > 0 ? escapeHtml(formatCurrency(mercato.prezzoMax)) : '—'}</div><div class="s">valori unitari min/max</div></div>
-    <div class="metric"><div class="k">Trend</div><div class="v">${escapeHtml(valueOrDash(mercato.tendenzaMercato))}</div><div class="s">Domanda ${escapeHtml(valueOrDash(mercato.domanda))}</div></div>
-    <div class="metric"><div class="k">Fonte</div><div class="v">${escapeHtml(valueOrDash(mercato.fonteDati))}</div><div class="s">${escapeHtml(`${valueOrDash(mercato.annoOMI)} · ${valueOrDash(mercato.trimestreOMI)}`)}</div></div>
+    <div class="metric"><div class="k">Fonti attive</div><div class="v">${escapeHtml(fontiMercato.length > 0 ? fontiMercato.join(' + ') : '—')}</div><div class="s">Report selezionato</div></div>
+    <div class="metric"><div class="k">Media fonti scelte</div><div class="v">${valoreFontiSelezionate > 0 ? escapeHtml(formatCurrency(valoreFontiSelezionate)) : '—'}</div><div class="s">Combinazione delle fonti attive</div></div>
   </div>
   <div class="section-card" style="margin-top:16px;">
     <h3>Quadro di Mercato</h3>
     <p style="font-size:12px; line-height:1.8; color:#1A1A1A; white-space:pre-line;">${escapeHtml(valueOrDash(mercato.descrizioneMercato)).replace(/\n/g, '<br/>')}</p>
     <div class="note-box"><p>Tempi medi di vendita: ${escapeHtml(valueOrDash(mercato.tempiMediVendita))}. Liquidabilità: ${escapeHtml(valueOrDash(mercato.liquidabilita))}.</p></div>
   </div>
+  ${(options.mostraFonteOmi && mercato.prezzoOmiMq > 0) || (options.mostraFonteWeb && mediaComparabili > 0) || (options.mostraFonteStorico && mercato.prezzoStoricoMq > 0) ? `
+  <div class="section-card">
+    <h3>Report Fonti di Comparazione</h3>
+    <table>
+      <thead><tr><th>Fonte</th><th>€/mq</th><th>Stato</th><th>Riferimento</th></tr></thead>
+      <tbody>
+        ${options.mostraFonteOmi && mercato.prezzoOmiMq > 0 ? `<tr><td>OMI</td><td>${escapeHtml(formatCurrency(mercato.prezzoOmiMq))}</td><td>${mercato.usaFonteOmi ? 'Attiva' : 'Esclusa'}</td><td>${escapeHtml(`${valueOrDash(mercato.annoOMI)} · ${valueOrDash(mercato.trimestreOMI)}`)}</td></tr>` : ''}
+        ${options.mostraFonteWeb && mediaComparabili > 0 ? `<tr><td>Rete web / comparabili</td><td>${escapeHtml(formatCurrency(mediaComparabili))}</td><td>${mercato.usaFonteWeb ? 'Attiva' : 'Esclusa'}</td><td>Mediana ${medianaComparabili > 0 ? escapeHtml(formatCurrency(medianaComparabili)) : '—'}</td></tr>` : ''}
+        ${options.mostraFonteStorico && mercato.prezzoStoricoMq > 0 ? `<tr><td>Storico database</td><td>${escapeHtml(formatCurrency(mercato.prezzoStoricoMq))}</td><td>${mercato.usaFonteStorico ? 'Attiva' : 'Esclusa'}</td><td>Archivio pratiche interne</td></tr>` : ''}
+      </tbody>
+    </table>
+  </div>` : ''}
   ${comparabili.length > 0 ? `
   <div class="section-card">
     <h3>Comparabili Rilevati</h3>
     <table>
-      <thead><tr><th>Indirizzo</th><th>Superficie</th><th>Prezzo</th><th>Note</th></tr></thead>
+      <thead><tr><th>Fonte</th><th>Indirizzo</th><th>Superficie</th><th>Prezzo</th><th>€/mq</th><th>Note</th></tr></thead>
       <tbody>
-        ${comparabili.map((item) => `<tr><td>${escapeHtml(item.indirizzo || '—')}</td><td>${escapeHtml(valueOrDash(item.superficie))} mq</td><td>${item.prezzo ? escapeHtml(formatCurrency(item.prezzo)) : '—'}</td><td>${escapeHtml(item.note || '—')}</td></tr>`).join('')}
+        ${comparabili.map((item) => `<tr><td>${escapeHtml(item.fonte || '—')}</td><td>${escapeHtml(item.indirizzo || item.url || '—')}</td><td>${escapeHtml(valueOrDash(item.superficie))} mq</td><td>${item.prezzo ? escapeHtml(formatCurrency(item.prezzo)) : '—'}</td><td>${calcPrezzoMqComparabile(item) > 0 ? escapeHtml(formatCurrency(calcPrezzoMqComparabile(item))) : '—'}</td><td>${escapeHtml(item.note || '—')}</td></tr>`).join('')}
       </tbody>
     </table>
   </div>` : ''}
+  ${footerHtml}
 </div>` : ''}
 
 ${options.includiSezione5 && valori.length > 0 ? `
@@ -457,7 +549,8 @@ ${options.includiSezione5 && valori.length > 0 ? `
       }).join('')}
     </tbody>
   </table>
-  ${valoreFinale > 0 ? `<div class="value-final"><p class="label">Valore di Stima Finale</p><p class="amount">${formatCurrency(valoreFinale)}</p><p style="font-size:11px;color:#5C5346;margin-top:8px">Range: ${formatCurrency(valoreFinale * 0.92)} — ${formatCurrency(valoreFinale * 1.08)}</p></div>` : ''}
+  ${options.mostraValoreFinale && valoreFinale > 0 ? `<div class="value-final"><p class="label">Valore di Stima Finale</p><p class="amount">${formatCurrency(valoreFinale)}</p><p style="font-size:11px;color:#5C5346;margin-top:8px">Range: ${formatCurrency(valoreFinale * 0.92)} — ${formatCurrency(valoreFinale * 1.08)}</p></div>` : ''}
+  ${footerHtml}
 </div>` : ''}
 
 ${options.includiSezione5 && valori.length === 0 ? `
@@ -467,6 +560,7 @@ ${options.includiSezione5 && valori.length === 0 ? `
     <span>2D Valuta Pro · ${dataIT}</span>
   </div>
   <div class="empty-box"><p>I metodi estimativi non risultano ancora completati. Per ottenere un valore professionale occorre valorizzare almeno il metodo comparativo oppure uno dei metodi alternativi previsti.</p></div>
+  ${footerHtml}
 </div>` : ''}
 
 ${options.includiSezione6 && perizia.foto.filter(f => f.includiPdf).length > 0 ? `
@@ -484,6 +578,7 @@ ${options.includiSezione6 && perizia.foto.filter(f => f.includiPdf).length > 0 ?
       </div>
     `).join('')}
   </div>
+  ${footerHtml}
 </div>` : ''}
 
 ${options.includiSezione7 && perizia.sezioniTestuali.length > 0 ? `
@@ -502,6 +597,7 @@ ${options.includiSezione7 && perizia.sezioniTestuali.length > 0 ? `
   <div class="legal-note">
     <p>La presente perizia è stata redatta da Domenico Dentamaro – Agente Immobiliare e Consulente del settore – con sede in Bari (BA), Puglia. Il valore stimato espresso nella presente perizia si riferisce alla data di sopralluogo indicata e alle condizioni di mercato rilevate in tale data. — 2D Sviluppo Immobiliare, Domenico Dentamaro — Bari, Puglia</p>
   </div>
+  ${footerHtml}
 </div>` : ''}
 
 </body>

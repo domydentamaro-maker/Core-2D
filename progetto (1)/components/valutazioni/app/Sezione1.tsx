@@ -1,7 +1,6 @@
 import React from 'react';
 import { DatiIncarico, FINALITA_VALUTAZIONE } from '@/components/valutazioni/types/perizia';
 import { SectionHeader, SectionCard, FormField, Input, SelectField, TextareaField, FormGrid } from './FormComponents';
-import { Upload, X } from 'lucide-react';
 
 interface Sezione1Props {
   data: DatiIncarico;
@@ -20,14 +19,6 @@ export default function Sezione1({ data, onChange }: Sezione1Props) {
     update('finalita', finalita);
   };
 
-  const handleFirmaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => update('firmaUrl', ev.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
   return (
     <div className="max-w-3xl">
       <SectionHeader numero={1} title="Dati Identificativi Incarico" />
@@ -39,7 +30,7 @@ export default function Sezione1({ data, onChange }: Sezione1Props) {
               <Input
                 value={data.numeroPratica}
                 onChange={e => update('numeroPratica', e.target.value)}
-                placeholder="es. 2D-2024-0001"
+                placeholder="es. 2D-2026-04-001"
               />
             </FormField>
             <FormField label="Data Sopralluogo" required>
@@ -120,38 +111,17 @@ export default function Sezione1({ data, onChange }: Sezione1Props) {
                 <Input
                   value={data.peritoNome}
                   onChange={e => update('peritoNome', e.target.value)}
+                  placeholder="Domenico Dentamaro"
                 />
               </FormField>
               <FormField label="Qualifica">
                 <Input
                   value={data.peritoQualifica}
                   onChange={e => update('peritoQualifica', e.target.value)}
+                  placeholder="Agente Immobiliare"
                 />
-              </FormField>
-            </FormGrid>
-
-            <FormField label="Firma / Timbro (opzionale)">
-              {data.firmaUrl ? (
-                <div className="flex items-start gap-4">
-                  <div className="w-40 h-20 border border-[#D4C9B0] rounded bg-white flex items-center justify-center overflow-hidden">
-                    <img src={data.firmaUrl} alt="Firma" className="max-w-full max-h-full object-contain" />
-                  </div>
-                  <button
-                    onClick={() => update('firmaUrl', '')}
-                    className="flex items-center gap-1 text-xs text-red-600 hover:text-red-800 font-source mt-1"
-                  >
-                    <X className="w-3 h-3" />
-                    Rimuovi
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-[#D4C9B0] rounded cursor-pointer hover:border-[#C8A96E] hover:bg-[#C8A96E]/5 transition-all">
-                  <Upload className="w-5 h-5 text-[#5C5346]/50 mb-1" />
-                  <span className="text-xs font-source text-[#5C5346]/60">Clicca per caricare firma o timbro</span>
-                  <input type="file" accept="image/*" onChange={handleFirmaUpload} className="hidden" />
-                </label>
-              )}
             </FormField>
+            </FormGrid>
           </div>
         </SectionCard>
       </div>
