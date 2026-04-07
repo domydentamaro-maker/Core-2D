@@ -148,7 +148,7 @@ if ($operazioni_query->have_posts()) {
 get_header(); ?>
 
 <!-- Hero Section -->
-<section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+<section class="relative min-h-[100svh] md:h-screen w-full flex items-center justify-center overflow-hidden pt-32 md:pt-0 pb-12 md:pb-0">
     <div class="absolute inset-0 w-full h-full">
         <img
             src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80"
@@ -159,7 +159,7 @@ get_header(); ?>
         <div class="absolute inset-0 bg-gradient-to-b from-ink/60 via-transparent to-ink/90"></div>
     </div>
 
-    <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto mt-20">
+    <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto mt-0 md:mt-20">
         <div class="animate-fadeInUp">
             <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif text-white font-light tracking-tight mb-4 drop-shadow-lg whitespace-nowrap">
                 Visioni <br class="md:hidden" /> <span class="italic text-gold">Immobiliari</span>
@@ -172,48 +172,78 @@ get_header(); ?>
             </p>
         </div>
 
-        <!-- Search Bar -->
-        <div class="mt-12 max-w-5xl mx-auto bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20 shadow-2xl animate-fadeInUp" style="animation-delay: 0.4s;">
-            <div class="bg-white rounded-xl p-2 grid grid-cols-1 lg:grid-cols-5 gap-2 items-center">
-                <div class="flex items-center px-4 py-3 w-full border-b lg:border-b-0 lg:border-r border-gray-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gold mr-3 shrink-0"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <input type="text" placeholder="Dove vuoi vivere?" class="w-full bg-transparent outline-none text-ink placeholder:text-gray-400 font-medium text-sm">
+        <!-- Search Bar Premium -->
+        <form method="get" action="<?php echo esc_url( home_url( '/immobili/' ) ); ?>" class="mt-12 max-w-6xl mx-auto bg-white/10 backdrop-blur-xl p-3 rounded-3xl border border-white/25 shadow-[0_30px_80px_rgba(0,0,0,0.35)] animate-fadeInUp" style="animation-delay: 0.4s;">
+            <div class="bg-white rounded-2xl p-4 md:p-5 text-left">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-gray-200">
+                    <p class="text-[11px] tracking-[0.22em] uppercase font-semibold text-ink/60">Ricerca Strategica</p>
+                    <a href="<?php echo esc_url( home_url( '/immobili/' ) ); ?>" class="text-[11px] tracking-[0.18em] uppercase font-semibold text-ink/60 hover:text-gold transition-colors">Ricerca avanzata</a>
                 </div>
-                <div class="flex items-center px-4 py-3 w-full border-b lg:border-b-0 lg:border-r border-gray-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gold mr-3 shrink-0"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    <select class="w-full bg-transparent outline-none text-ink font-medium appearance-none cursor-pointer text-sm">
-                        <option value="">Tipologia</option>
-                        <option value="appartamento">Appartamento</option>
-                        <option value="villa">Villa</option>
-                        <option value="attico">Attico</option>
-                        <option value="ufficio">Ufficio</option>
-                    </select>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+                    <label class="block">
+                        <span class="block text-[10px] tracking-[0.16em] uppercase text-ink/55 mb-2">Dove</span>
+                        <input type="text" name="luogo" placeholder="Bari, Monopoli, Lecce..." class="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-gray-400" />
+                    </label>
+
+                    <label class="block">
+                        <span class="block text-[10px] tracking-[0.16em] uppercase text-ink/55 mb-2">Tipologia</span>
+                        <select name="tipologia" class="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-ink appearance-none">
+                            <option value="">Tutte</option>
+                            <option value="appartamento">Appartamento</option>
+                            <option value="villa">Villa</option>
+                            <option value="attico">Attico</option>
+                            <option value="ufficio">Ufficio</option>
+                            <option value="terreno">Terreno</option>
+                        </select>
+                    </label>
+
+                    <label class="block">
+                        <span class="block text-[10px] tracking-[0.16em] uppercase text-ink/55 mb-2">Camere Min</span>
+                        <select name="camere_min" class="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-ink appearance-none">
+                            <option value="">Qualsiasi</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                            <option value="5">5+</option>
+                        </select>
+                    </label>
+
+                    <label class="block">
+                        <span class="block text-[10px] tracking-[0.16em] uppercase text-ink/55 mb-2">MQ Min</span>
+                        <input type="number" min="0" step="10" name="mq_min" placeholder="Es. 80" class="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-gray-400" />
+                    </label>
+
+                    <label class="block">
+                        <span class="block text-[10px] tracking-[0.16em] uppercase text-ink/55 mb-2">Prezzo Min</span>
+                        <input type="number" min="0" step="10000" name="prezzo_min" placeholder="Es. 150000" class="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-gray-400" />
+                    </label>
+
+                    <label class="block">
+                        <span class="block text-[10px] tracking-[0.16em] uppercase text-ink/55 mb-2">Prezzo Max</span>
+                        <input type="number" min="0" step="10000" name="prezzo_max" placeholder="Es. 500000" class="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-gray-400" />
+                    </label>
+
+                    <label class="block">
+                        <span class="block text-[10px] tracking-[0.16em] uppercase text-ink/55 mb-2">Finalita</span>
+                        <select name="finalita" class="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-ink appearance-none">
+                            <option value="">Tutte</option>
+                            <option value="abitare">Abitare</option>
+                            <option value="investimento">Investimento</option>
+                            <option value="sviluppo">Sviluppo</option>
+                        </select>
+                    </label>
+
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full h-[49px] bg-ink text-white rounded-xl font-semibold tracking-[0.18em] uppercase text-xs hover:bg-gold hover:text-ink transition-colors duration-300 flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            Cerca Opportunita
+                        </button>
+                    </div>
                 </div>
-                <div class="flex items-center px-4 py-3 w-full border-b lg:border-b-0 lg:border-r border-gray-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gold mr-3 shrink-0"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
-                    <select class="w-full bg-transparent outline-none text-ink font-medium appearance-none cursor-pointer text-sm">
-                        <option value="">Vani</option>
-                        <option value="1">1+ Vani</option>
-                        <option value="2">2+ Vani</option>
-                        <option value="3">3+ Vani</option>
-                        <option value="4">4+ Vani</option>
-                        <option value="5">5+ Vani</option>
-                    </select>
-                </div>
-                <div class="flex items-center px-4 py-3 w-full border-b lg:border-b-0 lg:border-r border-gray-200">
-                    <span class="text-gold mr-3 font-serif text-xl shrink-0">€</span>
-                    <select class="w-full bg-transparent outline-none text-ink font-medium appearance-none cursor-pointer text-sm">
-                        <option value="">Prezzo Max</option>
-                        <option value="500000">Fino a 500.000 €</option>
-                        <option value="1000000">Fino a 1.000.000 €</option>
-                    </select>
-                </div>
-                <button class="w-full h-full bg-ink text-white px-8 py-4 rounded-lg font-semibold tracking-wider uppercase text-sm hover:bg-gold transition-colors duration-300 flex items-center justify-center gap-2 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    <span>Cerca</span>
-                </button>
             </div>
-        </div>
+        </form>
     </div>
 
     <!-- Scroll Indicator -->
@@ -265,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const mapOverlay = document.getElementById('main-map-overlay');
         const mapToggle = document.getElementById('main-map-toggle');
         const defaultCenter = [41.117143, 16.871871];
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
         
         const map = L.map('main-map', {
             scrollWheelZoom: false,
@@ -280,6 +311,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const setMapInteractive = (enabled) => {
+            const mapContainer = map.getContainer();
+
             if (enabled) {
                 map.dragging.enable();
                 map.touchZoom.enable();
@@ -291,6 +324,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 mapShell.classList.add('is-map-interactive');
                 mapOverlay.classList.add('is-interactive');
+                mapContainer.style.pointerEvents = 'auto';
+                if (isTouchDevice) {
+                    mapContainer.style.touchAction = 'none';
+                }
                 mapToggle.textContent = 'Blocca la mappa';
                 mapToggle.setAttribute('aria-pressed', 'true');
             } else {
@@ -304,6 +341,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 mapShell.classList.remove('is-map-interactive');
                 mapOverlay.classList.remove('is-interactive');
+                mapContainer.style.pointerEvents = 'none';
+                mapContainer.style.touchAction = 'pan-y';
                 mapToggle.textContent = 'Attiva la mappa';
                 mapToggle.setAttribute('aria-pressed', 'false');
             }
@@ -687,10 +726,13 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="lg:col-span-5 flex flex-col justify-center h-full reveal">
                 <div class="flex items-center gap-4 mb-8">
                     <span class="w-12 h-[1px] bg-gold"></span>
-                    <span class="text-gold font-semibold tracking-[0.2em] uppercase text-xs">Il Cuore del Progetto</span>
+                    <span class="text-gold font-semibold tracking-[0.2em] uppercase text-xs">Gruppo 2D</span>
                 </div>
-                <h2 class="text-5xl md:text-7xl font-serif text-ink leading-[0.9] mb-8">2D Sviluppo <br /><span class="italic font-light text-ink/70">Immobiliare</span></h2>
-                <p class="text-ink/70 text-lg leading-relaxed mb-10 font-light">Da qui parte tutto. 2D Sviluppo Immobiliare è l'anima creativa e costruttiva dietro ogni nostro progetto. Non ci limitiamo a vendere immobili, li pensiamo, li progettiamo e li realizziamo con una visione orientata all'eccellenza e all'innovazione.</p>
+                <h2 class="text-5xl md:text-7xl font-serif text-ink leading-[0.95] mb-8">
+                    <span class="block font-sans font-semibold tracking-[0.04em] leading-none">2D</span>
+                    <span class="block italic font-light text-ink/70">Sviluppo Immobiliare</span>
+                </h2>
+                <p class="text-ink/70 text-lg leading-relaxed mb-10 font-light">La holding che guida strategia, sviluppo e valorizzazione. Visioni Immobiliari nasce da questa regia: asset selezionati, execution rigorosa e approccio orientato al rendimento.</p>
                 <a href="https://www.2dsviluppoimmobiliare.it" target="_blank" class="group flex items-center gap-4 text-ink font-semibold tracking-widest uppercase text-sm hover:text-gold transition-colors w-max !bg-transparent hover:!bg-transparent focus:outline-none !border-none">
                     Scopri la nostra storia
                     <div class="w-10 h-10 rounded-full border border-ink/20 flex items-center justify-center group-hover:border-gold transition-colors !bg-transparent">

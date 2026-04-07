@@ -1,0 +1,5 @@
+.env
+.env.*
+!.env.threads.example
+social-hq/analytics/threads-publisher.log
+social-hq/analytics/threads-publisher-debug.json

@@ -105,6 +105,7 @@ export async function dbOmiLookup(
   tipologia: string = 'A',
   anno: number = new Date().getFullYear(),
   semestre: 1 | 2 = 1,
+  provincia?: string,
 ): Promise<OmiResult | null> {
   try {
     const params = new URLSearchParams({
@@ -114,6 +115,7 @@ export async function dbOmiLookup(
       anno:      String(anno),
       semestre:  String(semestre),
     });
+    if (provincia?.trim()) params.set('provincia', provincia.trim().toUpperCase());
     const res = await apiFetch(`${API_URL}?${params}`);
     return res.json();
   } catch {

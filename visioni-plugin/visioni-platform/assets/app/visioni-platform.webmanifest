@@ -1,0 +1,39 @@
+{
+  "name": "2D Radar",
+  "short_name": "2D Radar",
+  "description": "App privata e installabile dell'ecosistema Visioni per geofencing immobiliare, matching e moduli predittivi.",
+  "lang": "it-IT",
+  "start_url": "/platform/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#14110f",
+  "theme_color": "#14110f",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/wp-content/plugins/visioni-platform/assets/icons/visioni-radar-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/wp-content/plugins/visioni-platform/assets/icons/visioni-radar-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Apri Radar",
+      "short_name": "Radar",
+      "url": "/radar/"
+    },
+    {
+      "name": "Apri Hub",
+      "short_name": "Hub",
+      "url": "/platform/"
+    }
+  ]
+}

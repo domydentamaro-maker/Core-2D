@@ -40,3 +40,27 @@ require_once plugin_dir_path( __FILE__ ) . 'mappa-immobili.php';
 require_once plugin_dir_path( __FILE__ ) . 'incrocio-clienti.php';
 
 Visioni_Core_Manager::init();
+
+add_action( 'visioni_core_daily_quality_audit', 'visioni_core_run_daily_quality_audit' );
+
+function visioni_core_run_daily_quality_audit() {
+    Visioni_Core_Manager::run_daily_quality_audit();
+}
+
+register_activation_hook( __FILE__, 'visioni_core_on_activation' );
+register_deactivation_hook( __FILE__, 'visioni_core_on_deactivation' );
+
+function visioni_core_on_activation() {
+    if ( ! wp_next_scheduled( 'visioni_core_daily_quality_audit' ) ) {
+        wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'visioni_core_daily_quality_audit' );
+    }
+
+    Visioni_Core_Manager::run_daily_quality_audit();
+}
+
+function visioni_core_on_deactivation() {
+    $timestamp = wp_next_scheduled( 'visioni_core_daily_quality_audit' );
+    if ( $timestamp ) {
+        wp_unschedule_event( $timestamp, 'visioni_core_daily_quality_audit' );
+    }
+}

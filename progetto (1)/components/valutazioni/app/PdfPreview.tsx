@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Perizia } from '@/components/valutazioni/types/perizia';
 import { calcValoreFinale, formatCurrency } from '@/components/valutazioni/lib/storage';
+import { resolvePdfSections } from '@/components/valutazioni/lib/reportText';
 import { X, Download, Loader2 } from 'lucide-react';
 
 interface PdfPreviewProps {
@@ -199,11 +200,42 @@ function formatDateIT(isoDate: string): string {
   return `${d}/${m}/${y}`;
 }
 
+function escapeHtml(value: string | number | null | undefined): string {
+  return String(value ?? '—')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatBool(value?: boolean): string {
+  return value ? 'Sì' : 'No';
+}
+
+function valueOrDash(value: string | number | null | undefined): string {
+  if (value === null || value === undefined || value === '') return '—';
+  return String(value);
+}
+
 function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): string {
   const dataIT = formatDateIT(perizia.dataCreazione);
   const d = perizia.datiIncarico;
   const imm = perizia.datiImmobile;
+  const s = perizia.schedaTecnica;
+  const mercato = perizia.analisiMercato;
   const { valori } = calcValoreFinale(perizia.metodiValutazione);
+  const sezioni = resolvePdfSections(perizia);
+  const comparabili = mercato.comparabili.filter((item) => item.indirizzo || item.superficie || item.prezzo || item.note);
+
+  const superficiLabel = s.tipologia === 'D' ? 'Superficie terreno' : 'Superficie commerciale';
+  const superficiValue = s.tipologia === 'D' ? valueOrDash(s.superficieTerreno) : valueOrDash(s.superficieCommerciale);
+  const statoUrbanistico = [
+    `Conformità urbanistica: ${formatBool(imm.conformitaUrbanistica)}`,
+    `Conformità catastale: ${formatBool(imm.conformitaCatastale)}`,
+    `Agibilità: ${formatBool(imm.agibilita)}`,
+    `Vincoli/ipoteche: ${formatBool(imm.ipoteche)}`,
+  ].join(' · ');
 
   return `<!DOCTYPE html>
 <html lang="it">
@@ -213,24 +245,37 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Source Sans 3', sans-serif; background: #F5F0E8; color: #1A1A1A; }
-  .cover { background: #F5F0E8; border: 2px solid #D4C9B0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; page-break-after: always; }
-  .cover h1 { font-family: 'Playfair Display', serif; font-size: 36px; color: #1A1A1A; margin: 16px 0 8px; }
-  .cover h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: #5C5346; margin-bottom: 24px; }
-  .cover .divider { width: 80px; height: 1px; background: #C8A96E; margin: 16px auto; }
-  .cover .subtitle { color: #5C5346; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; }
-  .cover .value-box { border: 2px solid #C8A96E; background: #FDFAF4; padding: 24px 40px; margin-top: 24px; border-radius: 4px; }
-  .cover .value-label { color: #5C5346; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; }
-  .cover .value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #1A1A1A; margin-top: 8px; }
-  .page { background: #F5F0E8; padding: 40px; page-break-after: always; }
+  body { font-family: 'Source Sans 3', sans-serif; background: #e7e1d6; color: #1A1A1A; }
+  .cover { background: linear-gradient(180deg, #f9f6f0 0%, #efe8db 100%); border: 2px solid #c7b08b; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 56px 64px; page-break-after: always; }
+  .cover-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-brand { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: #5C5346; }
+  .cover-code { font-size: 12px; color: #5C5346; text-align: right; }
+  .cover-main { margin-top: 80px; }
+  .cover h1 { font-family: 'Playfair Display', serif; font-size: 42px; color: #1A1A1A; margin: 0 0 10px; }
+  .cover h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: #8a6f43; margin-bottom: 26px; font-weight: 400; }
+  .cover .divider { width: 90px; height: 2px; background: #C8A96E; margin: 18px 0 24px; }
+  .cover-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; margin-top: 30px; }
+  .cover-card { border: 1px solid #d1c0a2; background: rgba(255,255,255,0.65); padding: 18px 20px; min-height: 120px; }
+  .cover-card .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: #5C5346; margin-bottom: 8px; }
+  .cover-card .value { font-size: 14px; line-height: 1.5; color: #1A1A1A; }
+  .cover-value-box { border: 2px solid #8a6f43; background: #fffdf9; padding: 22px 28px; margin-top: 24px; width: fit-content; }
+  .cover-value-box .label { color: #5C5346; font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em; }
+  .cover-value-box .value { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: #1A1A1A; margin-top: 8px; }
+  .cover-footer { display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px; color: #5C5346; }
+  .page { background: #F8F4EC; padding: 34px 38px 42px; page-break-after: always; }
   .page-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #C8A96E; padding-bottom: 12px; margin-bottom: 24px; }
   .page-header h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: #1A1A1A; }
   .page-header span { font-size: 10px; color: #5C5346; }
   .field { margin-bottom: 16px; }
   .field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #5C5346; display: block; margin-bottom: 4px; }
-  .field p { font-size: 13px; font-weight: 600; color: #1A1A1A; border-bottom: 1px solid #D4C9B0; padding-bottom: 6px; }
+  .field p { font-size: 13px; font-weight: 600; color: #1A1A1A; border-bottom: 1px solid #D4C9B0; padding-bottom: 6px; min-height: 24px; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .metric { background: #fffdf9; border: 1px solid #d8c8ac; padding: 14px; min-height: 90px; }
+  .metric .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: #5C5346; margin-bottom: 6px; }
+  .metric .v { font-size: 18px; font-weight: 700; color: #1A1A1A; }
+  .metric .s { font-size: 11px; color: #6d6254; margin-top: 8px; line-height: 1.4; }
   .section-card { background: #FDFAF4; border: 1px solid #D4C9B0; border-radius: 4px; padding: 20px; margin-bottom: 16px; }
   .section-card h3 { font-family: 'Playfair Display', serif; font-size: 15px; color: #1A1A1A; margin-bottom: 16px; border-bottom: 1px solid #D4C9B0; padding-bottom: 8px; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0; }
@@ -249,6 +294,10 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   .text-section { margin-bottom: 16px; }
   .text-section h4 { font-family: 'Playfair Display', serif; font-size: 13px; color: #1A1A1A; margin-bottom: 8px; }
   .text-section p { font-size: 12px; line-height: 1.8; color: #1A1A1A; white-space: pre-line; }
+  .note-box { border-left: 4px solid #8a6f43; background: #fffdf9; padding: 14px 16px; margin-top: 18px; }
+  .note-box p { font-size: 12px; line-height: 1.65; color: #3b342d; }
+  .empty-box { border: 1px dashed #b39a71; background: #fffaf0; padding: 16px; margin-top: 18px; }
+  .empty-box p { font-size: 12px; color: #5C5346; }
   @media print {
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .cover { min-height: 297mm; }
@@ -259,14 +308,30 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
 
 <!-- Cover -->
 <div class="cover">
-  <p class="subtitle">2D Sviluppo Immobiliare · Domenico Dentamaro</p>
-  <div class="divider"></div>
-  <h1>PERIZIA IMMOBILIARE</h1>
-  <h2>Stima del Valore di Mercato</h2>
-  <div class="divider"></div>
-  ${imm.comune ? `<p style="color:#5C5346;font-size:13px;margin-bottom:4px">${imm.via} ${imm.civico} — ${imm.comune} (${imm.provincia})</p>` : ''}
-  <p style="color:#5C5346;font-size:11px;margin-bottom:12px">Data: ${dataIT}</p>
-  ${valoreFinale > 0 ? `<div class="value-box"><p class="value-label">Valore di Stima</p><p class="value">${formatCurrency(valoreFinale)}</p></div>` : ''}
+  <div class="cover-top">
+    <div class="cover-brand">2D Sviluppo Immobiliare · Domenico Dentamaro</div>
+    <div class="cover-code">Pratica ${escapeHtml(perizia.numeroPratica)}<br/>Data ${escapeHtml(dataIT)}</div>
+  </div>
+  <div class="cover-main">
+    <div class="divider"></div>
+    <h1>PERIZIA IMMOBILIARE</h1>
+    <h2>Stima del Valore di Mercato</h2>
+    <div class="cover-grid">
+      <div class="cover-card">
+        <div class="label">Immobile</div>
+        <div class="value">${escapeHtml([imm.via, imm.civico].filter(Boolean).join(' ') || 'Indirizzo da completare')}<br/>${escapeHtml(imm.comune || 'Comune da completare')} (${escapeHtml(imm.provincia || '—')})</div>
+      </div>
+      <div class="cover-card">
+        <div class="label">Incarico</div>
+        <div class="value">Committente: ${escapeHtml(d.committenteNome || '—')}<br/>Finalità: ${escapeHtml(d.finalita.join(', ') || '—')}</div>
+      </div>
+    </div>
+    ${valoreFinale > 0 ? `<div class="cover-value-box"><p class="label">Valore di Stima</p><p class="value">${formatCurrency(valoreFinale)}</p></div>` : `<div class="empty-box"><p>Valore finale non ancora determinato. Il documento riporta comunque il quadro tecnico, documentale e di mercato disponibile.</p></div>`}
+  </div>
+  <div class="cover-footer">
+    <div>Perito: ${escapeHtml(d.peritoNome || 'Domenico Dentamaro')} · ${escapeHtml(d.peritoQualifica || 'Perito Immobiliare')}</div>
+    <div>Documento riservato</div>
+  </div>
 </div>
 
 ${options.includiSezione1 ? `
@@ -277,14 +342,102 @@ ${options.includiSezione1 ? `
     <span>2D Valuta Pro · ${dataIT}</span>
   </div>
   <div class="grid-2">
-    <div class="field"><label>Data Perizia</label><p>${d.dataPerizia || dataIT}</p></div>
-    <div class="field"><label>Data Sopralluogo</label><p>${d.dataSopralluogo || '—'}</p></div>
-    <div class="field"><label>Committente</label><p>${d.committenteNome || '—'}</p></div>
-    <div class="field"><label>Indirizzo Committente</label><p>${d.committenteIndirizzo || '—'}</p></div>
-    <div class="field"><label>CF / P.IVA</label><p>${d.committenteCfPiva || '—'}</p></div>
-    <div class="field"><label>Finalità</label><p>${d.finalita.join(', ') || '—'}</p></div>
-    <div class="field"><label>Perito</label><p>${d.peritoNome} · ${d.peritoQualifica}</p></div>
+    <div class="field"><label>Data Perizia</label><p>${escapeHtml(d.dataPerizia || dataIT)}</p></div>
+    <div class="field"><label>Data Sopralluogo</label><p>${escapeHtml(d.dataSopralluogo || '—')}</p></div>
+    <div class="field"><label>Committente</label><p>${escapeHtml(d.committenteNome || '—')}</p></div>
+    <div class="field"><label>Indirizzo Committente</label><p>${escapeHtml(d.committenteIndirizzo || '—')}</p></div>
+    <div class="field"><label>CF / P.IVA</label><p>${escapeHtml(d.committenteCfPiva || '—')}</p></div>
+    <div class="field"><label>Finalità</label><p>${escapeHtml(d.finalita.join(', ') || '—')}</p></div>
+    <div class="field"><label>Perito</label><p>${escapeHtml(`${d.peritoNome} · ${d.peritoQualifica}`)}</p></div>
   </div>
+</div>` : ''}
+
+${options.includiSezione2 ? `
+<!-- Sezione 2 -->
+<div class="page">
+  <div class="page-header">
+    <h2>Dati Identificativi Immobile</h2>
+    <span>2D Valuta Pro · ${dataIT}</span>
+  </div>
+  <div class="section-card">
+    <h3>Localizzazione</h3>
+    <div class="grid-3">
+      <div class="field"><label>Indirizzo</label><p>${escapeHtml([imm.via, imm.civico].filter(Boolean).join(' ') || '—')}</p></div>
+      <div class="field"><label>Comune</label><p>${escapeHtml(imm.comune || '—')}</p></div>
+      <div class="field"><label>CAP / Provincia</label><p>${escapeHtml(`${valueOrDash(imm.cap)} · ${valueOrDash(imm.provincia)}`)}</p></div>
+    </div>
+  </div>
+  <div class="section-card">
+    <h3>Dati Catastali e Provenienza</h3>
+    <div class="grid-3">
+      <div class="field"><label>Foglio</label><p>${escapeHtml(valueOrDash(imm.foglio))}</p></div>
+      <div class="field"><label>Particella</label><p>${escapeHtml(valueOrDash(imm.particella))}</p></div>
+      <div class="field"><label>Subalterno</label><p>${escapeHtml(valueOrDash(imm.subalterno))}</p></div>
+      <div class="field"><label>Categoria</label><p>${escapeHtml(valueOrDash(imm.categoria))}</p></div>
+      <div class="field"><label>Classe / Rendita</label><p>${escapeHtml(`${valueOrDash(imm.classe)} · ${valueOrDash(imm.rendita)}`)}</p></div>
+      <div class="field"><label>Tipo Proprietà</label><p>${escapeHtml(valueOrDash(imm.tipoProprietà))}</p></div>
+    </div>
+  </div>
+  <div class="note-box"><p>${escapeHtml(statoUrbanistico)}${imm.dettagliUrbanistica ? `<br/>Note urbanistiche: ${escapeHtml(imm.dettagliUrbanistica)}` : ''}${imm.dettagliIpoteche ? `<br/>Dettagli vincoli/ipoteche: ${escapeHtml(imm.dettagliIpoteche)}` : ''}</p></div>
+</div>` : ''}
+
+${options.includiSezione3 ? `
+<!-- Sezione 3 -->
+<div class="page">
+  <div class="page-header">
+    <h2>Scheda Tecnica</h2>
+    <span>2D Valuta Pro · ${dataIT}</span>
+  </div>
+  <div class="grid-4">
+    <div class="metric"><div class="k">Tipologia</div><div class="v">${escapeHtml(s.tipologia)}</div><div class="s">${escapeHtml(superficiLabel)}</div></div>
+    <div class="metric"><div class="k">${escapeHtml(superficiLabel)}</div><div class="v">${escapeHtml(superficiValue)} mq</div><div class="s">Dato principale di riferimento</div></div>
+    <div class="metric"><div class="k">Stato conservazione</div><div class="v">${escapeHtml(valueOrDash(s.statoConservazione))}</div><div class="s">Classe energetica ${escapeHtml(valueOrDash(s.classeEnergetica))}</div></div>
+    <div class="metric"><div class="k">Anno costruzione</div><div class="v">${escapeHtml(valueOrDash(s.annoCostruzione))}</div><div class="s">Piano ${escapeHtml(valueOrDash(s.piano))}</div></div>
+  </div>
+  <div class="section-card" style="margin-top:16px;">
+    <h3>Caratteristiche Tecniche</h3>
+    <div class="grid-3">
+      <div class="field"><label>Superficie lorda</label><p>${escapeHtml(valueOrDash(s.superficieLorda))} mq</p></div>
+      <div class="field"><label>Superficie netta</label><p>${escapeHtml(valueOrDash(s.superficieNetta))} mq</p></div>
+      <div class="field"><label>Numero locali / bagni</label><p>${escapeHtml(`${valueOrDash(s.numeroLocali)} / ${valueOrDash(s.numeroBagni)}`)}</p></div>
+      <div class="field"><label>Pertinenze</label><p>${escapeHtml(valueOrDash(s.pertinenze))}</p></div>
+      <div class="field"><label>Impianti</label><p>${escapeHtml(s.impianti.join(', ') || '—')}</p></div>
+      <div class="field"><label>Note aggiuntive</label><p>${escapeHtml(valueOrDash(s.noteAggiuntive))}</p></div>
+    </div>
+  </div>
+  ${s.tipologia === 'D' ? `<div class="note-box"><p>Destinazione urbanistica: ${escapeHtml(valueOrDash(s.destinazioneUrbanistica))}. Indice di edificabilità: ${escapeHtml(valueOrDash(s.indiceEdificabilita))} mc/mq.</p></div>` : ''}
+  ${s.tipologia === 'E' ? `<div class="note-box"><p>Superficie vetrine: ${escapeHtml(valueOrDash(s.superficieVetrine))} ml. Visibilità e posizionamento: ${escapeHtml(valueOrDash(s.visibilitaNote))}.</p></div>` : ''}
+  ${s.tipologia === 'F' ? `<div class="note-box"><p>Altezza utile: ${escapeHtml(valueOrDash(s.altezzaUtile))} m. Accessi: ${escapeHtml(valueOrDash(s.accessiNote))}. Impianti industriali: ${escapeHtml(valueOrDash(s.impiantiIndustriali))}.</p></div>` : ''}
+</div>` : ''}
+
+${options.includiSezione4 ? `
+<!-- Sezione 4 -->
+<div class="page">
+  <div class="page-header">
+    <h2>Analisi di Mercato</h2>
+    <span>2D Valuta Pro · ${dataIT}</span>
+  </div>
+  <div class="grid-4">
+    <div class="metric"><div class="k">Prezzo medio</div><div class="v">${mercato.prezzoMedioMq > 0 ? escapeHtml(formatCurrency(mercato.prezzoMedioMq)) : '—'}</div><div class="s">per metro quadrato</div></div>
+    <div class="metric"><div class="k">Range OMI / mercato</div><div class="v">${mercato.prezzoMin > 0 ? escapeHtml(formatCurrency(mercato.prezzoMin)) : '—'} - ${mercato.prezzoMax > 0 ? escapeHtml(formatCurrency(mercato.prezzoMax)) : '—'}</div><div class="s">valori unitari min/max</div></div>
+    <div class="metric"><div class="k">Trend</div><div class="v">${escapeHtml(valueOrDash(mercato.tendenzaMercato))}</div><div class="s">Domanda ${escapeHtml(valueOrDash(mercato.domanda))}</div></div>
+    <div class="metric"><div class="k">Fonte</div><div class="v">${escapeHtml(valueOrDash(mercato.fonteDati))}</div><div class="s">${escapeHtml(`${valueOrDash(mercato.annoOMI)} · ${valueOrDash(mercato.trimestreOMI)}`)}</div></div>
+  </div>
+  <div class="section-card" style="margin-top:16px;">
+    <h3>Quadro di Mercato</h3>
+    <p style="font-size:12px; line-height:1.8; color:#1A1A1A; white-space:pre-line;">${escapeHtml(valueOrDash(mercato.descrizioneMercato)).replace(/\n/g, '<br/>')}</p>
+    <div class="note-box"><p>Tempi medi di vendita: ${escapeHtml(valueOrDash(mercato.tempiMediVendita))}. Liquidabilità: ${escapeHtml(valueOrDash(mercato.liquidabilita))}.</p></div>
+  </div>
+  ${comparabili.length > 0 ? `
+  <div class="section-card">
+    <h3>Comparabili Rilevati</h3>
+    <table>
+      <thead><tr><th>Indirizzo</th><th>Superficie</th><th>Prezzo</th><th>Note</th></tr></thead>
+      <tbody>
+        ${comparabili.map((item) => `<tr><td>${escapeHtml(item.indirizzo || '—')}</td><td>${escapeHtml(valueOrDash(item.superficie))} mq</td><td>${item.prezzo ? escapeHtml(formatCurrency(item.prezzo)) : '—'}</td><td>${escapeHtml(item.note || '—')}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  </div>` : ''}
 </div>` : ''}
 
 ${options.includiSezione5 && valori.length > 0 ? `
@@ -305,6 +458,15 @@ ${options.includiSezione5 && valori.length > 0 ? `
     </tbody>
   </table>
   ${valoreFinale > 0 ? `<div class="value-final"><p class="label">Valore di Stima Finale</p><p class="amount">${formatCurrency(valoreFinale)}</p><p style="font-size:11px;color:#5C5346;margin-top:8px">Range: ${formatCurrency(valoreFinale * 0.92)} — ${formatCurrency(valoreFinale * 1.08)}</p></div>` : ''}
+</div>` : ''}
+
+${options.includiSezione5 && valori.length === 0 ? `
+<div class="page">
+  <div class="page-header">
+    <h2>Metodi di Valutazione</h2>
+    <span>2D Valuta Pro · ${dataIT}</span>
+  </div>
+  <div class="empty-box"><p>I metodi estimativi non risultano ancora completati. Per ottenere un valore professionale occorre valorizzare almeno il metodo comparativo oppure uno dei metodi alternativi previsti.</p></div>
 </div>` : ''}
 
 ${options.includiSezione6 && perizia.foto.filter(f => f.includiPdf).length > 0 ? `
@@ -331,10 +493,10 @@ ${options.includiSezione7 && perizia.sezioniTestuali.length > 0 ? `
     <h2>Relazione Tecnica</h2>
     <span>2D Valuta Pro · ${dataIT}</span>
   </div>
-  ${perizia.sezioniTestuali.map(s => `
+  ${sezioni.map(s => `
     <div class="text-section">
-      <h4>${s.titolo}</h4>
-      <p>${s.contenuto.replace(/\n/g, '<br/>')}</p>
+      <h4>${escapeHtml(s.titolo)}</h4>
+      <p>${escapeHtml(s.contenuto).replace(/\n/g, '<br/>')}</p>
     </div>
   `).join('')}
   <div class="legal-note">

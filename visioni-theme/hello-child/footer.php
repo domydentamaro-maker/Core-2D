@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <li><a href="<?php echo esc_url( get_post_type_archive_link( 'cantieri' ) ?: home_url( '/cantieri' ) ); ?>" class="hover:text-gold transition-colors">Cantieri in Costruzione</a></li>
                     <li><a href="<?php echo esc_url( get_post_type_archive_link( 'terreni' ) ?: home_url( '/terreni' ) ); ?>" class="hover:text-gold transition-colors">Terreni</a></li>
                     <li><a href="<?php echo esc_url( get_post_type_archive_link( 'operazioni' ) ?: home_url( '/operazioni' ) ); ?>" class="hover:text-gold transition-colors">Operazioni Immobiliari</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/domenico-dentamaro/' ) ); ?>" class="hover:text-gold transition-colors">Domenico Dentamaro</a></li>
                     <li><a href="https://www.2dsviluppoimmobiliare.it/zes" target="_blank" class="hover:text-gold transition-colors">ZES</a></li>
                     <li><a href="https://www.2dsviluppoimmobiliare.it" target="_blank" class="hover:text-gold transition-colors">Gruppo 2D</a></li>
                     <li><a href="https://materiaprima.2dsviluppoimmobiliare.it" target="_blank" class="hover:text-gold transition-colors">Blog</a></li>

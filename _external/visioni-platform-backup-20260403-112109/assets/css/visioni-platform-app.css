@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap');
+
+.visioni-platform-app {
+	--vp-ink: #14110f;
+	--vp-gold: #c7a366;
+	--vp-paper: #f6efe3;
+	--vp-card: rgba(255, 251, 245, 0.88);
+	--vp-line: rgba(199, 163, 102, 0.24);
+	--vp-accent: #1b5f6d;
+	max-width: 1180px;
+	margin: 24px auto;
+	padding: 22px;
+	border-radius: 28px;
+	border: 1px solid var(--vp-line);
+	background:
+		radial-gradient(circle at top left, rgba(199, 163, 102, 0.22), transparent 30%),
+		radial-gradient(circle at bottom right, rgba(27, 95, 109, 0.18), transparent 32%),
+		linear-gradient(180deg, #191513 0%, #100d0c 100%);
+	color: var(--vp-paper);
+	box-shadow: 0 30px 80px rgba(8, 6, 5, 0.28);
+	font-family: 'Space Grotesk', sans-serif;
+}
+
+.visioni-platform-app__hero {
+	padding: 22px;
+	border-radius: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.visioni-platform-app__brand {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 18px;
+	align-items: center;
+}
+
+.visioni-platform-app__brandmark {
+	width: min(280px, 100%);
+	height: auto;
+}
+
+.visioni-platform-app__copy h2 {
+	margin: 8px 0 12px;
+	max-width: 12ch;
+	font-family: 'Fraunces', serif;
+	font-size: clamp(2.2rem, 6vw, 4.6rem);
+	line-height: 0.96;
+	letter-spacing: -0.04em;
+}
+
+.visioni-platform-app__lede {
+	max-width: 64ch;
+	margin: 0;
+	color: rgba(246, 239, 227, 0.8);
+	font-size: 1rem;
+	line-height: 1.6;
+}
+
+.visioni-platform-app__eyebrow {
+	margin: 0;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: var(--vp-gold);
+}
+
+.visioni-platform-app__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 20px;
+}
+
+.visioni-platform-app__install,
+.visioni-platform-app__launch {
+	appearance: none;
+	border: 0;
+	border-radius: 999px;
+	padding: 14px 18px;
+	text-decoration: none;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	cursor: pointer;
+	transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.visioni-platform-app__install {
+	background: linear-gradient(135deg, #f5d29a 0%, #c7a366 100%);
+	color: var(--vp-ink);
+	box-shadow: 0 14px 30px rgba(199, 163, 102, 0.28);
+}
+
+.visioni-platform-app__install:disabled {
+	cursor: default;
+	opacity: 0.72;
+}
+
+.visioni-platform-app__launch {
+	background: rgba(255, 255, 255, 0.08);
+	color: var(--vp-paper);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.visioni-platform-app__install:hover,
+.visioni-platform-app__launch:hover {
+	transform: translateY(-1px);
+}
+
+.visioni-platform-app__hint {
+	margin: 12px 0 0;
+	color: rgba(246, 239, 227, 0.68);
+	font-size: 0.92rem;
+}
+
+.visioni-platform-app__signals {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.visioni-platform-app__signals span {
+	padding: 8px 12px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.07);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: rgba(246, 239, 227, 0.86);
+	font-size: 0.84rem;
+}
+
+.visioni-platform-app__intro {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 14px;
+	margin-top: 18px;
+}
+
+.visioni-platform-app__intro article,
+.visioni-platform-app__card,
+.visioni-module {
+	border-radius: 22px;
+	border: 1px solid var(--vp-line);
+	background: var(--vp-card);
+	color: var(--vp-ink);
+	backdrop-filter: blur(10px);
+}
+
+.visioni-platform-app__intro article {
+	padding: 18px;
+}
+
+.visioni-platform-app__intro h3 {
+	margin: 0 0 8px;
+	font-family: 'Fraunces', serif;
+	font-size: 1.2rem;
+}
+
+.visioni-platform-app__intro p {
+	margin: 0;
+	line-height: 1.6;
+	color: rgba(20, 17, 15, 0.74);
+}
+
+.visioni-platform-app__grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 14px;
+	margin-top: 18px;
+}
+
+.visioni-platform-app__card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 180px;
+	padding: 18px;
+	text-decoration: none;
+	box-shadow: 0 16px 40px rgba(14, 11, 9, 0.08);
+}
+
+.visioni-platform-app__card strong {
+	font-family: 'Fraunces', serif;
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+
+.visioni-platform-app__card span {
+	line-height: 1.55;
+	color: rgba(20, 17, 15, 0.74);
+}
+
+.visioni-platform-app__card em {
+	margin-top: auto;
+	align-self: flex-start;
+	padding: 7px 10px;
+	border-radius: 999px;
+	background: rgba(20, 17, 15, 0.08);
+	color: var(--vp-ink);
+	font-style: normal;
+	font-size: 0.83rem;
+	font-weight: 700;
+}
+
+.visioni-platform-app__card--primary {
+	background: linear-gradient(145deg, rgba(199, 163, 102, 0.18), rgba(255, 251, 245, 0.96));
+}
+
+.visioni-platform-app__footer {
+	margin-top: 18px;
+	padding: 0 4px;
+}
+
+.visioni-platform-app__footer p {
+	margin: 0;
+	color: rgba(246, 239, 227, 0.64);
+	line-height: 1.6;
+}
+
+.visioni-module {
+	max-width: 980px;
+	margin: 20px auto;
+	padding: 22px;
+}
+
+.visioni-module code {
+	background: rgba(20, 17, 15, 0.06);
+	padding: 2px 6px;
+	border-radius: 6px;
+}
+
+@media (min-width: 860px) {
+	.visioni-platform-app__brand {
+		grid-template-columns: 300px minmax(0, 1fr);
+	}
+
+	.visioni-platform-app__intro {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.visioni-platform-app__grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}

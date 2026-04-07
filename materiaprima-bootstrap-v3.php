@@ -12,6 +12,147 @@ ini_set('display_errors', 1);
 require dirname(__FILE__) . '/wp-load.php';
 require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
 require_once ABSPATH . 'wp-admin/includes/post.php';
+require_once ABSPATH . 'wp-admin/includes/file.php';
+require_once ABSPATH . 'wp-admin/includes/media.php';
+require_once ABSPATH . 'wp-admin/includes/image.php';
+
+function mp_bootstrap_normalize_url($url) {
+    return trim(html_entity_decode((string) $url, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+}
+
+function mp_bootstrap_find_attachment_by_source($url) {
+    $attachments = get_posts(array(
+        'post_type'      => 'attachment',
+        'post_status'    => 'inherit',
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'meta_key'       => '_mp_source_url',
+        'meta_value'     => mp_bootstrap_normalize_url($url),
+    ));
+
+    return !empty($attachments) ? (int) $attachments[0] : 0;
+}
+
+function mp_bootstrap_sideload_image($post_id, $image_url, $alt_text = '', $set_featured = false) {
+    $image_url = mp_bootstrap_normalize_url($image_url);
+    if ($image_url === '') {
+        return new WP_Error('empty_image_url', 'URL immagine vuota.');
+    }
+
+    $existing = mp_bootstrap_find_attachment_by_source($image_url);
+    if ($existing) {
+        if ($alt_text) {
+            update_post_meta($existing, '_wp_attachment_image_alt', $alt_text);
+        }
+        if ($set_featured) {
+            set_post_thumbnail($post_id, $existing);
+        }
+        return $existing;
+    }
+
+    $tmp_file = download_url($image_url, 120);
+    if (is_wp_error($tmp_file)) {
+        return $tmp_file;
+    }
+
+    $path = wp_parse_url($image_url, PHP_URL_PATH);
+    $filename = $path ? basename($path) : 'image.jpg';
+    $filename = preg_replace('/\?.*$/', '', $filename);
+    if (pathinfo($filename, PATHINFO_EXTENSION) === '') {
+        $filename .= '.jpg';
+    }
+
+    $file_array = array(
+        'name'     => sanitize_file_name($filename),
+        'tmp_name' => $tmp_file,
+    );
+
+    $attachment_id = media_handle_sideload($file_array, $post_id);
+    if (is_wp_error($attachment_id)) {
+        @unlink($tmp_file);
+        return $attachment_id;
+    }
+
+    update_post_meta($attachment_id, '_mp_source_url', $image_url);
+    if ($alt_text) {
+        update_post_meta($attachment_id, '_wp_attachment_image_alt', $alt_text);
+    }
+    if ($set_featured) {
+        set_post_thumbnail($post_id, $attachment_id);
+    }
+
+    return $attachment_id;
+}
+
+function mp_bootstrap_fix_post_images($post_id) {
+    $post = get_post($post_id);
+    if (!$post) {
+        return;
+    }
+
+    if (!has_post_thumbnail($post_id)) {
+        $thumb_url = get_post_meta($post_id, '_thumbnail_url_external', true);
+        $thumb_alt = get_post_meta($post_id, '_thumbnail_alt', true);
+        if (!empty($thumb_url)) {
+            mp_bootstrap_sideload_image($post_id, $thumb_url, $thumb_alt, true);
+        }
+    }
+
+    $content = (string) $post->post_content;
+    if (preg_match_all('/<img[^>]+src=["\']([^"\']+)["\'][^>]*>/i', $content, $matches, PREG_SET_ORDER)) {
+        foreach ($matches as $match) {
+            $src = mp_bootstrap_normalize_url($match[1]);
+            $host = wp_parse_url($src, PHP_URL_HOST);
+            if (!$host || $host === wp_parse_url(home_url('/'), PHP_URL_HOST)) {
+                continue;
+            }
+
+            $alt = '';
+            if (preg_match('/alt=["\']([^"\']*)["\']/i', $match[0], $alt_match)) {
+                $alt = html_entity_decode($alt_match[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            }
+
+            $attachment_id = mp_bootstrap_sideload_image($post_id, $src, $alt, false);
+            if (is_wp_error($attachment_id) || !$attachment_id) {
+                continue;
+            }
+
+            $local_url = wp_get_attachment_url($attachment_id);
+            if (!$local_url) {
+                continue;
+            }
+
+            $variants = array_unique(array(
+                $src,
+                str_replace('&', '&amp;', $src),
+                str_replace('&', '&#038;', $src),
+                str_replace('&', '&#38;', $src),
+            ));
+            foreach ($variants as $variant) {
+                $content = str_replace($variant, $local_url, $content);
+            }
+        }
+    }
+
+    if (!preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $content) && has_post_thumbnail($post_id)) {
+        $thumb_id = get_post_thumbnail_id($post_id);
+        $thumb_url = wp_get_attachment_url($thumb_id);
+        $thumb_alt = get_post_meta($thumb_id, '_wp_attachment_image_alt', true);
+        if (!$thumb_alt) {
+            $thumb_alt = get_the_title($post_id);
+        }
+        if ($thumb_url) {
+            $content = '<figure class="wp-block-image"><img src="' . esc_url($thumb_url) . '" alt="' . esc_attr($thumb_alt) . '" loading="lazy" /></figure>' . "\n\n" . ltrim($content);
+        }
+    }
+
+    if ($content !== $post->post_content) {
+        wp_update_post(array(
+            'ID' => $post_id,
+            'post_content' => $content,
+        ));
+    }
+}
 
 echo "<h1>🚀 Materia Prima — Bootstrap Premium v3</h1><pre>\n";
 
@@ -122,13 +263,15 @@ foreach ($xml->channel->item as $idx => $item) {
     // Import post meta from XML
     foreach ($wp->postmeta as $meta) {
         $key = (string) $meta->meta_key;
-        $val = (string) $meta->meta_value;
+        $val = maybe_unserialize((string) $meta->meta_value);
         if (!empty($key) && $key[0] !== '_') {
             update_post_meta($post_id, $key, $val);
         } elseif ($key === '_yoast_wpseo_focuskw' || strpos($key, 'rank_math') === 0) {
             update_post_meta($post_id, $key, $val);
         }
     }
+
+    mp_bootstrap_fix_post_images($post_id);
 
     echo "✅ Importato: '$title' (ID: $post_id) → $post_date\n";
     $imported_ids[] = $post_id;

@@ -1,114 +1,307 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap');
+
 .visioni-radar {
-  max-width: 980px;
-  margin: 24px auto;
+  --vr-ink: #14110f;
+  --vr-paper: #f6efe3;
+  --vr-gold: #c7a366;
+  --vr-line: rgba(199, 163, 102, 0.22);
+  --vr-soft: rgba(255, 251, 245, 0.86);
+  max-width: 1180px;
+  margin: clamp(112px, 16vw, 190px) auto 24px;
+  padding: 22px;
+  border-radius: 28px;
+  border: 1px solid var(--vr-line);
+  background:
+    radial-gradient(circle at top left, rgba(199, 163, 102, 0.2), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(27, 95, 109, 0.16), transparent 30%),
+    linear-gradient(180deg, #191513 0%, #100d0c 100%);
+  color: var(--vr-paper);
+  font-family: 'Space Grotesk', sans-serif;
+  box-shadow: 0 32px 80px rgba(9, 7, 5, 0.24);
+}
+
+body.admin-bar .visioni-radar {
+  margin-top: calc(clamp(112px, 16vw, 190px) + 32px);
+}
+
+@media (max-width: 782px) {
+  body.admin-bar .visioni-radar {
+    margin-top: calc(clamp(112px, 16vw, 190px) + 46px);
+  }
+}
+
+.visioni-radar__header {
+  display: grid;
+  gap: 18px;
   padding: 20px;
-  border: 1px solid #e6dcc7;
-  border-radius: 14px;
-  background: #f5f0e8;
-  color: #1a1a1a;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-.visioni-radar__eyebrow {
+.visioni-radar__header-main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.visioni-radar__brandmark {
+  width: min(260px, 100%);
+  height: auto;
+}
+
+.visioni-radar__header h2 {
+  margin: 8px 0 10px;
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.visioni-radar__header p {
   margin: 0;
-  letter-spacing: 0.2em;
+  color: rgba(246, 239, 227, 0.8);
+  line-height: 1.6;
+}
+
+.visioni-radar__eyebrow,
+.visioni-radar-summarycard__eyebrow {
+  margin: 0;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #c8a96e;
+  color: var(--vr-gold);
 }
 
-.visioni-radar__wizard {
+.visioni-radar__header-side {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.visioni-radar__header-side span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(246,239,227,0.86);
+  font-size: 0.82rem;
+}
+
+.visioni-radar__wizard-shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
   margin-top: 18px;
-  padding: 16px;
-  background: #ffffff;
-  border-radius: 10px;
 }
 
-.visioni-radar-step h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
+.visioni-radar__wizard,
+.visioni-radar__summary,
+.visioni-radar__map,
+.visioni-radar-card,
+.visioni-radar-empty,
+.visioni-radar-success {
+  border-radius: 22px;
+  border: 1px solid var(--vr-line);
+  background: var(--vr-soft);
+  color: var(--vr-ink);
+  backdrop-filter: blur(10px);
+}
+
+.visioni-radar__wizard,
+.visioni-radar__summary {
+  padding: 18px;
+}
+
+.visioni-radar-progress {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.visioni-radar-progress strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 1.08rem;
+}
+
+.visioni-radar-progressbar {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(20, 17, 15, 0.08);
+  overflow: hidden;
+}
+
+.visioni-radar-progressbar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #e4c58a 0%, #c7a366 100%);
+}
+
+.visioni-radar-stephead h3 {
+  margin: 0 0 8px;
+  font-family: 'Fraunces', serif;
+  font-size: 1.7rem;
+}
+
+.visioni-radar-stephead p {
+  margin: 0 0 14px;
+  color: rgba(20,17,15,0.72);
+  line-height: 1.6;
+}
+
+.visioni-radar-fields {
+  display: grid;
+  gap: 12px;
 }
 
 .visioni-radar-step label {
   display: block;
-  margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .visioni-radar-step input,
 .visioni-radar-step select {
   width: 100%;
-  margin-top: 4px;
-  border: 1px solid #d7c8a5;
-  border-radius: 8px;
-  padding: 10px;
-  background: #fff;
+  margin-top: 6px;
+  border: 1px solid rgba(199, 163, 102, 0.36);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(255,255,255,0.82);
+  color: var(--vr-ink);
 }
 
+.visioni-radar-fieldgrid,
+.visioni-radar-choicegroup,
 .visioni-radar-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 10px;
-  margin-top: 12px;
 }
 
-.visioni-radar-actions button {
+.visioni-radar-choicegroup button,
+.visioni-radar-actions button,
+.visioni-radar-linkbutton {
+  appearance: none;
   border: 0;
-  border-radius: 8px;
-  padding: 10px 14px;
-  background: #1a1a1a;
-  color: #f5f0e8;
+  border-radius: 999px;
+  padding: 14px 16px;
+  background: #161210;
+  color: var(--vr-paper);
+  font-weight: 700;
+  text-align: center;
   cursor: pointer;
+  text-decoration: none;
 }
 
-.visioni-radar-actions button:hover {
-  background: #c8a96e;
-  color: #1a1a1a;
+.visioni-radar-choicegroup button.is-active {
+  background: linear-gradient(135deg, #f5d29a 0%, #c7a366 100%);
+  color: var(--vr-ink);
+}
+
+.visioni-radar-linkbutton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .visioni-radar-zone-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px 14px;
-  margin-bottom: 8px;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.visioni-radar-zone-grid label {
+.visioni-radar-zoneitem {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 0;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.68);
+  border: 1px solid rgba(199,163,102,0.18);
 }
 
-.visioni-radar-zone-grid input[type="checkbox"] {
+.visioni-radar-zoneitem input,
+.visioni-radar-consent input {
   width: auto;
   margin: 0;
 }
 
 .visioni-radar-consent {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.68);
 }
 
-.visioni-radar-consent input {
-  width: auto;
+.visioni-radar-rangevalue {
+  display: inline-block;
+  margin-top: 8px;
+  color: rgba(20,17,15,0.72);
+}
+
+.visioni-radar__summary {
+  display: grid;
+  gap: 12px;
+}
+
+.visioni-radar-summarycard {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(199,163,102,0.18);
+}
+
+.visioni-radar-summarycard--soft {
+  background: rgba(255,250,243,0.54);
+}
+
+.visioni-radar-summarycard h3 {
+  margin: 8px 0 12px;
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+}
+
+.visioni-radar-summarycard ul {
+  list-style: none;
+  padding: 0;
   margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.visioni-radar-summarycard li {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.visioni-radar-summarycard li span {
+  color: rgba(20,17,15,0.62);
 }
 
 .visioni-radar__map {
-  height: 340px;
+  height: 360px;
   margin-top: 18px;
-  border-radius: 10px;
   overflow: hidden;
-  background: #eee3cf;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .visioni-radar-map-fallback {
-  padding: 12px;
-  color: #5e5138;
+  max-width: 36ch;
+  padding: 18px;
+  text-align: center;
+  color: rgba(20,17,15,0.68);
+  line-height: 1.6;
 }
 
 .visioni-radar__results {
@@ -117,45 +310,77 @@
 
 .visioni-radar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
 .visioni-radar-card {
-  border: 1px solid #e3d6b6;
-  border-radius: 10px;
-  background: #fff;
-  padding: 12px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(14,11,9,0.08);
 }
 
-.visioni-radar-card h4 {
-  margin: 0 0 8px;
+.visioni-radar-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.visioni-radar-card__top strong {
+  font-family: 'Fraunces', serif;
+  font-size: 1.25rem;
+}
+
+.visioni-radar-card__top span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(20,17,15,0.07);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .visioni-radar-card p {
-  margin: 4px 0;
-  font-size: 13px;
+  margin: 8px 0 0;
+  color: rgba(20,17,15,0.72);
 }
 
 .visioni-radar-card a {
   display: inline-block;
-  margin-top: 6px;
-  color: #1a1a1a;
-  font-weight: 600;
+  margin-top: 12px;
+  font-weight: 700;
+  color: #1b5f6d;
 }
 
-.visioni-radar-success {
-  border: 1px solid #c8a96e;
-  border-radius: 10px;
-  padding: 12px;
-  background: #fff9ed;
-  color: #2f291b;
-  font-weight: 600;
-}
-
+.visioni-radar-success,
 .visioni-radar-empty {
-  border: 1px dashed #c8a96e;
-  border-radius: 10px;
-  padding: 12px;
-  background: #fff;
+  padding: 18px;
+}
+
+.visioni-radar-success h3 {
+  margin: 0 0 8px;
+  font-family: 'Fraunces', serif;
+}
+
+.visioni-radar-success p,
+.visioni-radar-empty {
+  color: rgba(20,17,15,0.76);
+  line-height: 1.6;
+}
+
+@media (min-width: 860px) {
+  .visioni-radar__header-main {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .visioni-radar__wizard-shell {
+    grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+  }
+
+  .visioni-radar-fieldgrid,
+  .visioni-radar-choicegroup,
+  .visioni-radar-actions,
+  .visioni-radar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

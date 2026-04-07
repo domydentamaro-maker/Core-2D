@@ -18,6 +18,10 @@ class Visioni_Core_Manager {
 
     private const MATCHABLE_POST_TYPES = array( 'immobili', 'cantieri', 'terreno', 'terreni', 'operazioni' );
 
+    private const QUALITY_AUDIT_OPTION = 'visioni_quality_audit_report_v1';
+    private const QUALITY_THRESHOLD_OPTION = 'visioni_quality_publish_threshold_v1';
+    private const QUALITY_OVERRIDE_TRANSIENT_PREFIX = 'visioni_quality_override_once_';
+
     public static function init() {
         add_filter( 'pre_option_visionimmobiliari_flush_rewrite_rules_flag_v3', array( __CLASS__, 'skip_theme_flush_flag' ) );
         add_action( 'after_setup_theme', array( __CLASS__, 'disable_theme_conflicts' ), 100 );
@@ -31,6 +35,7 @@ class Visioni_Core_Manager {
         add_action( 'add_meta_boxes', array( __CLASS__, 'simplify_admin_screen' ), 20, 2 );
         add_action( 'admin_head', array( __CLASS__, 'admin_styles' ) );
         add_action( 'admin_notices', array( __CLASS__, 'render_quality_notice' ) );
+        add_action( 'admin_init', array( __CLASS__, 'handle_quality_override_request' ) );
         add_action( 'acf/init', array( __CLASS__, 'register_local_field_groups' ) );
 
         foreach ( array_keys( self::CATALOG_POST_TYPES ) as $post_type ) {
@@ -291,7 +296,18 @@ class Visioni_Core_Manager {
         }
 
         $missing = self::missing_required_fields( $post_id, $post->post_type );
+        $quality = self::calculate_quality_score( $post_id, $post->post_type );
+        $threshold = self::get_publish_threshold();
+        $must_block = (int) $quality['score'] < $threshold;
+        $has_override = self::has_quality_override( $post_id );
+
         if ( empty( $missing ) ) {
+            if ( 'publish' !== $post->post_status || ! $must_block || $has_override ) {
+                return;
+            }
+        }
+
+        if ( 'publish' === $post->post_status && ! $must_block ) {
             return;
         }
 
@@ -314,10 +330,42 @@ class Visioni_Core_Manager {
                 'post_id'      => (int) $post_id,
                 'post_type'    => $post->post_type,
                 'missing'      => $missing,
+                'score'        => (int) $quality['score'],
+                'threshold'    => $threshold,
                 'forced_draft' => 'publish' === $post->post_status,
             ),
             120
         );
+    }
+
+    public static function handle_quality_override_request() {
+        if ( ! is_admin() || ! current_user_can( 'edit_posts' ) ) {
+            return;
+        }
+
+        $action = isset( $_GET['visioni_quality_action'] ) ? sanitize_key( (string) wp_unslash( $_GET['visioni_quality_action'] ) ) : '';
+        if ( 'allow_once' !== $action ) {
+            return;
+        }
+
+        $post_id = isset( $_GET['post_id'] ) ? (int) $_GET['post_id'] : 0;
+        $nonce = isset( $_GET['_visioni_quality_nonce'] ) ? (string) wp_unslash( $_GET['_visioni_quality_nonce'] ) : '';
+        if ( $post_id <= 0 || ! wp_verify_nonce( $nonce, 'visioni_quality_allow_once_' . $post_id ) ) {
+            return;
+        }
+
+        set_transient( self::QUALITY_OVERRIDE_TRANSIENT_PREFIX . get_current_user_id() . '_' . $post_id, 1, 30 * MINUTE_IN_SECONDS );
+
+        $redirect = add_query_arg(
+            array(
+                'post'   => $post_id,
+                'action' => 'edit',
+            ),
+            admin_url( 'post.php' )
+        );
+
+        wp_safe_redirect( $redirect );
+        exit;
     }
 
     public static function title_placeholder( $title, $post ) {
@@ -387,6 +435,7 @@ class Visioni_Core_Manager {
         $snapshot = self::quality_snapshot( $post->ID, $post->post_type );
         ?>
         <p><strong>Completamento:</strong> <?php echo esc_html( $snapshot['percent'] ); ?>%</p>
+        <p><strong>Quality Score:</strong> <?php echo esc_html( $snapshot['score'] ); ?>/100 (soglia publish: <?php echo esc_html( $snapshot['threshold'] ); ?>)</p>
         <ul style="margin-left: 1.1em; list-style: disc;">
             <?php foreach ( $snapshot['checks'] as $check ) : ?>
                 <li>
@@ -427,7 +476,23 @@ class Visioni_Core_Manager {
         <div class="notice notice-warning is-dismissible">
             <p>
                 <strong><?php echo esc_html( $prefix ); ?></strong>
-                <?php echo esc_html( implode( ', ', $missing_labels ) ); ?>.
+                <?php if ( ! empty( $missing_labels ) ) : ?>
+                    <?php echo esc_html( implode( ', ', $missing_labels ) ); ?>.
+                <?php endif; ?>
+                Quality score: <?php echo esc_html( (string) ( $notice['score'] ?? 0 ) ); ?>/100 (soglia: <?php echo esc_html( (string) ( $notice['threshold'] ?? self::get_publish_threshold() ) ); ?>).
+                <?php if ( ! empty( $notice['forced_draft'] ) && ! empty( $notice['post_id'] ) ) : ?>
+                    <?php
+                    $unlock_url = add_query_arg(
+                        array(
+                            'visioni_quality_action' => 'allow_once',
+                            'post_id' => (int) $notice['post_id'],
+                            '_visioni_quality_nonce' => wp_create_nonce( 'visioni_quality_allow_once_' . (int) $notice['post_id'] ),
+                        ),
+                        admin_url( 'post.php' )
+                    );
+                    ?>
+                    <a href="<?php echo esc_url( $unlock_url ); ?>" style="margin-left:8px;">Consenti una pubblicazione (30 min)</a>
+                <?php endif; ?>
             </p>
         </div>
         <?php
@@ -731,6 +796,109 @@ class Visioni_Core_Manager {
         return $count;
     }
 
+    public static function run_daily_quality_audit() {
+        $supported_types = array_merge( self::GEOCODABLE_POST_TYPES, array( 'cliente' ) );
+        $threshold = self::get_publish_threshold();
+        $report = array(
+            'generated_at' => current_time( 'mysql' ),
+            'threshold'    => $threshold,
+            'types'        => array(),
+            'totals'       => array(
+                'scanned'     => 0,
+                'incomplete'  => 0,
+                'missing_geo' => 0,
+                'under_threshold' => 0,
+                'avg_score'   => 0,
+            ),
+            'top_missing'  => array(),
+        );
+
+        $missing_counter = array();
+        $score_sum = 0;
+
+        foreach ( $supported_types as $post_type ) {
+            $ids = get_posts(
+                array(
+                    'post_type'      => $post_type,
+                    'post_status'    => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+                    'posts_per_page' => -1,
+                    'fields'         => 'ids',
+                    'orderby'        => 'date',
+                    'order'          => 'DESC',
+                )
+            );
+
+            $type_scanned = count( $ids );
+            $type_incomplete = 0;
+            $type_missing_geo = 0;
+            $type_under_threshold = 0;
+            $type_score_sum = 0;
+
+            foreach ( $ids as $post_id ) {
+                $report['totals']['scanned']++;
+
+                $missing = self::missing_required_fields( $post_id, $post_type );
+                if ( ! empty( $missing ) ) {
+                    $type_incomplete++;
+                    $report['totals']['incomplete']++;
+
+                    foreach ( $missing as $field_key ) {
+                        if ( ! isset( $missing_counter[ $field_key ] ) ) {
+                            $missing_counter[ $field_key ] = 0;
+                        }
+                        $missing_counter[ $field_key ]++;
+                    }
+                }
+
+                if ( in_array( $post_type, self::GEOCODABLE_POST_TYPES, true ) ) {
+                    $lat = trim( (string) get_post_meta( $post_id, 'latitudine', true ) );
+                    $lng = trim( (string) get_post_meta( $post_id, 'longitudine', true ) );
+                    if ( '' === $lat || '' === $lng ) {
+                        $type_missing_geo++;
+                        $report['totals']['missing_geo']++;
+                    }
+                }
+
+                $quality = self::calculate_quality_score( $post_id, $post_type );
+                $type_score_sum += (int) $quality['score'];
+                $score_sum += (int) $quality['score'];
+                if ( (int) $quality['score'] < $threshold ) {
+                    $type_under_threshold++;
+                    $report['totals']['under_threshold']++;
+                }
+            }
+
+            $report['types'][ $post_type ] = array(
+                'scanned'     => $type_scanned,
+                'incomplete'  => $type_incomplete,
+                'missing_geo' => $type_missing_geo,
+                'under_threshold' => $type_under_threshold,
+                'avg_score'   => $type_scanned > 0 ? (int) round( $type_score_sum / $type_scanned ) : 0,
+            );
+        }
+
+        if ( $report['totals']['scanned'] > 0 ) {
+            $report['totals']['avg_score'] = (int) round( $score_sum / $report['totals']['scanned'] );
+        }
+
+        arsort( $missing_counter );
+        foreach ( array_slice( $missing_counter, 0, 10, true ) as $field_key => $count ) {
+            $report['top_missing'][] = array(
+                'field' => $field_key,
+                'label' => self::field_label( $field_key ),
+                'count' => (int) $count,
+            );
+        }
+
+        update_option( self::QUALITY_AUDIT_OPTION, $report, false );
+        return $report;
+    }
+
+    public static function get_quality_audit_report() {
+        $report = get_option( self::QUALITY_AUDIT_OPTION, array() );
+        return is_array( $report ) ? $report : array();
+    }
+
     private static function register_post_type( $post_type, array $config ) {
         if ( post_type_exists( $post_type ) ) {
             return;
@@ -757,6 +925,7 @@ class Visioni_Core_Manager {
 
     private static function quality_snapshot( $post_id, $post_type ) {
         $required = self::required_fields_for_post_type( $post_type );
+        $quality = self::calculate_quality_score( $post_id, $post_type );
         $checks = array();
         $missing_labels = array();
 
@@ -779,8 +948,71 @@ class Visioni_Core_Manager {
 
         return array(
             'percent'        => $percent,
+            'score'          => (int) $quality['score'],
+            'threshold'      => self::get_publish_threshold(),
             'checks'         => $checks,
             'missing_labels' => $missing_labels,
+        );
+    }
+
+    private static function get_publish_threshold() {
+        $threshold = (int) get_option( self::QUALITY_THRESHOLD_OPTION, 70 );
+        return max( 40, min( 95, $threshold ) );
+    }
+
+    private static function has_quality_override( $post_id ) {
+        $key = self::QUALITY_OVERRIDE_TRANSIENT_PREFIX . get_current_user_id() . '_' . (int) $post_id;
+        return (bool) get_transient( $key );
+    }
+
+    private static function calculate_quality_score( $post_id, $post_type ) {
+        $required = self::required_fields_for_post_type( $post_type );
+        $required_total = count( $required );
+        $required_ok = 0;
+        foreach ( $required as $field_key ) {
+            if ( '' !== self::meta_value( $post_id, $field_key ) ) {
+                $required_ok++;
+            }
+        }
+
+        $required_ratio = $required_total > 0 ? ( $required_ok / $required_total ) : 1;
+
+        $geo_bonus = 0;
+        if ( in_array( $post_type, self::GEOCODABLE_POST_TYPES, true ) ) {
+            $lat = self::meta_value( $post_id, 'latitudine' );
+            $lng = self::meta_value( $post_id, 'longitudine' );
+            if ( '' !== $lat && '' !== $lng ) {
+                $geo_bonus = 15;
+            }
+        } else {
+            $geo_bonus = 15;
+        }
+
+        $media_bonus = 0;
+        if ( has_post_thumbnail( $post_id ) ) {
+            $media_bonus += 8;
+        }
+        $gallery = get_post_meta( $post_id, 'galleria', true );
+        if ( is_array( $gallery ) && ! empty( $gallery ) ) {
+            $media_bonus += 7;
+        }
+
+        $content_bonus = 0;
+        $title = trim( (string) get_the_title( $post_id ) );
+        if ( '' !== $title ) {
+            $content_bonus += 4;
+        }
+        $content = trim( wp_strip_all_tags( (string) get_post_field( 'post_content', $post_id ) ) );
+        if ( strlen( $content ) >= 120 ) {
+            $content_bonus += 6;
+        }
+
+        $score = (int) round( ( $required_ratio * 70 ) + $geo_bonus + $media_bonus + $content_bonus );
+        $score = max( 0, min( 100, $score ) );
+
+        return array(
+            'score' => $score,
+            'required_ratio' => $required_ratio,
         );
     }
 

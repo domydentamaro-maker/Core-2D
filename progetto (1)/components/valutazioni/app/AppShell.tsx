@@ -23,6 +23,28 @@ type SaveStatus = 'saved' | 'saving' | 'unsaved';
 
 const SEZIONI_ORDER = ['incarico', 'immobile', 'tecnica', 'mercato', 'valutazione', 'foto', 'relazione'];
 
+function syncComparativoReferences(next: Perizia, previous?: Perizia | null): Perizia {
+  const updated = JSON.parse(JSON.stringify(next)) as Perizia;
+  const comparativo = updated.metodiValutazione.comparativo;
+  const prevSurface = previous?.metodiValutazione.comparativo.superficieCommerciale ?? 0;
+  const prevPrice = previous?.metodiValutazione.comparativo.prezzeMedioMq ?? 0;
+
+  const suggestedSurface = updated.schedaTecnica.tipologia === 'D'
+    ? updated.schedaTecnica.superficieTerreno
+    : updated.schedaTecnica.superficieCommerciale;
+  const suggestedPrice = updated.analisiMercato.prezzoMedioMq;
+
+  if (suggestedSurface > 0 && (comparativo.superficieCommerciale <= 0 || comparativo.superficieCommerciale === prevSurface)) {
+    comparativo.superficieCommerciale = suggestedSurface;
+  }
+
+  if (suggestedPrice > 0 && (comparativo.prezzeMedioMq <= 0 || comparativo.prezzeMedioMq === prevPrice)) {
+    comparativo.prezzeMedioMq = suggestedPrice;
+  }
+
+  return updated;
+}
+
 export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
   const [perizie, setPerizie] = useState<Perizia[]>([]);
   const [periziaCorrente, setPeriziaCorrente] = useState<Perizia | null>(null);
@@ -55,11 +77,12 @@ export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
 
   const updatePerizia = useCallback((updates: Partial<Perizia>) => {
     if (!periziaCorrente) return;
-    const updated: Perizia = {
+    const merged: Perizia = {
       ...periziaCorrente,
       ...updates,
-      completamento: calcCompletamento({ ...periziaCorrente, ...updates }),
     };
+    const updated = syncComparativoReferences(merged, periziaCorrente);
+    updated.completamento = calcCompletamento(updated);
     setPeriziaCorrente(updated);
     triggerAutosave(updated);
   }, [periziaCorrente, triggerAutosave]);
@@ -72,7 +95,9 @@ export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
   };
 
   const handleAprePerizia = (perizia: Perizia) => {
-    setPeriziaCorrente({ ...perizia, completamento: calcCompletamento(perizia) });
+    const normalized = syncComparativoReferences(perizia);
+    normalized.completamento = calcCompletamento(normalized);
+    setPeriziaCorrente(normalized);
     setSezioneAttiva('incarico');
   };
 

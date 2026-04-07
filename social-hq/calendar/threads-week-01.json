@@ -1,0 +1,58 @@
+{
+  "timezone": "Europe/Rome",
+  "channel": "threads",
+  "profile": "domenicodentamaro",
+  "posts": [
+    {
+      "id": "post-01",
+      "scheduled_at": "2026-04-06T19:00:00+02:00",
+      "status": "pending",
+      "format": "text",
+      "text": "Non mi interessa piacere a tutti.\nMi interessa essere riconoscibile da chi sa ancora distinguere\nla sostanza dal rumore.\n\nNel lavoro come nella vita,\nil vero valore non urla.\nSi vede nei dettagli,\nnella calma,\nnella coerenza,\nnelle cose costruite bene.\n\nForse è per questo\nche certe persone si incontrano poco.\nMa quando si riconoscono,\nsi capiscono subito."
+    },
+    {
+      "id": "post-02",
+      "scheduled_at": "2026-04-07T07:30:00+02:00",
+      "status": "pending",
+      "format": "image",
+      "asset_hint": "1000397580 (1).jpg",
+      "media_url": "",
+      "text": "C'è chi aspetta il momento giusto.\nC'è chi costruisce le condizioni perché arrivi.\n\nDue approcci diversi alla vita.\nIo ne ho scelto uno da sempre.\nE non ho mai guardato indietro."
+    },
+    {
+      "id": "post-03",
+      "scheduled_at": "2026-04-08T19:00:00+02:00",
+      "status": "pending",
+      "format": "text",
+      "text": "Crescere in Puglia ti insegna una cosa che non si studia:\nche il valore di un posto lo vedi solo se sai aspettare.\n\nUn ulivo ci mette decenni a dare il meglio.\nUn tufo ci mette secoli a diventare storia.\n\nHo impiegato anni a capire che lavorare qui\nnon era un limite.\nEra un vantaggio che pochi sapevano leggere.\n\nAdesso lo leggo meglio di chiunque altro."
+    },
+    {
+      "id": "post-04",
+      "scheduled_at": "2026-04-09T12:30:00+02:00",
+      "status": "pending",
+      "format": "text",
+      "text": "La gente vede il risultato finale.\nL'accordo chiuso, il progetto consegnato, la firma.\n\nNon vede le 47 volte che hai ridisegnato il progetto.\nI permessi.\nI silenzi che durano mesi.\nLe attese che diventano anni.\n\nCostruire immobili non è comprare e vendere.\nÈ avere la memoria lunga\ne i nervi saldi.\n\nNon tutti ci arrivano.\nE va bene così."
+    },
+    {
+      "id": "post-05",
+      "scheduled_at": "2026-04-10T19:00:00+02:00",
+      "status": "pending",
+      "format": "text",
+      "text": "Nel mercato immobiliare in questo momento\nquasi tutti stanno guardando nella direzione sbagliata.\n\nPuntano alle città consolidate.\nAgli indirizzi già prezzati.\nAi mercati già aperti.\n\nIo guardo i margini.\nI territori che nessuno ha ancora letto.\nI posti che tra dieci anni avranno un nome.\n\nIl futuro non ha ancora l'indirizzo che pensate."
+    },
+    {
+      "id": "post-06",
+      "scheduled_at": "2026-04-11T10:00:00+02:00",
+      "status": "pending",
+      "format": "text",
+      "text": "Sabato mattina.\nCaffè, telefono sul tavolo.\nUna chiamata che ribalta i piani della settimana.\n\nIl lavoro vero non ha orari.\nMa se stai costruendo qualcosa che è davvero tuo,\na un certo punto smetti di chiamarlo lavoro."
+    },
+    {
+      "id": "post-07",
+      "scheduled_at": "2026-04-12T11:00:00+02:00",
+      "status": "pending",
+      "format": "text",
+      "text": "Ho imparato a leggere un territorio\nprima ancora di aprire un foglio di calcolo.\n\nL'odore dell'aria.\nLe strade che nessuno ha ancora asfaltato.\nI bar con le sedie fuori a marzo.\nI posti che respirano ancora.\n\nQuelli sono i luoghi dove si costruisce il futuro.\nIl resto è solo speculazione travestita da investimento."
+    }
+  ]
+}

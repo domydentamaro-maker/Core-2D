@@ -6,20 +6,117 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+$html_inline_style = '-webkit-tap-highlight-color: transparent !important;';
+if ( is_admin_bar_showing() ) {
+    $html_inline_style .= ' margin-top: 32px !important;';
+}
 ?>
 <!doctype html>
-<html <?php language_attributes(); ?> style="-webkit-tap-highlight-color: transparent !important;">
+<html <?php language_attributes(); ?> style="<?php echo esc_attr( $html_inline_style ); ?>">
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<link rel="profile" href="https://gmpg.org/xfn/11">
+    <script>
+        (function () {
+            document.documentElement.classList.add('tw-booting');
+
+            var releaseBoot = function () {
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        setTimeout(function () {
+                            document.documentElement.classList.remove('tw-booting');
+                        }, 120);
+                    });
+                });
+            };
+
+            window.addEventListener('load', function () {
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(releaseBoot).catch(releaseBoot);
+                    return;
+                }
+                releaseBoot();
+            }, { once: true });
+        })();
+    </script>
+    <style id="visioni-critical-header">
+        html, body { overflow-x: hidden; }
+        body { margin: 0; }
+
+        @media (min-width: 1024px) {
+            html.tw-booting body {
+                opacity: 0 !important;
+                visibility: hidden !important;
+            }
+        }
+
+        #site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: transparent;
+        }
+        @media (min-width: 768px) {
+            #site-header {
+                padding-top: 4rem;
+                padding-bottom: 4rem;
+            }
+        }
+        @media (max-width: 782px) {
+            html[style*="margin-top"] {
+                margin-top: 46px !important;
+            }
+        }
+        #site-header .site-header-inner {
+            max-width: 80rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        @media (min-width: 768px) {
+            #site-header .site-header-inner {
+                padding-left: 3rem;
+                padding-right: 3rem;
+            }
+        }
+        body.page-preload #site-header,
+        body.page-preload #header-logo,
+        body.page-preload .nav-link,
+        body.page-preload #header-cta,
+        body.page-preload #header-cta-reserved {
+            transition: none !important;
+            animation: none !important;
+        }
+
+        @media (min-width: 1024px) {
+            body.page-preload #site-header {
+                opacity: 0 !important;
+                visibility: hidden !important;
+            }
+        }
+    </style>
 	<?php wp_head(); ?>
 </head>
-<body <?php body_class(); ?> style="-webkit-tap-highlight-color: transparent !important; touch-action: manipulation;">
+<body <?php body_class( 'page-preload' ); ?> style="-webkit-tap-highlight-color: transparent !important; touch-action: manipulation;">
 <?php wp_body_open(); ?>
+<?php
+$show_reserved_cta = is_front_page();
+$reserved_target_url = home_url( '/platform/' );
+$reserved_area_url = is_user_logged_in() ? $reserved_target_url : wp_login_url( $reserved_target_url );
+?>
 
-<header id="site-header" class="fixed top-0 left-0 right-0 z-[1000] transition-all duration-500 py-8 md:py-16">
-    <div class="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+<header id="site-header" class="header-preload">
+    <div class="site-header-inner max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
         <!-- Logo -->
         <div class="site-logo z-[1001]">
             <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="block">
@@ -38,6 +135,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <a href="<?php echo esc_url( get_post_type_archive_link( 'cantieri' ) ?: home_url( '/cantieri' ) ); ?>" class="nav-link text-sm font-semibold tracking-widest uppercase text-white/90 hover:text-gold transition-colors">Cantieri</a>
             <a href="<?php echo esc_url( get_post_type_archive_link( 'terreni' ) ?: home_url( '/terreni' ) ); ?>" class="nav-link text-sm font-semibold tracking-widest uppercase text-white/90 hover:text-gold transition-colors">Terreni</a>
             <a href="<?php echo esc_url( get_post_type_archive_link( 'operazioni' ) ?: home_url( '/operazioni' ) ); ?>" class="nav-link text-sm font-semibold tracking-widest uppercase text-white/90 hover:text-gold transition-colors">Operazioni</a>
+            <a href="<?php echo esc_url( home_url( '/domenico-dentamaro/' ) ); ?>" class="nav-link text-sm font-semibold tracking-widest uppercase text-white/90 hover:text-gold transition-colors">Domenico Dentamaro</a>
             <a href="https://www.2dsviluppoimmobiliare.it/zes" target="_blank" class="nav-link text-sm font-semibold tracking-widest uppercase text-white/90 hover:text-gold transition-colors">ZES</a>
             <a href="https://materiaprima.2dsviluppoimmobiliare.it" target="_blank" class="nav-link text-sm font-semibold tracking-widest uppercase text-white/90 hover:text-gold transition-colors">Blog</a>
             
@@ -45,6 +143,12 @@ if ( ! defined( 'ABSPATH' ) ) {
                 Gruppo 2D
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
             </a>
+            <?php if ( $show_reserved_cta ) : ?>
+            <a href="<?php echo esc_url( $reserved_area_url ); ?>" class="group flex items-center gap-2 bg-gold text-ink px-6 py-2.5 rounded-full text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-white transition-all duration-500" id="header-cta-reserved">
+                Area riservata
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 transition-transform"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </a>
+            <?php endif; ?>
         </nav>
 
         <!-- Mobile Toggle -->
@@ -56,24 +160,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobile-menu-overlay" class="fixed inset-0 z-[999] bg-ink/98 backdrop-blur-2xl flex flex-col items-center justify-center gap-10 hidden opacity-0 transition-all duration-500">
-    <div class="flex flex-col items-center gap-6">
-        <a href="<?php echo esc_url( get_post_type_archive_link( 'immobili' ) ?: home_url( '/immobili' ) ); ?>" class="text-3xl font-serif text-white hover:text-gold transition-colors">Immobili</a>
-        <a href="<?php echo esc_url( get_post_type_archive_link( 'cantieri' ) ?: home_url( '/cantieri' ) ); ?>" class="text-3xl font-serif text-white hover:text-gold transition-colors">Cantieri</a>
-        <a href="<?php echo esc_url( get_post_type_archive_link( 'terreni' ) ?: home_url( '/terreni' ) ); ?>" class="text-3xl font-serif text-white hover:text-gold transition-colors">Terreni</a>
-        <a href="<?php echo esc_url( get_post_type_archive_link( 'operazioni' ) ?: home_url( '/operazioni' ) ); ?>" class="text-3xl font-serif text-white hover:text-gold transition-colors">Operazioni</a>
-        <a href="https://www.2dsviluppoimmobiliare.it/zes" target="_blank" class="text-3xl font-serif text-white hover:text-gold transition-colors">ZES</a>
-        <a href="https://materiaprima.2dsviluppoimmobiliare.it" target="_blank" class="text-3xl font-serif text-white hover:text-gold transition-colors">Blog</a>
-    </div>
-    
-    <div class="mt-8 flex flex-col items-center gap-6">
-        <a href="https://www.2dsviluppoimmobiliare.it" target="_blank" class="flex items-center gap-3 bg-gold text-ink px-10 py-4 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-white transition-all duration-500">
-            Gruppo 2D
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-        </a>
-        <div class="flex items-center gap-6 text-white/40">
-            <a href="#" class="hover:text-gold transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
-            <a href="#" class="hover:text-gold transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+<div id="mobile-menu-overlay" class="fixed inset-0 z-[999] flex items-center justify-center p-4 hidden opacity-0 transition-all duration-300" style="background-color: rgba(0, 0, 0, 0.65);">
+    <div class="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-3xl border border-white/20 shadow-2xl px-8 py-10 flex flex-col items-center gap-8" style="background-color: rgba(10, 10, 10, 0.96);">
+        <div class="flex flex-col items-center gap-5">
+            <a href="<?php echo esc_url( get_post_type_archive_link( 'immobili' ) ?: home_url( '/immobili' ) ); ?>" class="text-2xl font-serif text-white hover:text-gold transition-colors">Immobili</a>
+            <a href="<?php echo esc_url( get_post_type_archive_link( 'cantieri' ) ?: home_url( '/cantieri' ) ); ?>" class="text-2xl font-serif text-white hover:text-gold transition-colors">Cantieri</a>
+            <a href="<?php echo esc_url( get_post_type_archive_link( 'terreni' ) ?: home_url( '/terreni' ) ); ?>" class="text-2xl font-serif text-white hover:text-gold transition-colors">Terreni</a>
+            <a href="<?php echo esc_url( get_post_type_archive_link( 'operazioni' ) ?: home_url( '/operazioni' ) ); ?>" class="text-2xl font-serif text-white hover:text-gold transition-colors">Operazioni</a>
+            <a href="<?php echo esc_url( home_url( '/domenico-dentamaro/' ) ); ?>" class="text-2xl font-serif text-white hover:text-gold transition-colors">Domenico Dentamaro</a>
+            <a href="https://www.2dsviluppoimmobiliare.it/zes" target="_blank" class="text-2xl font-serif text-white hover:text-gold transition-colors">ZES</a>
+            <a href="https://materiaprima.2dsviluppoimmobiliare.it" target="_blank" class="text-2xl font-serif text-white hover:text-gold transition-colors">Blog</a>
+        </div>
+
+        <div class="w-full flex flex-col items-center gap-4 pt-2 border-t border-white/10">
+            <a href="https://www.2dsviluppoimmobiliare.it" target="_blank" class="w-full flex items-center justify-center gap-3 bg-gold text-ink px-8 py-3.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-white transition-all duration-500">
+                Gruppo 2D
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </a>
+            <?php if ( $show_reserved_cta ) : ?>
+            <a href="<?php echo esc_url( $reserved_area_url ); ?>" class="w-full flex items-center justify-center gap-3 bg-white/10 border border-white/20 text-white px-8 py-3.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-gold hover:text-ink hover:border-gold transition-all duration-500">
+                Area riservata
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </a>
+            <?php endif; ?>
+            <div class="flex items-center gap-6 text-white/40 pt-1">
+                <a href="#" class="hover:text-gold transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+                <a href="#" class="hover:text-gold transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            </div>
         </div>
     </div>
 </div>
@@ -112,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
             header.style.paddingTop = '';
             header.style.paddingBottom = '';
             
-            const isWhiteBgPage = <?php echo (is_singular('immobili') || is_post_type_archive('immobili') || is_singular('terreni') || is_post_type_archive('terreni') || is_singular('cantieri') || is_singular('operazioni')) ? 'true' : 'false'; ?>;
+            const isWhiteBgPage = <?php echo (is_singular('immobili') || is_post_type_archive('immobili') || is_singular('terreni') || is_post_type_archive('terreni') || is_singular('cantieri') || is_post_type_archive('cantieri') || is_singular('operazioni') || is_post_type_archive('operazioni')) ? 'true' : 'false'; ?>;
             if (isWhiteBgPage) {
                 logo.style.filter = 'none';
                 toggle.style.color = '#0A0A0A';
@@ -131,7 +244,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('scroll', updateHeader);
     window.addEventListener('resize', updateHeader);
-    updateHeader();
+
+    window.addEventListener('load', function() {
+        document.body.classList.remove('page-preload');
+        header.classList.remove('header-preload');
+        requestAnimationFrame(updateHeader);
+    }, { once: true });
 
     toggle.addEventListener('click', function() {
         isMenuOpen = !isMenuOpen;

@@ -38,7 +38,12 @@ get_header(); ?>
                 </a>
 
             <?php endwhile; else : ?>
-                <p><?php esc_html_e( 'Nessun cantiere trovato.', 'textdomain' ); ?></p>
+                <div class="md:col-span-2 lg:col-span-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-10 md:p-14 text-center">
+                        <h2 class="font-serif text-3xl md:text-4xl text-white mb-4"><?php esc_html_e( 'Cantieri in aggiornamento', 'textdomain' ); ?></h2>
+                        <p class="text-white/70 text-base md:text-lg max-w-3xl mx-auto"><?php esc_html_e( 'Stiamo preparando i prossimi sviluppi da pubblicare. Torna presto per vedere nuovi cantieri con schede complete, avanzamento lavori e dettagli operativi.', 'textdomain' ); ?></p>
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
         

@@ -7,11 +7,16 @@ function visionimmobiliari_enqueue_styles() {
     // Enqueue Leaflet CSS for the map
     wp_enqueue_style( 'leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4' );
 
+    $style_path = get_stylesheet_directory() . '/style.css';
+    $style_version = file_exists( $style_path )
+        ? (string) filemtime( $style_path )
+        : (string) wp_get_theme()->get( 'Version' );
+
     // Enqueue main style
     wp_enqueue_style( 'visionimmobiliari-style',
         get_stylesheet_directory_uri() . '/style.css',
         array( 'leaflet-css' ),
-        wp_get_theme()->get('Version')
+        $style_version
     );
 
     // Enqueue Leaflet JS
@@ -56,83 +61,6 @@ if ( ! function_exists( 'get_field' ) ) {
         return false;
     }
 }
-
-// Register Custom Post Types for Immobili and Cantieri
-function visionimmobiliari_custom_post_types() {
-    register_post_type('immobili',
-        array(
-            'labels'      => array(
-                'name'          => __('Immobili', 'textdomain'),
-                'singular_name' => __('Immobile', 'textdomain'),
-            ),
-            'public'      => true,
-            'has_archive' => true,
-            'rewrite'     => array('slug' => 'immobili', 'with_front' => false),
-            'supports'    => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'),
-            'taxonomies'  => array('post_tag', 'category'),
-            'menu_icon'   => 'dashicons-admin-home',
-            'show_in_rest' => true,
-        )
-    );
-    
-    register_post_type('cantieri',
-        array(
-            'labels'      => array(
-                'name'          => __('Cantieri', 'textdomain'),
-                'singular_name' => __('Cantiere', 'textdomain'),
-            ),
-            'public'      => true,
-            'has_archive' => true,
-            'rewrite'     => array('slug' => 'cantieri', 'with_front' => false),
-            'supports'    => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'),
-            'taxonomies'  => array('post_tag', 'category'),
-            'menu_icon'   => 'dashicons-hammer',
-            'show_in_rest' => true,
-        )
-    );
-    
-    register_post_type('terreni',
-        array(
-            'labels'      => array(
-                'name'          => __('Terreni', 'textdomain'),
-                'singular_name' => __('Terreno', 'textdomain'),
-            ),
-            'public'      => true,
-            'has_archive' => true,
-            'rewrite'     => array('slug' => 'terreni', 'with_front' => false),
-            'supports'    => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'),
-            'taxonomies'  => array('post_tag', 'category'),
-            'menu_icon'   => 'dashicons-location-alt',
-            'show_in_rest' => true,
-        )
-    );
-    
-    register_post_type('operazioni',
-        array(
-            'labels'      => array(
-                'name'          => __('Operazioni Immobiliari', 'textdomain'),
-                'singular_name' => __('Operazione Immobiliare', 'textdomain'),
-            ),
-            'public'      => true,
-            'has_archive' => true,
-            'rewrite'     => array('slug' => 'operazioni', 'with_front' => false),
-            'supports'    => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'),
-            'taxonomies'  => array('post_tag', 'category'),
-            'menu_icon'   => 'dashicons-chart-line',
-            'show_in_rest' => true,
-        )
-    );
-}
-add_action('init', 'visionimmobiliari_custom_post_types');
-
-// Flush rewrite rules on init to fix 404 issues with custom post types
-add_action('init', function() {
-    if (get_option('visionimmobiliari_flush_rewrite_rules_flag_v3') !== 'done') {
-        visionimmobiliari_custom_post_types();
-        flush_rewrite_rules();
-        update_option('visionimmobiliari_flush_rewrite_rules_flag_v3', 'done');
-    }
-}, 20);
 
 // Shortcode for Terreni Section
 add_shortcode('sezione_terreni', function() {
@@ -347,6 +275,77 @@ add_action('wp_head', function() {
 }, 999);
 
 /**
+ * Ensure the founder page exists on Visioni.
+ */
+function visionimmobiliari_ensure_founder_page() {
+    if ( is_admin() ) {
+        return;
+    }
+
+    $flag = 'visionimmobiliari_founder_page_ready_v1';
+    if ( get_option( $flag ) ) {
+        return;
+    }
+
+    $slug = 'domenico-dentamaro';
+    $page = get_page_by_path( $slug );
+
+    if ( ! ( $page instanceof WP_Post ) ) {
+        wp_insert_post(
+            array(
+                'post_title'   => 'Domenico Dentamaro',
+                'post_name'    => $slug,
+                'post_type'    => 'page',
+                'post_status'  => 'publish',
+                'post_content' => '',
+            )
+        );
+    }
+
+    update_option( $flag, 1, false );
+}
+add_action( 'init', 'visionimmobiliari_ensure_founder_page', 20 );
+
+/**
+ * SEO meta for Domenico Dentamaro page on Visioni.
+ */
+function visionimmobiliari_domenico_page_seo_meta() {
+    if ( ! is_page( 'domenico-dentamaro' ) ) {
+        return;
+    }
+
+    $title = 'Domenico Dentamaro | Visioni Immobiliari | 2D Sviluppo Immobiliare';
+    $description = 'Domenico Dentamaro su Visioni Immobiliari: profilo professionale, visione strategica, network 2D e contatti ufficiali nel real estate in Puglia.';
+    $url = home_url( '/domenico-dentamaro/' );
+    $image = 'https://www.2dsviluppoimmobiliare.it/domenico/domenico-dentamaro-fondatore-2d-sviluppo.jpg';
+
+    echo '<meta name="description" content="' . esc_attr( $description ) . '" />' . "\n";
+    echo '<link rel="canonical" href="' . esc_url( $url ) . '" />' . "\n";
+    echo '<meta property="og:type" content="profile" />' . "\n";
+    echo '<meta property="og:site_name" content="Visioni Immobiliari" />' . "\n";
+    echo '<meta property="og:title" content="' . esc_attr( $title ) . '" />' . "\n";
+    echo '<meta property="og:description" content="' . esc_attr( $description ) . '" />' . "\n";
+    echo '<meta property="og:url" content="' . esc_url( $url ) . '" />' . "\n";
+    echo '<meta property="og:image" content="' . esc_url( $image ) . '" />' . "\n";
+    echo '<meta property="og:locale" content="it_IT" />' . "\n";
+    echo '<meta name="twitter:card" content="summary_large_image" />' . "\n";
+    echo '<meta name="twitter:title" content="' . esc_attr( $title ) . '" />' . "\n";
+    echo '<meta name="twitter:description" content="' . esc_attr( $description ) . '" />' . "\n";
+    echo '<meta name="twitter:image" content="' . esc_url( $image ) . '" />' . "\n";
+}
+add_action( 'wp_head', 'visionimmobiliari_domenico_page_seo_meta', 5 );
+
+function visionimmobiliari_domenico_document_title( $parts ) {
+    if ( ! is_page( 'domenico-dentamaro' ) ) {
+        return $parts;
+    }
+
+    $parts['title'] = 'Domenico Dentamaro | Visioni Immobiliari';
+    return $parts;
+}
+add_filter( 'document_title_parts', 'visionimmobiliari_domenico_document_title', 20 );
+
+/**
  * Fetch related articles from Materia Prima blog based on tags
  */
 function get_materia_prima_related_articles($post_id = 0) {
@@ -424,64 +423,33 @@ function get_materia_prima_related_articles($post_id = 0) {
 
     return $articles;
 }
-// Genera codice progressivo per CPT
-function vi_genera_codice_progressivo($post_id, $post, $update) {
 
-    if ($update) return;
-
-    $post_type = $post->post_type;
-
-    $map = [
-        'immobili' => 'IMM',
-        'cantieri' => 'CAN',
-        'terreno'  => 'TER'
-    ];
-
-    if (!isset($map[$post_type])) return;
-
-    $prefix = $map[$post_type];
-
-    $args = [
-        'post_type' => $post_type,
-        'posts_per_page' => -1,
-        'post_status' => 'publish'
-    ];
-
-    $query = new WP_Query($args);
-    $numero = $query->found_posts + 1;
-
-    $codice = $prefix . '-' . str_pad($numero, 3, '0', STR_PAD_LEFT);
-
-    update_post_meta($post_id, 'codice_gestionale', $codice);
-
-}
-
-add_action('wp_insert_post', 'vi_genera_codice_progressivo', 10, 3);
-
-
-// Colonna codice in admin
-function vi_aggiungi_colonna_codice($columns) {
-    $columns['codice_gestionale'] = 'Codice';
-    return $columns;
-}
-
-add_filter('manage_immobili_posts_columns', 'vi_aggiungi_colonna_codice');
-add_filter('manage_cantieri_posts_columns', 'vi_aggiungi_colonna_codice');
-add_filter('manage_terreno_posts_columns', 'vi_aggiungi_colonna_codice');
-
-
-// Contenuto colonna
-function vi_mostra_codice_colonna($column, $post_id) {
-
-    if ($column == 'codice_gestionale') {
-
-        $codice = get_post_meta($post_id, 'codice_gestionale', true);
-
-        echo $codice ? $codice : '-';
+/**
+ * Force child-theme archive templates on known archive slugs.
+ * This avoids generic fallback output from parent/theme builders.
+ */
+function visionimmobiliari_force_archive_templates( $template ) {
+    if ( is_admin() ) {
+        return $template;
     }
 
-}
+    $path = wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH );
+    $slug = trim( (string) $path, '/' );
 
-add_action('manage_immobili_posts_custom_column', 'vi_mostra_codice_colonna', 10, 2);
-add_action('manage_cantieri_posts_custom_column', 'vi_mostra_codice_colonna', 10, 2);
-add_action('manage_terreno_posts_custom_column', 'vi_mostra_codice_colonna', 10, 2);
+    $map = array(
+        'immobili'   => 'archive-immobili.php',
+        'cantieri'   => 'archive-cantieri.php',
+        'terreni'    => 'archive-terreni.php',
+        'operazioni' => 'archive-operazioni.php',
+    );
+
+    if ( isset( $map[ $slug ] ) ) {
+        $forced = get_stylesheet_directory() . '/' . $map[ $slug ];
+        if ( file_exists( $forced ) ) {
+            return $forced;
+        }
+    }
+
+    return $template;
+}
+add_filter( 'template_include', 'visionimmobiliari_force_archive_templates', 99 );

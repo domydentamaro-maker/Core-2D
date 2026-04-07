@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { SezioneTestuale, Perizia } from '@/components/valutazioni/types/perizia';
 import { SectionHeader } from './FormComponents';
-import { RefreshCw, Lock, ChevronDown, Bold, Italic, List } from 'lucide-react';
+import { RefreshCw, Lock, ChevronDown } from 'lucide-react';
 import { cn } from '@/components/valutazioni/lib/utils';
+import { generateSectionDraft, isDraftableSection } from '@/components/valutazioni/lib/reportText';
 
 interface Sezione7Props {
   sezioni: SezioneTestuale[];
@@ -40,26 +41,18 @@ export default function Sezione7({ sezioni, perizia, onChange }: Sezione7Props) 
     onChange(sezioni.map(s => s.id === id ? { ...s, contenuto } : s));
   };
 
-  const rigeneraDescrizione = () => {
-    const d = perizia.datiImmobile;
-    const s = perizia.schedaTecnica;
-    const tipologiaMap: Record<string, string> = {
-      A: 'appartamento residenziale', B: 'immobile in costruzione', C: 'villa',
-      D: 'terreno', E: 'immobile commerciale', F: 'immobile industriale'
-    };
-    const tipo = tipologiaMap[s.tipologia] || 'immobile';
-    
-    const desc = `L'immobile oggetto di perizia è un ${tipo} ubicato in ${d.via ? `${d.via} ${d.civico}` : 'indirizzo da specificare'}, nel Comune di ${d.comune || '___'} (${d.provincia || '___'}), CAP ${d.cap || '___'}.
+  const rigeneraSezione = (id: string) => {
+    const bozza = generateSectionDraft(perizia, id);
+    if (!bozza) return;
+    updateSezione(id, bozza);
+  };
 
-Dal punto di vista catastale, l'immobile è identificato al Foglio ${d.foglio || '___'}, Particella ${d.particella || '___'}${d.subalterno ? `, Sub. ${d.subalterno}` : ''}, categoria catastale ${d.categoria || '___'}, con una rendita catastale di € ${d.rendita || '___'}.
-
-${s.superficieCommerciale ? `La superficie commerciale ammonta a circa ${s.superficieCommerciale} mq.` : ''}
-${s.annoCostruzione ? `L'immobile è stato costruito nel ${s.annoCostruzione}.` : ''}
-${s.statoConservazione ? `Lo stato di conservazione è risultato: ${s.statoConservazione}.` : ''}
-${s.classeEnergetica ? `La classe energetica dichiarata è ${s.classeEnergetica}.` : ''}
-${s.pertinenze ? `Pertinenze: ${s.pertinenze}.` : ''}`;
-
-    onChange(sezioni.map(sec => sec.id === 'descrizione' ? { ...sec, contenuto: desc.trim() } : sec));
+  const rigeneraRelazioneCompleta = () => {
+    const next = sezioni.map((sezione) => {
+      const contenuto = generateSectionDraft(perizia, sezione.id);
+      return contenuto ? { ...sezione, contenuto } : sezione;
+    });
+    onChange(next);
   };
 
   const AVVERTENZA_LEGALE = `La presente perizia è stata redatta da Domenico Dentamaro – Agente Immobiliare e Consulente del settore – con sede in Bari (BA), Puglia.
@@ -70,10 +63,24 @@ Il valore stimato espresso nella presente perizia si riferisce alla data di sopr
     <div className="max-w-3xl">
       <SectionHeader numero={7} title="Relazione Testuale" />
 
+      <div className="mb-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={rigeneraRelazioneCompleta}
+          className="flex items-center gap-2 px-4 py-2 bg-[#1A1A1A] text-[#C8A96E] rounded hover:bg-[#2A2A2A] transition-colors text-sm font-source"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Genera bozza completa
+        </button>
+        <p className="text-xs font-source text-[#5C5346]/70 self-center">
+          Compila automaticamente i testi descrittivi partendo dai dati inseriti nella perizia.
+        </p>
+      </div>
+
       <div className="space-y-3">
         {sezioni.map((sezione) => {
           const isOpen = openSezioni.has(sezione.id);
-          const isDescrizione = sezione.id === 'descrizione';
+          const isGenerabile = isDraftableSection(sezione.id);
 
           return (
             <div key={sezione.id} className="bg-[#FDFAF4] border border-[#D4C9B0] rounded overflow-hidden">
@@ -92,9 +99,9 @@ Il valore stimato espresso nella presente perizia si riferisce alla data di sopr
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  {isDescrizione && (
+                  {isGenerabile && (
                     <button
-                      onClick={(e) => { e.stopPropagation(); rigeneraDescrizione(); }}
+                      onClick={(e) => { e.stopPropagation(); rigeneraSezione(sezione.id); }}
                       className="flex items-center gap-1.5 text-xs font-source text-[#C8A96E] hover:text-[#1A1A1A] border border-[#C8A96E]/30 px-2.5 py-1 rounded hover:bg-[#C8A96E]/10 transition-all"
                     >
                       <RefreshCw className="w-3 h-3" />

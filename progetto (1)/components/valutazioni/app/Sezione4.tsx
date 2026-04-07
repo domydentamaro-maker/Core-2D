@@ -54,6 +54,7 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
       tipologia ?? 'A',
       parseInt(data.annoOMI || String(currentYear)),
       getSemestre(),
+      provincia,
     );
     setOmiLoading(false);
     if (!result || result.data.length === 0) {
@@ -81,6 +82,7 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
       tipologia ?? 'A',
       parseInt(data.annoOMI || String(currentYear), 10),
       getSemestre(),
+      geo.provincia || provincia,
     );
 
     setOmiLoading(false);

@@ -1,0 +1,541 @@
+/*
+Theme Name: Visioni Immobiliari
+Theme URI: https://www.2dsviluppoimmobiliare.it
+Description: Tema custom per Visioni Immobiliari by 2D Sviluppo Immobiliare.
+Author: 2D Sviluppo Immobiliare
+Author URI: https://www.2dsviluppoimmobiliare.it
+Version: 1.0.0
+Text Domain: visioniimmobiliari
+*/
+
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+:root {
+    --gold: #D4AF37;
+    --ink: #0A0A0A;
+    --paper: #F5F5F0;
+    --white: #FFFFFF;
+}
+
+/* --- Base Styles --- */
+html {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+}
+
+body {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    background-color: var(--white);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden !important;
+    position: relative;
+}
+
+/* Fix per Admin Bar di WordPress: offset del solo header fisso, senza shift del body */
+body.admin-bar #site-header {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    body.admin-bar #site-header {
+        top: 46px;
+    }
+}
+
+/* --- Header & Logo --- */
+#site-header {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: transparent;
+}
+
+#site-header.header-preload {
+    transition: none !important;
+}
+
+#site-header.is-scrolled {
+    background-color: rgba(10, 10, 10, 0.95) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+#header-logo {
+    height: 12rem !important; /* Ancora più grande */
+    width: auto !important;
+    transition: all 0.4s ease;
+    display: block;
+    max-height: none !important;
+}
+
+#site-header.is-scrolled #header-logo {
+    height: 7rem !important; /* Più grande anche da scrollato */
+}
+
+@media (max-width: 768px) {
+    #header-logo {
+        height: 8rem !important;
+    }
+    #site-header.is-scrolled #header-logo {
+        height: 6rem !important;
+    }
+}
+
+.nav-link {
+    font-size: 1rem !important; /* Menu più grande */
+    letter-spacing: 0.2em !important;
+}
+
+h1, h2, h3, h4, h5, h6, .font-serif {
+    font-family: 'Cormorant Garamond', serif;
+}
+
+/* --- Custom Utilities --- */
+.glass-nav {
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-nav.scrolled {
+    background: rgba(10, 10, 10, 0.95);
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+}
+
+.text-gold { color: var(--gold); }
+.bg-gold { background-color: var(--gold); }
+.border-gold { border-color: var(--gold); }
+
+.text-ink { color: var(--ink); }
+.bg-ink { background-color: var(--ink); }
+
+.bg-paper { background-color: var(--paper); }
+
+/* --- Line Clamp --- */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scrollIndicator {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(200%); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 1s ease-out forwards;
+}
+
+.animate-fadeInUp {
+    animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-scrollIndicator {
+    animation: scrollIndicator 2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+/* --- WordPress Overrides --- */
+* {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+    -webkit-focus-ring-color: rgba(0,0,0,0) !important;
+    outline: none !important;
+    outline-color: transparent !important;
+    box-shadow: none !important;
+    touch-action: manipulation;
+    
+    /* Tailwind Ring Reset */
+    --tw-ring-color: transparent !important;
+    --tw-ring-offset-shadow: none !important;
+    --tw-ring-shadow: none !important;
+    --tw-shadow: none !important;
+}
+
+a, button, [role="button"] {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+}
+
+a:focus, button:focus, [role="button"]:focus,
+a:active, button:active, [role="button"]:active {
+    border-color: transparent !important;
+}
+
+*:focus, *:active, *:hover, *:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+    --tw-ring-color: transparent !important;
+    --tw-ring-shadow: none !important;
+}
+
+img {
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+}
+
+.site {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+}
+
+*:focus, *:active, 
+button:focus, button:active, 
+select:focus, select:active, 
+input:focus, input:active, 
+a:focus, a:active,
+.nav-link:focus, .nav-link:active,
+.mobile-menu-toggle:focus, .mobile-menu-toggle:active {
+    outline: none !important;
+    outline-width: 0 !important;
+    outline-style: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Fix for specific highlights */
+a, button, input, select, textarea, [tabindex], [role="button"],
+.menu-item a,
+.menu-item a:focus, .menu-item a:active, .menu-item a:hover {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+    outline: none !important;
+    outline-color: transparent !important;
+    outline-width: 0 !important;
+    outline-style: none !important;
+    box-shadow: none !important;
+    -webkit-focus-ring-color: rgba(0,0,0,0) !important;
+}
+
+/* Aggressive reset for button backgrounds to prevent theme bleed-through (like fuchsia/pink) */
+button:not([class*="bg-"]):hover, 
+a[role="button"]:not([class*="bg-"]):hover,
+input[type="submit"]:not([class*="bg-"]):hover {
+    background-color: transparent !important;
+}
+
+/* Force override any inline styles or shadow DOM */
+:root {
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+::selection {
+    background: rgba(212, 175, 55, 0.3); /* Gold color for selection, just in case */
+}
+
+::-moz-selection {
+    background: rgba(212, 175, 55, 0.3);
+}
+
+.site-main {
+    min-height: 60vh;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+.site-footer {
+    width: 100% !important;
+    max-width: 100% !important;
+    background-color: var(--ink);
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Rimuovo i fix per Elementor visto che non è in uso */
+section {
+    overflow: hidden !important;
+}
+
+/* Pagination Styling */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 50px;
+}
+
+.pagination .page-numbers {
+    padding: 8px 16px;
+    border: 1px solid rgba(10, 10, 10, 0.1);
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-numbers.current {
+    background-color: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+}
+
+.pagination .page-numbers:hover:not(.current) {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+/* --- Property Cards --- */
+.property-card {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
+}
+
+.property-card:hover {
+    transform: translateY(-10px);
+}
+
+/* --- Reveal Animations --- */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .glass-nav {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+}
+
+/* --- Leaflet Popups --- */
+.leaflet-popup-content-wrapper {
+    padding: 0 !important;
+    overflow: hidden;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+.leaflet-popup-content {
+    margin: 0 !important;
+    width: 256px !important;
+}
+
+.leaflet-popup-tip {
+    background: white !important;
+}
+
+.custom-div-icon {
+    background: none !important;
+    border: none !important;
+    z-index: 1000 !important;
+}
+
+.leaflet-marker-icon {
+    z-index: 1000 !important;
+}
+
+.leaflet-pane {
+    z-index: 400 !important;
+}
+
+#main-map {
+    min-height: 750px;
+}
+
+.map-shell {
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.04), rgba(212, 175, 55, 0.08));
+}
+
+.map-lock-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.18), rgba(10, 10, 10, 0.32));
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.map-lock-overlay.is-interactive {
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 1rem;
+    background: transparent;
+    pointer-events: none;
+}
+
+.map-lock-overlay__panel {
+    max-width: 34rem;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1.5rem;
+    background: rgba(10, 10, 10, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: var(--white);
+    text-align: center;
+}
+
+.map-lock-overlay.is-interactive .map-lock-overlay__panel {
+    max-width: none;
+    padding: 0.75rem;
+    border-radius: 999px;
+    background: rgba(10, 10, 10, 0.8);
+    pointer-events: auto;
+}
+
+.map-lock-overlay.is-interactive .map-lock-overlay__eyebrow,
+.map-lock-overlay.is-interactive .map-lock-overlay__title,
+.map-lock-overlay.is-interactive .map-lock-overlay__text {
+    display: none;
+}
+
+.map-lock-overlay__eyebrow,
+.map-empty-state__eyebrow {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+.map-lock-overlay__title,
+.map-empty-state__title {
+    margin: 0 0 0.75rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    line-height: 0.95;
+}
+
+.map-lock-overlay__text,
+.map-empty-state__text {
+    margin: 0 auto;
+    max-width: 30rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.98rem;
+    line-height: 1.65;
+}
+
+.map-lock-overlay__button {
+    margin-top: 1.5rem;
+    padding: 0.95rem 1.4rem;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.map-lock-overlay.is-interactive .map-lock-overlay__button {
+    margin-top: 0;
+    padding: 0.8rem 1rem;
+    background: rgba(10, 10, 10, 0.92);
+    color: var(--white);
+    border-color: rgba(212, 175, 55, 0.45);
+}
+
+.map-lock-overlay__button:hover {
+    transform: translateY(-1px);
+    background: var(--white) !important;
+}
+
+.map-lock-overlay.is-interactive .map-lock-overlay__button:hover {
+    background: var(--gold) !important;
+    color: var(--ink);
+}
+
+.map-empty-state {
+    position: absolute;
+    right: 2rem;
+    bottom: 2rem;
+    z-index: 650;
+    max-width: 24rem;
+    padding: 1.25rem 1.4rem;
+    border: 1px solid rgba(10, 10, 10, 0.08);
+    border-radius: 1.25rem;
+    background: rgba(245, 245, 240, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 24px 50px rgba(10, 10, 10, 0.08) !important;
+}
+
+.map-empty-state__title {
+    color: var(--ink);
+    font-size: 2rem;
+}
+
+.map-empty-state__text {
+    color: rgba(10, 10, 10, 0.68);
+    max-width: none;
+}
+
+@media (max-width: 768px) {
+    #main-map {
+        min-height: 560px;
+    }
+
+    .map-lock-overlay {
+        padding: 1rem;
+        align-items: flex-end;
+    }
+
+    .map-lock-overlay__panel,
+    .map-empty-state {
+        max-width: none;
+        width: 100%;
+    }
+
+    .map-empty-state {
+        right: 1rem;
+        bottom: 1rem;
+        left: 1rem;
+    }
+}

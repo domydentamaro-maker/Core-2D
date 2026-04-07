@@ -1,0 +1,25 @@
+<svg width="1160" height="280" viewBox="0 0 1160 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1160" height="280" rx="36" fill="#14110F"/>
+  <g transform="translate(28,24) scale(0.45)">
+    <rect width="512" height="512" rx="120" fill="#14110F"/>
+    <circle cx="256" cy="216" r="120" stroke="#C7A366" stroke-opacity="0.18" stroke-width="16"/>
+    <circle cx="256" cy="216" r="86" stroke="#C7A366" stroke-opacity="0.32" stroke-width="12"/>
+    <circle cx="256" cy="216" r="50" stroke="#C7A366" stroke-opacity="0.5" stroke-width="10"/>
+    <path d="M256 106C207.399 106 168 145.399 168 194C168 256.316 256 360 256 360C256 360 344 256.316 344 194C344 145.399 304.601 106 256 106Z" fill="url(#markGradient)"/>
+    <path d="M214 154H244V238H214V154Z" fill="#F6EFE3"/>
+    <path d="M250 130H280V238H250V130Z" fill="#F6EFE3"/>
+    <path d="M286 170H316V238H286V170Z" fill="#F6EFE3"/>
+    <path d="M200 314C231.211 287.338 280.407 286.827 311.945 312.834C333.193 330.353 360.673 338.5 388.055 335.416" stroke="#C7A366" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="366" cy="240" r="10" fill="#C7A366"/>
+  </g>
+  <text x="298" y="122" fill="#F6EFE3" font-family="Space Grotesk, Arial, sans-serif" font-size="54" font-weight="700" letter-spacing="8">2D</text>
+  <text x="398" y="122" fill="#C7A366" font-family="Fraunces, Georgia, serif" font-size="92" font-weight="700" letter-spacing="-3">Radar</text>
+  <text x="302" y="176" fill="#C7A366" font-family="Space Grotesk, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="6">PRIVATE PREDICTIVE PROPERTY APP</text>
+  <text x="302" y="218" fill="#DAD1C4" font-family="Space Grotesk, Arial, sans-serif" font-size="28" font-weight="400">Geofencing, matching e attivazione immobiliare nell'ecosistema Visioni.</text>
+  <defs>
+    <linearGradient id="markGradient" x1="168" y1="106" x2="344" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1D79B"/>
+      <stop offset="1" stop-color="#C7A366"/>
+    </linearGradient>
+  </defs>
+</svg>

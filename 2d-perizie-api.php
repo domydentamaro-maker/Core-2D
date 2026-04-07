@@ -119,23 +119,21 @@ $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 
 try {
-    ensureSchema();
-
     switch ($action) {
         case 'perizie':
-            if ($method === 'GET')  { listPerizie(); break; }
+            if ($method === 'GET')  { ensureSchema(); listPerizie(); break; }
             break;
 
         case 'perizia':
-            if ($method === 'GET')  { getPerizia(); break; }
+            if ($method === 'GET')  { ensureSchema(); getPerizia(); break; }
             break;
 
         case 'save':
-            if ($method === 'POST') { savePerizia(); break; }
+            if ($method === 'POST') { ensureSchema(); savePerizia(); break; }
             break;
 
         case 'delete':
-            if ($method === 'DELETE' || $method === 'POST') { deletePerizia(); break; }
+            if ($method === 'DELETE' || $method === 'POST') { ensureSchema(); deletePerizia(); break; }
             break;
 
         case 'omi':
@@ -242,6 +240,7 @@ function deletePerizia(): void {
 
 function omiLookup(): void {
     $comune    = trim($_GET['comune']    ?? '');
+    $provincia = trim($_GET['provincia'] ?? '');
     $tipologia = strtoupper(trim($_GET['tipologia'] ?? 'A'));
     $anno      = (int)($_GET['anno']     ?? date('Y'));
     $semestre  = (int)($_GET['semestre'] ?? 1);
@@ -252,17 +251,24 @@ function omiLookup(): void {
     $mapTipologia = ['A' => 'A', 'B' => 'B', 'C' => 'C', 'D' => 'D', 'E' => 'E', 'F' => 'F'];
     $tipOMI = $mapTipologia[$tipologia] ?? 'A';
 
-    // 1. Controlla cache DB (valida 180 giorni)
-    $db   = getDb();
-    $stmt = $db->prepare("
-        SELECT prezzo_min, prezzo_max, fascia, stato_conserv
-        FROM omi_cache
-        WHERE comune_nome = ? AND anno = ? AND semestre = ? AND tipologia = ?
-          AND cached_at > DATE_SUB(NOW(), INTERVAL 180 DAY)
-        ORDER BY fascia ASC
-    ");
-    $stmt->execute([strtoupper($comune), $anno, $semestre, $tipOMI]);
-    $cached = $stmt->fetchAll();
+    // 1. Controlla cache DB (valida 180 giorni), ma senza rendere bloccante la lookup.
+    $db = null;
+    $cached = [];
+    try {
+        ensureSchema();
+        $db   = getDb();
+        $stmt = $db->prepare(" 
+            SELECT prezzo_min, prezzo_max, fascia, stato_conserv
+            FROM omi_cache
+            WHERE comune_nome = ? AND anno = ? AND semestre = ? AND tipologia = ?
+              AND cached_at > DATE_SUB(NOW(), INTERVAL 180 DAY)
+            ORDER BY fascia ASC
+        ");
+        $stmt->execute([strtoupper($comune), $anno, $semestre, $tipOMI]);
+        $cached = $stmt->fetchAll();
+    } catch (Throwable $e) {
+        $db = null;
+    }
 
     if (!empty($cached)) {
         echo json_encode(['source' => 'cache', 'data' => aggregateOmiResults($cached)]);
@@ -270,20 +276,26 @@ function omiLookup(): void {
     }
 
     // 2. Fetch live da OMI open data CSV
-    $result = fetchOmiFromCsv($comune, $tipOMI, $anno, $semestre);
+    $result = fetchOmiFromAgenzia($comune, $provincia, $tipOMI, $anno, $semestre);
+
+    if (empty($result)) {
+        $result = fetchOmiFromCsv($comune, $tipOMI, $anno, $semestre);
+    }
 
     if (!empty($result)) {
         // Salva in cache
-        $ins = $db->prepare("
-            INSERT INTO omi_cache (comune_nome, anno, semestre, tipologia, fascia, stato_conserv, prezzo_min, prezzo_max)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ");
-        foreach ($result as $row) {
-            $ins->execute([
-                strtoupper($comune), $anno, $semestre, $tipOMI,
-                $row['fascia'] ?? 'B', $row['stato'] ?? 'Normale',
-                $row['min'], $row['max'],
-            ]);
+        if ($db instanceof PDO) {
+            $ins = $db->prepare(" 
+                INSERT INTO omi_cache (comune_nome, anno, semestre, tipologia, fascia, stato_conserv, prezzo_min, prezzo_max)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            foreach ($result as $row) {
+                $ins->execute([
+                    strtoupper($comune), $anno, $semestre, $tipOMI,
+                    $row['fascia'] ?? 'B', $row['stato'] ?? 'Normale',
+                    $row['min'], $row['max'],
+                ]);
+            }
         }
         echo json_encode(['source' => 'omi', 'data' => aggregateOmiResults(
             array_map(fn($r) => ['prezzo_min' => $r['min'], 'prezzo_max' => $r['max'], 'fascia' => $r['fascia'] ?? 'B'], $result)
@@ -294,6 +306,276 @@ function omiLookup(): void {
     // 3. Nessun dato trovato
     http_response_code(404);
     echo json_encode(['error' => 'Nessuna quotazione OMI trovata per ' . htmlspecialchars($comune)]);
+}
+
+function httpFetch(string $url, int $timeout = 30): array {
+    $userAgent = '2D-Perizie-App/1.1 (+https://www.2dsviluppoimmobiliare.it)';
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS      => 5,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT        => $timeout,
+            CURLOPT_USERAGENT      => $userAgent,
+            CURLOPT_HTTPHEADER     => ['Accept: */*'],
+        ]);
+
+        $body = curl_exec($ch);
+        $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err  = curl_error($ch);
+        curl_close($ch);
+
+        return [
+            'ok'     => $body !== false && $code >= 200 && $code < 400,
+            'status' => $code,
+            'body'   => $body === false ? '' : $body,
+            'error'  => $err ?: null,
+        ];
+    }
+
+    $ctx = stream_context_create(['http' => [
+        'timeout'       => $timeout,
+        'user_agent'    => $userAgent,
+        'ignore_errors' => true,
+    ]]);
+
+    $body = @file_get_contents($url, false, $ctx);
+    $code = 0;
+    foreach ($http_response_header ?? [] as $header) {
+        if (preg_match('~^HTTP/\S+\s+(\d{3})~', $header, $m)) {
+            $code = (int)$m[1];
+            break;
+        }
+    }
+
+    return [
+        'ok'     => $body !== false && $code >= 200 && $code < 400,
+        'status' => $code,
+        'body'   => $body === false ? '' : $body,
+        'error'  => $body === false ? 'file_get_contents failed' : null,
+    ];
+}
+
+function httpGetJson(string $url, int $timeout = 30): ?array {
+    $res = httpFetch($url, $timeout);
+    if (!$res['ok'] || $res['body'] === '') {
+        return null;
+    }
+
+    $data = json_decode($res['body'], true);
+    return is_array($data) ? $data : null;
+}
+
+function normalizeLookupValue(string $value): string {
+    $value = strtoupper(trim($value));
+    $ascii = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
+    if (is_string($ascii) && $ascii !== '') {
+        $value = $ascii;
+    }
+
+    $value = str_replace(['`', "'", '.', ',', '-', '/', '(', ')'], ' ', $value);
+    $value = preg_replace('/\s+/', ' ', $value) ?? $value;
+    return trim($value);
+}
+
+function mapProvinciaCode(string $provincia): ?string {
+    $provincia = normalizeLookupValue($provincia);
+    if ($provincia === '') {
+        return null;
+    }
+    if (preg_match('/^[A-Z]{2}$/', $provincia)) {
+        return $provincia;
+    }
+
+    static $province = null;
+    if ($province === null) {
+        $province = [];
+        $rows = httpGetJson('https://wwwt.agenziaentrate.gov.it/geopoi_omi/zoneomi.php?richiesta=1', 30) ?? [];
+        foreach ($rows as $row) {
+            $code = strtoupper(trim((string)($row['PROVINCIA'] ?? '')));
+            $name = normalizeLookupValue((string)($row['DIZIONE'] ?? ''));
+            if ($code !== '' && $name !== '') {
+                $province[$name] = $code;
+            }
+        }
+    }
+
+    return $province[$provincia] ?? null;
+}
+
+function resolveComuneCode(string $comune, string $provincia = ''): ?array {
+    $comuneNeedle = normalizeLookupValue($comune);
+    if ($comuneNeedle === '') {
+        return null;
+    }
+
+    $provinceCodes = [];
+    $provCode = mapProvinciaCode($provincia);
+    if ($provCode) {
+        $provinceCodes[] = $provCode;
+    } else {
+        $provRows = httpGetJson('https://wwwt.agenziaentrate.gov.it/geopoi_omi/zoneomi.php?richiesta=1', 30) ?? [];
+        foreach ($provRows as $row) {
+            $code = strtoupper(trim((string)($row['PROVINCIA'] ?? '')));
+            if ($code !== '') {
+                $provinceCodes[] = $code;
+            }
+        }
+    }
+
+    foreach (array_unique($provinceCodes) as $provinceCode) {
+        $rows = httpGetJson('https://wwwt.agenziaentrate.gov.it/geopoi_omi/zoneomi.php?richiesta=2&prov=' . rawurlencode($provinceCode), 45) ?? [];
+        foreach ($rows as $row) {
+            $name = normalizeLookupValue((string)($row['DIZIONE'] ?? ''));
+            if ($name === $comuneNeedle) {
+                return [
+                    'codcom'    => strtoupper(trim((string)($row['CODCOM'] ?? ''))),
+                    'provincia' => $provinceCode,
+                    'comune'    => (string)($row['DIZIONE'] ?? $comune),
+                ];
+            }
+        }
+
+        foreach ($rows as $row) {
+            $name = normalizeLookupValue((string)($row['DIZIONE'] ?? ''));
+            if ($name !== '' && strpos($name, $comuneNeedle) !== false) {
+                return [
+                    'codcom'    => strtoupper(trim((string)($row['CODCOM'] ?? ''))),
+                    'provincia' => $provinceCode,
+                    'comune'    => (string)($row['DIZIONE'] ?? $comune),
+                ];
+            }
+        }
+    }
+
+    return null;
+}
+
+function resolveOmiSemesterCode(int $anno, int $semestre): ?string {
+    $rows = httpGetJson('https://wwwt.agenziaentrate.gov.it/geopoi_omi/zoneomi.php?richiesta=5', 30) ?? [];
+    $requested = sprintf('%04d%d', $anno, $semestre === 2 ? 2 : 1);
+    $available = [];
+
+    foreach ($rows as $row) {
+        $code = preg_replace('/\D+/', '', (string)($row['SEMESTRE'] ?? ''));
+        if ($code !== '') {
+            $available[] = $code;
+        }
+    }
+
+    rsort($available, SORT_STRING);
+    if (in_array($requested, $available, true)) {
+        return $requested;
+    }
+
+    foreach ($available as $code) {
+        if ($code <= $requested) {
+            return $code;
+        }
+    }
+
+    return $available[0] ?? null;
+}
+
+function getOmiTipologyCandidates(string $tipologia): array {
+    $map = [
+        'A' => ['R'],
+        'B' => ['R'],
+        'C' => ['R'],
+        'D' => ['C', 'P', 'R', 'T'],
+        'E' => ['C', 'T'],
+        'F' => ['P', 'C'],
+    ];
+
+    return $map[$tipologia] ?? ['R'];
+}
+
+function parseOmiHtmlRows(string $html, string $fascia): array {
+    $rows = [];
+    $pattern = '~<tr>\s*<td[^>]*>(.*?)</td>\s*<td[^>]*>(.*?)</td>\s*<td[^>]*>(.*?)</td>\s*<td[^>]*>(.*?)</td>~is';
+    if (!preg_match_all($pattern, $html, $matches, PREG_SET_ORDER)) {
+        return [];
+    }
+
+    foreach ($matches as $match) {
+        $descrizione = trim(html_entity_decode(strip_tags($match[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $stato       = trim(html_entity_decode(strip_tags($match[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $minRaw      = trim(html_entity_decode(strip_tags($match[3]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $maxRaw      = trim(html_entity_decode(strip_tags($match[4]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+
+        $min = (float)str_replace(',', '.', preg_replace('/[^\d,\.]/', '', $minRaw) ?? '');
+        $max = (float)str_replace(',', '.', preg_replace('/[^\d,\.]/', '', $maxRaw) ?? '');
+        if ($min <= 0 || $max <= 0) {
+            continue;
+        }
+
+        $rows[] = [
+            'fascia' => $fascia,
+            'stato'  => $stato !== '' ? $stato : $descrizione,
+            'min'    => $min,
+            'max'    => $max,
+        ];
+    }
+
+    return $rows;
+}
+
+function fetchOmiFromAgenzia(string $comune, string $provincia, string $tipologia, int $anno, int $semestre): array {
+    $semesterCode = resolveOmiSemesterCode($anno, $semestre);
+    if (!$semesterCode) {
+        return [];
+    }
+
+    $comuneInfo = resolveComuneCode($comune, $provincia);
+    if (!$comuneInfo || empty($comuneInfo['codcom'])) {
+        return [];
+    }
+
+    $zones = httpGetJson(
+        'https://wwwt.agenziaentrate.gov.it/geopoi_omi/zoneomi.php?richiesta=3&codcom=' . rawurlencode($comuneInfo['codcom']),
+        45
+    ) ?? [];
+    if (empty($zones)) {
+        return [];
+    }
+
+    $tipologyCandidates = getOmiTipologyCandidates($tipologia);
+    $results = [];
+
+    foreach ($zones as $zone) {
+        $linkZona = trim((string)($zone['LINK_ZONA'] ?? ''));
+        $codZona  = trim((string)($zone['ZONA'] ?? ''));
+        $fascia   = trim((string)($zone['FASCIA'] ?? 'B'));
+        if ($linkZona === '' || $codZona === '') {
+            continue;
+        }
+
+        foreach ($tipologyCandidates as $tipCode) {
+            $url = sprintf(
+                'https://wwwt.agenziaentrate.gov.it/geopoi_omi/stampaomi.php?%s/%s/%s/%s/%s/0/0',
+                rawurlencode($comuneInfo['codcom']),
+                rawurlencode($linkZona),
+                rawurlencode($semesterCode),
+                rawurlencode($tipCode),
+                rawurlencode($codZona)
+            );
+            $res = httpFetch($url, 45);
+            if (!$res['ok'] || $res['body'] === '') {
+                continue;
+            }
+
+            $rows = parseOmiHtmlRows($res['body'], $fascia);
+            if (!empty($rows)) {
+                $results = array_merge($results, $rows);
+                break;
+            }
+        }
+    }
+
+    return $results;
 }
 
 /**

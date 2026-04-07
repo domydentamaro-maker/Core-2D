@@ -38,20 +38,71 @@ body {
     position: relative;
 }
 
-/* Fix per Admin Bar di WordPress */
-.admin-bar body {
-    padding-top: 32px !important;
+/* --- Header & Logo --- */
+#site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: transparent;
 }
-@media screen and (max-width: 782px) {
-    .admin-bar body {
-        padding-top: 46px !important;
+
+@media (min-width: 768px) {
+    #site-header {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
     }
 }
 
-/* --- Header & Logo --- */
-#site-header {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    background-color: transparent;
+/* Critical layout fallback before Tailwind runtime is ready */
+#site-header > .max-w-7xl,
+#site-header .site-header-inner {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+    #site-header > .max-w-7xl,
+    #site-header .site-header-inner {
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+}
+
+.main-navigation {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .main-navigation {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+}
+
+#mobile-menu-toggle {
+    display: inline-flex;
+}
+
+@media (min-width: 1024px) {
+    #mobile-menu-toggle {
+        display: none;
+    }
+}
+
+#site-header.header-preload {
+    transition: none !important;
 }
 
 #site-header.is-scrolled {
@@ -380,6 +431,16 @@ section {
     background: linear-gradient(135deg, rgba(10, 10, 10, 0.04), rgba(212, 175, 55, 0.08));
 }
 
+#main-map {
+    pointer-events: none;
+    touch-action: pan-y;
+}
+
+.map-shell.is-map-interactive #main-map {
+    pointer-events: auto;
+    touch-action: none;
+}
+
 .map-lock-overlay {
     position: absolute;
     inset: 0;
@@ -390,6 +451,7 @@ section {
     padding: 2rem;
     background: linear-gradient(180deg, rgba(10, 10, 10, 0.18), rgba(10, 10, 10, 0.32));
     transition: opacity 0.25s ease, visibility 0.25s ease;
+    touch-action: pan-y;
 }
 
 .map-lock-overlay.is-interactive {

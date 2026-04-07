@@ -6,6 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Visioni_Platform_Radar {
     private const API_NAMESPACE = 'visioni-platform/v1';
+    private const PROFILE_RATE_LIMIT_SECONDS = 90;
+    private const PROFILE_MAX_PER_HOUR = 8;
+    private const ALERT_MAX_PER_DAY = 5;
+    private const MAX_COMPATIBILITY_RESULTS = 30;
 
     private const BARI_QUARTIERI = array(
         'Poggiofranco',
@@ -35,6 +39,10 @@ class Visioni_Platform_Radar {
         $capability = class_exists( 'Visioni_Platform' )
             ? Visioni_Platform::required_capability()
             : 'edit_posts';
+
+        if ( class_exists( 'Visioni_Platform' ) && ! Visioni_Platform::has_system_access() ) {
+            return;
+        }
 
         add_submenu_page(
             'visioni-platform',
@@ -142,9 +150,10 @@ class Visioni_Platform_Radar {
             array(
                 'apiBase'     => esc_url_raw( rest_url( self::API_NAMESPACE ) ),
                 'nonce'       => wp_create_nonce( 'wp_rest' ),
-                'swUrl'       => esc_url_raw( VISIONI_PLATFORM_URL . 'visioni-platform-sw.js' ),
+                'swUrl'       => class_exists( 'Visioni_Platform' ) ? Visioni_Platform::pwa_service_worker_url() : esc_url_raw( home_url( '/visioni-platform-sw.js' ) ),
                 'quartieri'   => self::BARI_QUARTIERI,
                 'mapsEnabled' => wp_script_is( 'visioni-platform-google-maps', 'enqueued' ),
+                'platformUrl' => esc_url_raw( home_url( '/platform/' ) ),
             )
         );
 
@@ -152,11 +161,24 @@ class Visioni_Platform_Radar {
         ?>
         <div class="visioni-radar" id="visioni-radar-app">
             <div class="visioni-radar__header">
-                <p class="visioni-radar__eyebrow">2D Radar</p>
-                <h2>Attiva il tuo Radar Immobiliare</h2>
-                <p>Compila il wizard in 4 step per ricevere segnalazioni geolocalizzate in tempo reale.</p>
+                <div class="visioni-radar__header-main">
+                    <img src="<?php echo esc_url( class_exists( 'Visioni_Platform' ) ? Visioni_Platform::asset_url( 'assets/branding/visioni-radar-wordmark.svg' ) : VISIONI_PLATFORM_URL . 'assets/branding/visioni-radar-wordmark.svg' ); ?>" alt="2D Radar" class="visioni-radar__brandmark" />
+                    <div>
+                        <p class="visioni-radar__eyebrow">Private Mobile Experience</p>
+                        <h2>Attiva il tuo Radar Immobiliare</h2>
+                        <p>Compila il wizard, abilita posizione e notifiche e lascia che il sistema intercetti per te gli immobili compatibili quando entri nella zona giusta.</p>
+                    </div>
+                </div>
+                <div class="visioni-radar__header-side">
+                    <span>Privato</span>
+                    <span>Noindex</span>
+                    <span>Installabile</span>
+                </div>
             </div>
-            <div class="visioni-radar__wizard" id="visioni-radar-wizard"></div>
+            <div class="visioni-radar__wizard-shell">
+                <div class="visioni-radar__wizard" id="visioni-radar-wizard"></div>
+                <aside class="visioni-radar__summary" id="visioni-radar-summary"></aside>
+            </div>
             <div class="visioni-radar__map" id="visioni-radar-map"></div>
             <div class="visioni-radar__results" id="visioni-radar-results"></div>
         </div>
@@ -167,13 +189,22 @@ class Visioni_Platform_Radar {
 
     public static function create_profile( WP_REST_Request $request ) {
         $payload = (array) $request->get_json_params();
+        $profile = self::sanitize_profile_payload( $payload );
 
-        $name = sanitize_text_field( (string) ( $payload['nome'] ?? '' ) );
-        $email = sanitize_email( (string) ( $payload['email'] ?? '' ) );
-        $telefono = sanitize_text_field( (string) ( $payload['telefono'] ?? '' ) );
+        if ( ! self::can_create_profile( $profile ) ) {
+            return new WP_Error( 'rate_limited', 'Troppi invii ravvicinati. Riprova tra qualche minuto.', array( 'status' => 429 ) );
+        }
+
+        $name = (string) $profile['nome'];
+        $email = (string) $profile['email'];
+        $telefono = (string) $profile['telefono'];
 
         if ( '' === $name || '' === $email || ! is_email( $email ) ) {
             return new WP_Error( 'invalid_profile', 'Nome ed email validi sono obbligatori.', array( 'status' => 400 ) );
+        }
+
+        if ( empty( $profile['gdpr'] ) ) {
+            return new WP_Error( 'missing_consent', 'Devi accettare privacy e geolocalizzazione per attivare il Radar.', array( 'status' => 400 ) );
         }
 
         $title = 'Radar - ' . $name . ' - ' . gmdate( 'Y-m-d H:i' );
@@ -193,8 +224,10 @@ class Visioni_Platform_Radar {
         update_post_meta( $post_id, 'radar_nome', $name );
         update_post_meta( $post_id, 'radar_email', $email );
         update_post_meta( $post_id, 'radar_telefono', $telefono );
-        update_post_meta( $post_id, 'radar_profilo', wp_json_encode( self::sanitize_profile_payload( $payload ) ) );
+        update_post_meta( $post_id, 'radar_profilo', wp_json_encode( $profile ) );
         update_post_meta( $post_id, 'radar_created_at', current_time( 'mysql' ) );
+
+        self::touch_profile_rate_limit( $profile );
 
         wp_mail(
             $email,
@@ -225,6 +258,8 @@ class Visioni_Platform_Radar {
         }
 
         $filtered = self::apply_compatibility_filter( $items, $filters );
+    $filtered = self::apply_match_scores( $filtered, $filters );
+        $filtered = self::sort_compatibility_results( $filtered );
 
         return rest_ensure_response(
             array(
@@ -238,6 +273,19 @@ class Visioni_Platform_Radar {
     public static function get_compatibility( WP_REST_Request $request ) {
         $payload = (array) $request->get_json_params();
         $filters = self::sanitize_profile_payload( $payload );
+
+        if ( ! self::is_within_alert_window( $filters ) ) {
+            return rest_ensure_response(
+                array(
+                    'ok' => true,
+                    'compatibili' => array(),
+                    'matchCount' => 0,
+                    'muted' => true,
+                    'reason' => 'Fuori dalla fascia oraria notifiche del profilo.',
+                )
+            );
+        }
+
         $items = self::collect_catalog_immobili();
 
         if ( isset( $filters['lat'] ) && isset( $filters['lng'] ) ) {
@@ -250,17 +298,27 @@ class Visioni_Platform_Radar {
         }
 
         $filtered = self::apply_compatibility_filter( $items, $filters );
+        $filtered = self::apply_match_scores( $filtered, $filters );
+        $filtered = self::sort_compatibility_results( $filtered );
+
+        $alert_policy = self::apply_alert_rate_policy( $filtered, $filters );
+        $filtered = array_slice( $alert_policy['items'], 0, self::MAX_COMPATIBILITY_RESULTS );
 
         return rest_ensure_response(
             array(
                 'ok'           => true,
                 'compatibili'  => array_values( $filtered ),
                 'matchCount'   => count( $filtered ),
+                'alertBudgetRemaining' => (int) $alert_policy['remaining'],
             )
         );
     }
 
     public static function render_admin_page() {
+        if ( class_exists( 'Visioni_Platform' ) && Visioni_Platform::maybe_render_access_gate() ) {
+            return;
+        }
+
         $profiles = get_posts(
             array(
                 'post_type'      => 'radar_profile',
@@ -326,6 +384,24 @@ class Visioni_Platform_Radar {
             )
         );
 
+        $vani_min = max( 0, min( 20, (int) ( $raw['vaniMin'] ?? 1 ) ) );
+        $vani_max = max( 0, min( 20, (int) ( $raw['vaniMax'] ?? 6 ) ) );
+        if ( $vani_max > 0 && $vani_max < $vani_min ) {
+            $vani_max = $vani_min;
+        }
+
+        $budget_min = max( 0, (float) ( $raw['budgetMin'] ?? 0 ) );
+        $budget_max = max( 0, (float) ( $raw['budgetMax'] ?? 99999999 ) );
+        if ( $budget_max > 0 && $budget_max < $budget_min ) {
+            $budget_max = $budget_min;
+        }
+
+        $raggio_km = (float) ( $raw['raggioKm'] ?? 20 );
+        $raggio_km = max( 0.1, min( 150, $raggio_km ) );
+
+        $raggio_alert = (int) ( $raw['raggioAlert'] ?? 200 );
+        $raggio_alert = max( 50, min( 20000, $raggio_alert ) );
+
         return array(
             'nome'         => sanitize_text_field( (string) ( $raw['nome'] ?? '' ) ),
             'email'        => sanitize_email( (string) ( $raw['email'] ?? '' ) ),
@@ -333,21 +409,221 @@ class Visioni_Platform_Radar {
             'buyerType'    => sanitize_key( (string) ( $raw['buyerType'] ?? '' ) ),
             'intent'       => sanitize_key( (string) ( $raw['intent'] ?? '' ) ),
             'tipologia'    => $tipologia,
-            'vaniMin'      => (int) ( $raw['vaniMin'] ?? 1 ),
-            'vaniMax'      => (int) ( $raw['vaniMax'] ?? 6 ),
-            'budgetMin'    => (float) ( $raw['budgetMin'] ?? 0 ),
-            'budgetMax'    => (float) ( $raw['budgetMax'] ?? 99999999 ),
+            'vaniMin'      => $vani_min,
+            'vaniMax'      => $vani_max,
+            'budgetMin'    => $budget_min,
+            'budgetMax'    => $budget_max,
             'pianoMin'     => (int) ( $raw['pianoMin'] ?? 0 ),
             'garage'       => sanitize_key( (string) ( $raw['garage'] ?? 'no' ) ),
             'zone'         => array_values( $zone ),
-            'raggioKm'     => (float) ( $raw['raggioKm'] ?? 20 ),
-            'raggioAlert'  => (int) ( $raw['raggioAlert'] ?? 200 ),
+            'raggioKm'     => $raggio_km,
+            'raggioAlert'  => $raggio_alert,
             'fasciaDalle'  => sanitize_text_field( (string) ( $raw['fasciaDalle'] ?? '08:00' ) ),
             'fasciaAlle'   => sanitize_text_field( (string) ( $raw['fasciaAlle'] ?? '21:00' ) ),
             'gdpr'         => ! empty( $raw['gdpr'] ),
             'lat'          => isset( $raw['lat'] ) ? (float) $raw['lat'] : null,
             'lng'          => isset( $raw['lng'] ) ? (float) $raw['lng'] : null,
         );
+    }
+
+    private static function sort_compatibility_results( array $items ) {
+        usort(
+            $items,
+            static function( $a, $b ) {
+                $a_score = isset( $a['matchScore'] ) ? (float) $a['matchScore'] : 0;
+                $b_score = isset( $b['matchScore'] ) ? (float) $b['matchScore'] : 0;
+                if ( $a_score !== $b_score ) {
+                    return $b_score <=> $a_score;
+                }
+
+                $a_distance = isset( $a['distanceKm'] ) ? (float) $a['distanceKm'] : PHP_FLOAT_MAX;
+                $b_distance = isset( $b['distanceKm'] ) ? (float) $b['distanceKm'] : PHP_FLOAT_MAX;
+
+                if ( $a_distance !== $b_distance ) {
+                    return $a_distance <=> $b_distance;
+                }
+
+                $a_price = isset( $a['prezzo'] ) ? (float) $a['prezzo'] : PHP_FLOAT_MAX;
+                $b_price = isset( $b['prezzo'] ) ? (float) $b['prezzo'] : PHP_FLOAT_MAX;
+                if ( $a_price !== $b_price ) {
+                    return $a_price <=> $b_price;
+                }
+
+                return (int) ( $a['id'] ?? 0 ) <=> (int) ( $b['id'] ?? 0 );
+            }
+        );
+
+        return $items;
+    }
+
+    private static function apply_match_scores( array $items, array $filters ) {
+        foreach ( $items as &$item ) {
+            $score = 50.0;
+
+            if ( isset( $item['distanceKm'] ) ) {
+                $distance = (float) $item['distanceKm'];
+                $radius = max( 0.1, (float) ( $filters['raggioKm'] ?? 20 ) );
+                $distance_ratio = min( 1.0, $distance / $radius );
+                $score += ( 1 - $distance_ratio ) * 20;
+            }
+
+            $budget_min = (float) ( $filters['budgetMin'] ?? 0 );
+            $budget_max = (float) ( $filters['budgetMax'] ?? 0 );
+            $price = (float) ( $item['prezzo'] ?? 0 );
+            if ( $price > 0 && $budget_max > 0 ) {
+                if ( $price >= $budget_min && $price <= $budget_max ) {
+                    $score += 15;
+                } else {
+                    $center = $budget_min > 0 ? ( $budget_min + $budget_max ) / 2 : $budget_max;
+                    if ( $center > 0 ) {
+                        $delta = abs( $price - $center ) / $center;
+                        $score += max( 0, 12 - ( $delta * 20 ) );
+                    }
+                }
+            }
+
+            $vani = (int) ( $item['vani'] ?? 0 );
+            $vani_min = (int) ( $filters['vaniMin'] ?? 0 );
+            $vani_max = (int) ( $filters['vaniMax'] ?? 0 );
+            if ( $vani > 0 && $vani_min > 0 ) {
+                if ( $vani >= $vani_min && ( $vani_max <= 0 || $vani <= $vani_max ) ) {
+                    $score += 10;
+                } else {
+                    $score += 4;
+                }
+            }
+
+            $item['matchScore'] = max( 0, min( 100, (int) round( $score ) ) );
+        }
+        unset( $item );
+
+        return $items;
+    }
+
+    private static function is_within_alert_window( array $filters ) {
+        $from = isset( $filters['fasciaDalle'] ) ? trim( (string) $filters['fasciaDalle'] ) : '';
+        $to = isset( $filters['fasciaAlle'] ) ? trim( (string) $filters['fasciaAlle'] ) : '';
+        if ( '' === $from || '' === $to ) {
+            return true;
+        }
+
+        $from_ts = strtotime( $from );
+        $to_ts = strtotime( $to );
+        if ( false === $from_ts || false === $to_ts ) {
+            return true;
+        }
+
+        $now_hm = current_time( 'H:i' );
+        $now_ts = strtotime( $now_hm );
+        if ( false === $now_ts ) {
+            return true;
+        }
+
+        if ( $from_ts <= $to_ts ) {
+            return $now_ts >= $from_ts && $now_ts <= $to_ts;
+        }
+
+        return $now_ts >= $from_ts || $now_ts <= $to_ts;
+    }
+
+    private static function apply_alert_rate_policy( array $items, array $filters ) {
+        $token = self::profile_rate_limit_token( $filters );
+        if ( '' === $token ) {
+            return array(
+                'items' => $items,
+                'remaining' => self::ALERT_MAX_PER_DAY,
+            );
+        }
+
+        $key = 'visioni_radar_alert_day_' . md5( $token );
+        $sent_today = (int) get_transient( $key );
+        if ( $sent_today >= self::ALERT_MAX_PER_DAY ) {
+            return array(
+                'items' => array(),
+                'remaining' => 0,
+            );
+        }
+
+        $remaining = self::ALERT_MAX_PER_DAY - $sent_today;
+        $slice = array_slice( $items, 0, $remaining );
+        $new_total = $sent_today + count( $slice );
+        set_transient( $key, $new_total, DAY_IN_SECONDS );
+
+        return array(
+            'items' => $slice,
+            'remaining' => max( 0, self::ALERT_MAX_PER_DAY - $new_total ),
+        );
+    }
+
+    private static function can_create_profile( array $profile ) {
+        $token = self::profile_rate_limit_token( $profile );
+        if ( '' === $token ) {
+            return false;
+        }
+
+        $fast_key = 'visioni_radar_rate_fast_' . md5( $token );
+        if ( get_transient( $fast_key ) ) {
+            return false;
+        }
+
+        $hourly_key = 'visioni_radar_rate_hour_' . md5( $token );
+        $attempts = (int) get_transient( $hourly_key );
+        if ( $attempts >= self::PROFILE_MAX_PER_HOUR ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static function touch_profile_rate_limit( array $profile ) {
+        $token = self::profile_rate_limit_token( $profile );
+        if ( '' === $token ) {
+            return;
+        }
+
+        $fast_key = 'visioni_radar_rate_fast_' . md5( $token );
+        set_transient( $fast_key, 1, self::PROFILE_RATE_LIMIT_SECONDS );
+
+        $hourly_key = 'visioni_radar_rate_hour_' . md5( $token );
+        $attempts = (int) get_transient( $hourly_key );
+        set_transient( $hourly_key, $attempts + 1, HOUR_IN_SECONDS );
+    }
+
+    private static function profile_rate_limit_token( array $profile ) {
+        $email = strtolower( trim( (string) ( $profile['email'] ?? '' ) ) );
+        if ( '' !== $email && is_email( $email ) ) {
+            return 'email:' . $email;
+        }
+
+        $ip = self::resolve_request_ip();
+        if ( '' !== $ip ) {
+            return 'ip:' . $ip;
+        }
+
+        return '';
+    }
+
+    private static function resolve_request_ip() {
+        $server = wp_unslash( $_SERVER );
+        $candidates = array(
+            isset( $server['HTTP_X_FORWARDED_FOR'] ) ? (string) $server['HTTP_X_FORWARDED_FOR'] : '',
+            isset( $server['REMOTE_ADDR'] ) ? (string) $server['REMOTE_ADDR'] : '',
+        );
+
+        foreach ( $candidates as $candidate ) {
+            if ( '' === $candidate ) {
+                continue;
+            }
+
+            $parts = array_map( 'trim', explode( ',', $candidate ) );
+            foreach ( $parts as $part ) {
+                if ( filter_var( $part, FILTER_VALIDATE_IP ) ) {
+                    return $part;
+                }
+            }
+        }
+
+        return '';
     }
 
     private static function collect_catalog_immobili() {

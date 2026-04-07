@@ -223,7 +223,7 @@ foreach ( $xml->channel->item as $item ) {
 
 	foreach ( $wp_item->postmeta as $meta ) {
 		$key = (string) $meta->meta_key;
-		$val = (string) $meta->meta_value;
+		$val = maybe_unserialize( (string) $meta->meta_value );
 		if ( '' === $key ) {
 			continue;
 		}
