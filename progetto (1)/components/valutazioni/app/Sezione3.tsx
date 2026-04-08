@@ -1,9 +1,9 @@
 import React from 'react';
 import { SchedaTecnica, TIPOLOGIE_IMMOBILE, TipologiaImmobile } from '@/components/valutazioni/types/perizia';
 import { SectionHeader, SectionCard, FormField, Input, SelectField, TextareaField, FormGrid } from './FormComponents';
-import { Home, Hammer, Building, TreePine, Store, Factory, Plus, Trash2, Calculator } from 'lucide-react';
+import { Home, Hammer, Building, TreePine, Store, Factory, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/components/valutazioni/lib/utils';
-import { calcDettaglioSuperficie, calcSuperficieCommercialeDettaglio, calcSuperficieLordaDettaglio } from '@/components/valutazioni/lib/storage';
+import { calcDettaglioSuperficie, calcSuperficieCommercialeDettaglio, calcSuperficieLordaDettaglio, calcSuperficieNettaDettaglio, calcSuperficieTotaleInseritaDettaglio } from '@/components/valutazioni/lib/storage';
 
 interface Sezione3Props {
   data: SchedaTecnica;
@@ -31,9 +31,25 @@ export default function Sezione3({ data, onChange }: Sezione3Props) {
     onChange({ ...data, [field]: value });
   };
 
+  const syncDettaglioSuperfici = (nextPartial: Partial<SchedaTecnica>) => {
+    const snapshot = { ...data, ...nextPartial };
+    const dettaglio = snapshot.dettaglioSuperfici || [];
+    const percentualeMurature = snapshot.percentualeMurature ?? 10;
+    const superficieNetta = calcSuperficieNettaDettaglio(dettaglio);
+    const superficieLorda = calcSuperficieLordaDettaglio(dettaglio, percentualeMurature);
+    const superficieCommerciale = calcSuperficieCommercialeDettaglio(dettaglio);
+
+    onChange({
+      ...snapshot,
+      superficieNetta: superficieNetta > 0 ? superficieNetta : snapshot.superficieNetta,
+      superficieLorda: superficieLorda > 0 ? superficieLorda : snapshot.superficieLorda,
+      superficieCommerciale: superficieCommerciale > 0 ? superficieCommerciale : snapshot.superficieCommerciale,
+    });
+  };
+
   const updateDettaglioSuperficie = (id: string, field: string, value: any) => {
     const next = (data.dettaglioSuperfici || []).map((item) => item.id === id ? { ...item, [field]: value } : item);
-    update('dettaglioSuperfici', next);
+    syncDettaglioSuperfici({ dettaglioSuperfici: next });
   };
 
   const handleCriterioChange = (id: string, criterio: string) => {
@@ -41,11 +57,11 @@ export default function Sezione3({ data, onChange }: Sezione3Props) {
     const next = (data.dettaglioSuperfici || []).map((item) => item.id === id
       ? { ...item, criterio, coefficiente: preset ? Number(preset.coefficiente.toFixed(2)) : item.coefficiente }
       : item);
-    update('dettaglioSuperfici', next);
+    syncDettaglioSuperfici({ dettaglioSuperfici: next });
   };
 
   const addDettaglioSuperficie = () => {
-    update('dettaglioSuperfici', [
+    syncDettaglioSuperfici({ dettaglioSuperfici: [
       ...(data.dettaglioSuperfici || []),
       {
         id: crypto.randomUUID(),
@@ -57,23 +73,18 @@ export default function Sezione3({ data, onChange }: Sezione3Props) {
         superficie: 0,
         note: '',
       },
-    ]);
+    ] });
   };
 
   const removeDettaglioSuperficie = (id: string) => {
-    update('dettaglioSuperfici', (data.dettaglioSuperfici || []).filter((item) => item.id !== id));
+    syncDettaglioSuperfici({ dettaglioSuperfici: (data.dettaglioSuperfici || []).filter((item) => item.id !== id) });
   };
 
-  const totaleLordaDettaglio = calcSuperficieLordaDettaglio(data.dettaglioSuperfici || []);
+  const percentualeMurature = data.percentualeMurature ?? 10;
+  const totaleInseritoDettaglio = calcSuperficieTotaleInseritaDettaglio(data.dettaglioSuperfici || []);
+  const totaleNettaDettaglio = calcSuperficieNettaDettaglio(data.dettaglioSuperfici || []);
+  const totaleLordaDettaglio = calcSuperficieLordaDettaglio(data.dettaglioSuperfici || [], percentualeMurature);
   const totaleCommercialeDettaglio = calcSuperficieCommercialeDettaglio(data.dettaglioSuperfici || []);
-
-  const applyDettaglioToSuperfici = () => {
-    onChange({
-      ...data,
-      superficieLorda: totaleLordaDettaglio > 0 ? totaleLordaDettaglio : data.superficieLorda,
-      superficieCommerciale: totaleCommercialeDettaglio > 0 ? totaleCommercialeDettaglio : data.superficieCommerciale,
-    });
-  };
 
   const toggleImpianto = (imp: string) => {
     const impianti = data.impianti.includes(imp)
@@ -124,20 +135,32 @@ export default function Sezione3({ data, onChange }: Sezione3Props) {
               <FormField label="Sup. Commerciale" required hint="Puoi compilarla manualmente oppure derivarla dal dettaglio superfici qui sotto.">
                 <Input type="number" value={data.superficieCommerciale || ''} onChange={e => update('superficieCommerciale', +e.target.value)} unit="mq" />
               </FormField>
-              <FormField label="Sup. Lorda" hint="Valore di sintesi dell'involucro misurato.">
+              <FormField label="Sup. Lorda" hint="Derivata dalla superficie netta al 100% con incidenza murature.">
                 <Input type="number" value={data.superficieLorda || ''} onChange={e => update('superficieLorda', +e.target.value)} unit="mq" />
               </FormField>
-              <FormField label="Sup. Netta">
+              <FormField label="Sup. Netta" hint="Somma delle sole superfici interne al 100%.">
                 <Input type="number" value={data.superficieNetta || ''} onChange={e => update('superficieNetta', +e.target.value)} unit="mq" />
               </FormField>
             </FormGrid>
+
+            <div className="mt-4 max-w-xs">
+              <FormField label="Incidenza Murature" hint="Percentuale applicata alla netta per ottenere la lorda. Default 10%.">
+                <Input
+                  type="number"
+                  step="0.5"
+                  value={percentualeMurature || ''}
+                  onChange={e => syncDettaglioSuperfici({ percentualeMurature: +e.target.value })}
+                  unit="%"
+                />
+              </FormField>
+            </div>
 
             <div className="mt-6 border-t border-[#D4C9B0] pt-5">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <h4 className="font-playfair text-base font-bold text-[#1A1A1A]">Dettaglio superfici e criteri di ragguaglio</h4>
                   <p className="text-xs font-source text-[#5C5346]/70 mt-1">
-                    Inserisci i vani o gli spazi misurati e specifica il criterio: interni al 100%, esterni a 1/3, 1/5 o 1/10, cantine/interrati a 1/2, terrazzi di copertura al dettaglio.
+                    Le voci al 100% determinano la superficie netta. Alla netta viene applicata l'incidenza murature per calcolare la lorda. Le percentuali diverse dal 100% concorrono solo alla superficie commerciale.
                   </p>
                 </div>
                 <button
@@ -254,28 +277,29 @@ export default function Sezione3({ data, onChange }: Sezione3Props) {
 
                   <div className="grid md:grid-cols-3 gap-3">
                     <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
-                      <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Totale superfici reali</p>
+                      <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Netta da voci al 100%</p>
+                      <p className="font-playfair text-2xl text-[#1A1A1A]">{totaleNettaDettaglio > 0 ? `${totaleNettaDettaglio.toFixed(2)} mq` : '—'}</p>
+                    </div>
+                    <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
+                      <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Lorda con murature</p>
                       <p className="font-playfair text-2xl text-[#1A1A1A]">{totaleLordaDettaglio > 0 ? `${totaleLordaDettaglio.toFixed(2)} mq` : '—'}</p>
                     </div>
                     <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
-                      <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Totale commerciale</p>
+                      <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Commerciale ragguagliata</p>
                       <p className="font-playfair text-2xl text-[#1A1A1A]">{totaleCommercialeDettaglio > 0 ? `${totaleCommercialeDettaglio.toFixed(2)} mq` : '—'}</p>
+                      <p className="mt-2 text-[11px] font-source text-[#5C5346]/70">Somma ponderata di interni, accessori e superfici esterne secondo il criterio impostato.</p>
                     </div>
-                    <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8] flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={applyDettaglioToSuperfici}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#C8A96E] text-[#1A1A1A] rounded text-sm font-source font-600 hover:bg-[#B8996E] transition-colors"
-                      >
-                        <Calculator className="w-4 h-4" />
-                        Applica ai totali
-                      </button>
-                    </div>
+                  </div>
+
+                  <div className="p-4 border border-dashed border-[#D4C9B0] rounded bg-[#FDFAF4]">
+                    <p className="text-sm font-source text-[#1A1A1A]">
+                      Totale superfici inserite: <strong>{totaleInseritoDettaglio > 0 ? `${totaleInseritoDettaglio.toFixed(2)} mq` : '—'}</strong>. I campi netta, lorda e commerciale sopra vengono aggiornati automaticamente a partire da questo dettaglio.
+                    </p>
                   </div>
                 </div>
               ) : (
                 <div className="border border-dashed border-[#D4C9B0] rounded p-4 bg-[#F5F0E8]">
-                  <p className="text-sm font-source text-[#5C5346]">Nessun dettaglio inserito. Aggiungi i vani e gli spazi per documentare come si arriva alla superficie lorda e commerciale.</p>
+                  <p className="text-sm font-source text-[#5C5346]">Nessun dettaglio inserito. Aggiungi i vani e gli spazi al 100% per determinare la netta/lorda e usa i coefficienti percentuali per la commerciale.</p>
                 </div>
               )}
             </div>

@@ -34,11 +34,17 @@ export function generateSectionDraft(perizia: Perizia, id: string): string {
   const indirizzo = [immobile.via, immobile.civico].filter(Boolean).join(' ').trim() || 'indirizzo da precisare';
   const comune = immobile.comune || 'comune da precisare';
   const provincia = immobile.provincia || 'provincia da precisare';
-  const datiCatastali = [
-    immobile.foglio ? `Foglio ${immobile.foglio}` : '',
-    immobile.particella ? `Particella ${immobile.particella}` : '',
-    immobile.subalterno ? `Subalterno ${immobile.subalterno}` : '',
-  ].filter(Boolean).join(', ');
+  const datiCatastali = (immobile.unitaCatastali || []).map((unita) => {
+    const parti = [
+      unita.descrizione || '',
+      unita.foglio ? `Foglio ${unita.foglio}` : '',
+      unita.particella ? `Particella ${unita.particella}` : '',
+      unita.subalterno ? `Subalterno ${unita.subalterno}` : '',
+      unita.categoria ? `Categoria ${unita.categoria}` : '',
+      unita.rendita ? `Rendita ${unita.rendita}` : '',
+    ].filter(Boolean);
+    return parti.join(', ');
+  }).filter(Boolean).join('; ');
   const finalita = incarico.finalita.length > 0 ? incarico.finalita.join(', ') : 'finalità estimativa interna';
   const rangeMercato = mercato.prezzoMin > 0 && mercato.prezzoMax > 0
     ? `con un range di mercato rilevato compreso tra ${formatCurrency(mercato.prezzoMin)}/mq e ${formatCurrency(mercato.prezzoMax)}/mq`
@@ -58,7 +64,7 @@ La presente perizia è stata redatta sulla base della documentazione disponibile
     case 'descrizione':
       return `L'immobile oggetto di stima consiste in un ${tipo} ubicato in ${indirizzo}, nel Comune di ${comune} (${provincia})${immobile.cap ? `, CAP ${immobile.cap}` : ''}.
 
-Sotto il profilo catastale il bene risulta identificato ${datiCatastali ? `al ${datiCatastali}` : 'con dati catastali da integrare'}${immobile.categoria ? `, categoria ${immobile.categoria}` : ''}${immobile.rendita ? `, rendita catastale pari a ${immobile.rendita}` : ''}.
+Sotto il profilo catastale il bene risulta identificato ${datiCatastali ? `come segue: ${datiCatastali}` : 'con dati catastali da integrare'}.
 
 ${scheda.superficieCommerciale > 0 ? `La superficie commerciale considerata ai fini estimativi è pari a circa ${scheda.superficieCommerciale} mq.` : ''}
 ${scheda.superficieTerreno > 0 ? `La superficie del terreno risulta pari a circa ${scheda.superficieTerreno} mq.` : ''}

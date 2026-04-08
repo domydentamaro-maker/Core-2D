@@ -15,12 +15,24 @@ export interface DatiIncarico {
   firmaUrl: string;
 }
 
+export interface UnitaCatastale {
+  id: string;
+  descrizione: string;
+  foglio: string;
+  particella: string;
+  subalterno: string;
+  categoria: string;
+  rendita: string;
+  classe: string;
+}
+
 export interface DatiImmobile {
   via: string;
   civico: string;
   comune: string;
   cap: string;
   provincia: string;
+  unitaCatastali: UnitaCatastale[];
   foglio: string;
   particella: string;
   subalterno: string;
@@ -47,6 +59,7 @@ export interface SchedaTecnica {
   superficieCommerciale: number;
   superficieLorda: number;
   superficieNetta: number;
+  percentualeMurature: number;
   piano: string;
   numeroPiani: number;
   numeroLocali: number;
@@ -106,6 +119,12 @@ export interface AnalisiMercato {
   prezzoStoricoMq: number;
   prezzoMin: number;
   prezzoMax: number;
+  zonaOmi: string;
+  comuneCatastale: string;
+  compravenditeTotale: number;
+  compravenditeResidenziale: number;
+  compravenditeCommerciale: number;
+  compravenditePertinenze: number;
   fonteDati: string;
   usaFonteOmi: boolean;
   usaFonteWeb: boolean;
@@ -174,6 +193,19 @@ export interface FotoItem {
   ordine: number;
 }
 
+export interface AllegatoItem {
+  id: string;
+  url: string;
+  titolo: string;
+  categoria: string;
+  note: string;
+  nomeFile: string;
+  mimeType: string;
+  includiPdf: boolean;
+  dimensione: number;
+  ordine: number;
+}
+
 export interface SezioneTestuale {
   id: string;
   titolo: string;
@@ -193,6 +225,7 @@ export interface Perizia {
   analisiMercato: AnalisiMercato;
   metodiValutazione: MetodiValutazione;
   foto: FotoItem[];
+  allegati: AllegatoItem[];
   sezioniTestuali: SezioneTestuale[];
   completamento: { [key: string]: number };
 }
@@ -203,7 +236,7 @@ export const SEZIONI_MENU = [
   { id: 'tecnica', label: 'Scheda Tecnica', numero: 3 },
   { id: 'mercato', label: 'Analisi Mercato', numero: 4 },
   { id: 'valutazione', label: 'Valutazione', numero: 5 },
-  { id: 'foto', label: 'Foto e Documenti', numero: 6 },
+  { id: 'foto', label: 'Foto e Allegati', numero: 6 },
   { id: 'relazione', label: 'Relazione', numero: 7 },
 ];
 
@@ -302,6 +335,72 @@ export const DEFAULT_SEZIONI_TESTUALI: SezioneTestuale[] = [
   },
 ];
 
+export function createEmptyUnitaCatastale(overrides: Partial<UnitaCatastale> = {}): UnitaCatastale {
+  return {
+    id: crypto.randomUUID(),
+    descrizione: 'Unita principale',
+    foglio: '',
+    particella: '',
+    subalterno: '',
+    categoria: 'A/2',
+    rendita: '',
+    classe: '',
+    ...overrides,
+  };
+}
+
+export function normalizeDatiImmobile(raw?: Partial<DatiImmobile>): DatiImmobile {
+  const unitaCatastaliRaw = raw?.unitaCatastali && raw.unitaCatastali.length > 0
+    ? raw.unitaCatastali
+    : [
+        createEmptyUnitaCatastale({
+          descrizione: 'Unita principale',
+          foglio: raw?.foglio || '',
+          particella: raw?.particella || '',
+          subalterno: raw?.subalterno || '',
+          categoria: raw?.categoria || 'A/2',
+          rendita: raw?.rendita || '',
+          classe: raw?.classe || '',
+        }),
+      ];
+
+  const unitaCatastali = unitaCatastaliRaw.map((unita, index) => createEmptyUnitaCatastale({
+    ...unita,
+    id: unita.id || crypto.randomUUID(),
+    descrizione: unita.descrizione || (index === 0 ? 'Unita principale' : `Pertinenza ${index}`),
+    categoria: unita.categoria || 'A/2',
+  }));
+
+  const principale = unitaCatastali[0] || createEmptyUnitaCatastale();
+
+  return {
+    via: raw?.via || '',
+    civico: raw?.civico || '',
+    comune: raw?.comune || '',
+    cap: raw?.cap || '',
+    provincia: raw?.provincia || 'BA',
+    unitaCatastali,
+    foglio: principale.foglio,
+    particella: principale.particella,
+    subalterno: principale.subalterno,
+    categoria: principale.categoria,
+    rendita: principale.rendita,
+    classe: principale.classe,
+    tipoProprietà: raw?.tipoProprietà || 'Piena proprietà',
+    annoProvenienza: raw?.annoProvenienza || '',
+    ipoteche: raw?.ipoteche ?? false,
+    dettagliIpoteche: raw?.dettagliIpoteche || '',
+    conformitaUrbanistica: raw?.conformitaUrbanistica ?? true,
+    dettagliUrbanistica: raw?.dettagliUrbanistica || '',
+    conformitaCatastale: raw?.conformitaCatastale ?? true,
+    dettagliCatastale: raw?.dettagliCatastale || '',
+    abusiEdilizi: raw?.abusiEdilizi ?? false,
+    dettagliAbusiEdilizi: raw?.dettagliAbusiEdilizi || '',
+    agibilita: raw?.agibilita ?? true,
+    dettagliAgibilita: raw?.dettagliAgibilita || '',
+  };
+}
+
 export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroPratica?: string): Perizia {
   const now = new Date().toISOString().split('T')[0];
   const pratica = numeroPratica || `2D-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-001`;
@@ -327,6 +426,7 @@ export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroP
     },
     datiImmobile: {
       via: '', civico: '', comune: '', cap: '', provincia: 'BA',
+      unitaCatastali: [createEmptyUnitaCatastale()],
       foglio: '', particella: '', subalterno: '', categoria: 'A/2',
       rendita: '', classe: '',
       tipoProprietà: 'Piena proprietà', annoProvenienza: '',
@@ -339,6 +439,7 @@ export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroP
     schedaTecnica: {
       tipologia,
       superficieCommerciale: 0, superficieLorda: 0, superficieNetta: 0,
+      percentualeMurature: 10,
       piano: '', numeroPiani: 1, numeroLocali: 0, numeroBagni: 1,
       annoCostruzione: 0, statoConservazione: 'Buono', classeEnergetica: 'G',
       impianti: [], pertinenze: '',
@@ -352,6 +453,8 @@ export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroP
     },
     analisiMercato: {
       descrizioneMercato: '',
+      zonaOmi: '', comuneCatastale: '',
+      compravenditeTotale: 0, compravenditeResidenziale: 0, compravenditeCommerciale: 0, compravenditePertinenze: 0,
       prezzoMedioMq: 0, prezzoOmiMq: 0, prezzoStoricoMq: 0, prezzoMin: 0, prezzoMax: 0,
       fonteDati: 'OMI + Web + Storico',
       usaFonteOmi: true,
@@ -393,10 +496,71 @@ export function createDefaultPerizia(tipologia: TipologiaImmobile = 'A', numeroP
       },
     },
     foto: [],
+    allegati: [],
     sezioniTestuali: DEFAULT_SEZIONI_TESTUALI,
     completamento: {
       incarico: 0, immobile: 0, tecnica: 0,
       mercato: 0, valutazione: 0, foto: 0, relazione: 0,
+    },
+  };
+}
+
+export function normalizePerizia(raw: Partial<Perizia>): Perizia {
+  const tipologia = raw.schedaTecnica?.tipologia || 'A';
+  const pratica = raw.numeroPratica || raw.datiIncarico?.numeroPratica;
+  const base = createDefaultPerizia(tipologia, pratica);
+
+  return {
+    ...base,
+    ...raw,
+    datiIncarico: {
+      ...base.datiIncarico,
+      ...raw.datiIncarico,
+      numeroPratica: raw.datiIncarico?.numeroPratica || raw.numeroPratica || base.datiIncarico.numeroPratica,
+    },
+    datiImmobile: {
+      ...normalizeDatiImmobile({
+        ...base.datiImmobile,
+        ...raw.datiImmobile,
+      }),
+    },
+    schedaTecnica: {
+      ...base.schedaTecnica,
+      ...raw.schedaTecnica,
+      percentualeMurature: raw.schedaTecnica?.percentualeMurature ?? base.schedaTecnica.percentualeMurature,
+      dettaglioSuperfici: raw.schedaTecnica?.dettaglioSuperfici || base.schedaTecnica.dettaglioSuperfici,
+    },
+    analisiMercato: {
+      ...base.analisiMercato,
+      ...raw.analisiMercato,
+      comparabili: raw.analisiMercato?.comparabili || base.analisiMercato.comparabili,
+    },
+    metodiValutazione: {
+      ...base.metodiValutazione,
+      ...raw.metodiValutazione,
+      comparativo: {
+        ...base.metodiValutazione.comparativo,
+        ...raw.metodiValutazione?.comparativo,
+      },
+      costoRicostruzione: {
+        ...base.metodiValutazione.costoRicostruzione,
+        ...raw.metodiValutazione?.costoRicostruzione,
+      },
+      trasformazione: {
+        ...base.metodiValutazione.trasformazione,
+        ...raw.metodiValutazione?.trasformazione,
+      },
+      capitalizzazione: {
+        ...base.metodiValutazione.capitalizzazione,
+        ...raw.metodiValutazione?.capitalizzazione,
+      },
+    },
+    foto: raw.foto || base.foto,
+    allegati: raw.allegati || base.allegati,
+    sezioniTestuali: raw.sezioniTestuali || base.sezioniTestuali,
+    completamento: {
+      ...base.completamento,
+      ...raw.completamento,
     },
   };
 }

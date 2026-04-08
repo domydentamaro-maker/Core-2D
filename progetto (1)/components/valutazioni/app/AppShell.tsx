@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Perizia, TipologiaImmobile, createDefaultPerizia } from '@/components/valutazioni/types/perizia';
+import { Perizia, TipologiaImmobile, createDefaultPerizia, normalizePerizia } from '@/components/valutazioni/types/perizia';
 import {
   loadPerizie, savePerizia, deletePerizia, duplicatePerizia,
   exportPeriziaJSON, scheduleAutosave, calcCompletamento, calcSuperficieCommercialeDettaglio, generateNumeroPratica
@@ -102,7 +102,7 @@ export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
   };
 
   const handleAprePerizia = (perizia: Perizia) => {
-    const normalized = syncComparativoReferences(perizia);
+    const normalized = syncComparativoReferences(normalizePerizia(perizia));
     normalized.completamento = calcCompletamento(normalized);
     setPeriziaCorrente(normalized);
     setSezioneAttiva('incarico');
@@ -256,7 +256,9 @@ export default function AppShell({ onLogout }: { onLogout?: () => void } = {}) {
               {sezioneAttiva === 'foto' && (
                 <Sezione6
                   foto={periziaCorrente.foto}
-                  onChange={(foto) => updatePerizia({ foto })}
+                  allegati={periziaCorrente.allegati}
+                  onFotoChange={(foto) => updatePerizia({ foto })}
+                  onAllegatiChange={(allegati) => updatePerizia({ allegati })}
                 />
               )}
               {sezioneAttiva === 'relazione' && (

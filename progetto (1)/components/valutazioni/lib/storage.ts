@@ -1,4 +1,4 @@
-import { AnalisiMercato, Perizia, MetodiValutazione, ComparabileTx, DettaglioSuperficie } from '@/components/valutazioni/types/perizia';
+import { AnalisiMercato, Perizia, MetodiValutazione, ComparabileTx, DettaglioSuperficie, normalizePerizia } from '@/components/valutazioni/types/perizia';
 
 const STORAGE_KEY = '2d-valuta-pro-perizie';
 const AUTOSAVE_DELAY = 2000;
@@ -9,7 +9,7 @@ export function loadPerizie(): Perizia[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
     if (!data) return [];
-    return JSON.parse(data) as Perizia[];
+    return (JSON.parse(data) as Partial<Perizia>[]).map(normalizePerizia);
   } catch {
     return [];
   }
@@ -36,7 +36,7 @@ export function generateNumeroPratica(perizie: Perizia[], referenceDate: Date = 
 export function savePerizia(perizia: Perizia): Perizia[] {
   const perizie = loadPerizie();
   const index = perizie.findIndex(p => p.id === perizia.id);
-  const updated = { ...perizia, dataModifica: new Date().toISOString().split('T')[0] };
+  const updated = normalizePerizia({ ...perizia, dataModifica: new Date().toISOString().split('T')[0] });
   if (index >= 0) {
     perizie[index] = updated;
   } else {
@@ -55,7 +55,7 @@ export function deletePerizia(id: string): Perizia[] {
 export function duplicatePerizia(perizia: Perizia, perizieEsistenti: Perizia[] = []): Perizia {
   const now = new Date().toISOString().split('T')[0];
   const newPratica = generateNumeroPratica(perizieEsistenti, new Date());
-  return {
+  return normalizePerizia({
     ...JSON.parse(JSON.stringify(perizia)),
     id: crypto.randomUUID(),
     numeroPratica: newPratica,
@@ -67,7 +67,7 @@ export function duplicatePerizia(perizia: Perizia, perizieEsistenti: Perizia[] =
       numeroPratica: newPratica,
       dataPerizia: now,
     },
-  };
+  });
 }
 
 export function scheduleAutosave(perizia: Perizia, callback: (saved: boolean) => void): void {
@@ -94,7 +94,7 @@ export function importPeriziaJSON(file: File): Promise<Perizia> {
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target?.result as string);
-        resolve({ ...data, id: crypto.randomUUID(), dataModifica: new Date().toISOString().split('T')[0] });
+        resolve(normalizePerizia({ ...data, id: crypto.randomUUID(), dataModifica: new Date().toISOString().split('T')[0] }));
       } catch {
         reject(new Error('File JSON non valido'));
       }
@@ -160,7 +160,29 @@ export function calcDettaglioSuperficie(item: DettaglioSuperficie): number {
   return 0;
 }
 
-export function calcSuperficieLordaDettaglio(items: DettaglioSuperficie[]): number {
+function isDettaglioBaseInterna(item: DettaglioSuperficie): boolean {
+  const criterio = (item.criterio || '').toLowerCase();
+  return criterio.includes('100') || Math.abs((item.coefficiente || 0) - 1) < 0.001;
+}
+
+export function calcSuperficieNettaDettaglio(items: DettaglioSuperficie[]): number {
+  return Number(items
+    .filter(isDettaglioBaseInterna)
+    .reduce((sum, item) => sum + calcDettaglioSuperficie(item), 0)
+    .toFixed(2));
+}
+
+export function calcSuperficieLordaDaNetta(superficieNetta: number, percentualeMurature: number = 10): number {
+  if (superficieNetta <= 0) return 0;
+  return Number((superficieNetta * (1 + ((percentualeMurature || 0) / 100))).toFixed(2));
+}
+
+export function calcSuperficieLordaDettaglio(items: DettaglioSuperficie[], percentualeMurature: number = 10): number {
+  const netta = calcSuperficieNettaDettaglio(items);
+  return calcSuperficieLordaDaNetta(netta, percentualeMurature);
+}
+
+export function calcSuperficieTotaleInseritaDettaglio(items: DettaglioSuperficie[]): number {
   return Number(items.reduce((sum, item) => sum + calcDettaglioSuperficie(item), 0).toFixed(2));
 }
 
@@ -228,7 +250,7 @@ export function calcCompletamento(perizia: Perizia): { [key: string]: number } {
   const tecnica = calcCompletamentoTecnica(perizia);
   const mercato = calcCompletamentoMercato(perizia);
   const valutazione = calcCompletamentoValutazione(perizia);
-  const foto = perizia.foto.length > 0 ? 100 : 0;
+  const foto = perizia.foto.length > 0 || perizia.allegati.length > 0 ? 100 : 0;
   const relazione = calcCompletamentoRelazione(perizia);
   return { incarico, immobile, tecnica, mercato, valutazione, foto, relazione };
 }
@@ -240,7 +262,8 @@ function calcCompletamentoIncarico(p: Perizia): number {
 }
 
 function calcCompletamentoImmobile(p: Perizia): number {
-  const fields = [p.datiImmobile.via, p.datiImmobile.comune, p.datiImmobile.foglio, p.datiImmobile.particella];
+  const primaUnita = p.datiImmobile.unitaCatastali?.[0];
+  const fields = [p.datiImmobile.via, p.datiImmobile.comune, primaUnita?.foglio || p.datiImmobile.foglio, primaUnita?.particella || p.datiImmobile.particella];
   const filled = fields.filter(Boolean).length;
   return Math.round((filled / fields.length) * 100);
 }

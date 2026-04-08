@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { AnalisiMercato, ComparabileTx, TipologiaImmobile } from '@/components/valutazioni/types/perizia';
 import { SectionHeader, SectionCard, FormField, Input, SelectField, TextareaField, FormGrid } from './FormComponents';
-import { dbGetMarketHistory, dbOmiLookup, dbResolveAddress, MarketHistoryResult, OmiFascia } from '@/components/valutazioni/lib/db';
+import { dbGenerateMarketContext, dbGetLocalMarketData, dbGetMarketHistory, dbOmiLookup, MarketHistoryResult, OmiFascia } from '@/components/valutazioni/lib/db';
 import { calcFontiMercatoAttive, calcMediaPrezzoMqComparabili, calcMedianaPrezzoMqComparabili, calcPrezzoMqComparabile, calcPrezzoMqFontiSelezionate } from '@/components/valutazioni/lib/storage';
+import { toast } from 'sonner';
 
 interface Sezione4Props {
   data:       AnalisiMercato;
@@ -24,9 +25,11 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
   const [omiLoading, setOmiLoading]   = useState(false);
   const [omiResults, setOmiResults]   = useState<OmiFascia[] | null>(null);
   const [omiError,   setOmiError]     = useState<string | null>(null);
+  const [omiMode, setOmiMode] = useState<'aggregate' | 'zone' | null>(null);
   const [resolvedComune, setResolvedComune] = useState<string>('');
   const [marketHistory, setMarketHistory] = useState<MarketHistoryResult | null>(null);
   const [marketHistoryLoading, setMarketHistoryLoading] = useState(false);
+  const [marketContextLoading, setMarketContextLoading] = useState(false);
 
   const update = (field: keyof AnalisiMercato, value: any) => {
     onChange({ ...data, [field]: value });
@@ -83,6 +86,7 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
     setOmiLoading(true);
     setOmiError(null);
     setOmiResults(null);
+    setOmiMode(null);
     const result = await dbOmiLookup(
       comuneTarget,
       tipologia ?? 'A',
@@ -95,6 +99,7 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
       setOmiError('Nessuna quotazione OMI trovata. Verifica comune, semestre e anno disponibili.');
     } else {
       setOmiResults(result.data);
+      setOmiMode('aggregate');
     }
   };
 
@@ -103,28 +108,56 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
     setOmiError(null);
     setOmiResults(null);
 
-    const geo = await dbResolveAddress({ via, civico, comune, provincia, cap });
-    if (!geo?.comune) {
-      setOmiLoading(false);
+    const result = await dbGetLocalMarketData({
+      via,
+      civico,
+      comune,
+      provincia,
+      cap,
+      tipologia: tipologia ?? 'A',
+      anno: parseInt(data.annoOMI || String(currentYear), 10),
+      semestre: getSemestre(),
+    });
+
+    setOmiLoading(false);
+    if (!result?.comune) {
       setOmiError('Non riesco a risolvere l\'indirizzo. Verifica via/civico/comune.');
       return;
     }
 
-    setResolvedComune(geo.comune);
-    const result = await dbOmiLookup(
-      geo.comune,
-      tipologia ?? 'A',
-      parseInt(data.annoOMI || String(currentYear), 10),
-      getSemestre(),
-      geo.provincia || provincia,
-    );
+    setResolvedComune(result.comune);
 
-    setOmiLoading(false);
-    if (!result || result.data.length === 0) {
-      setOmiError(`Nessuna quotazione OMI trovata per ${geo.comune}.`);
-      return;
+    const nextData: AnalisiMercato = {
+      ...data,
+      comuneCatastale: result.comuneRecord?.codcom || '',
+      zonaOmi: result.omiZona?.zona || '',
+      compravenditeTotale: result.compravenduto?.totale || 0,
+      compravenditeResidenziale: result.compravenduto?.residenziale || 0,
+      compravenditeCommerciale: result.compravenduto?.commerciale || 0,
+      compravenditePertinenze: result.compravenduto?.pertinenze || 0,
+    };
+
+    if (result.omi.data.length > 0) {
+      const first = result.omi.data[0];
+      nextData.prezzoMin = first.min;
+      nextData.prezzoMax = first.max;
+      nextData.prezzoOmiMq = first.medio;
+      nextData.prezzoMedioMq = data.usaFonteOmi ? first.medio : data.prezzoMedioMq;
+      setOmiResults(result.omi.data);
+      setOmiMode(result.omi.mode === 'zone' ? 'zone' : 'aggregate');
+    } else {
+      setOmiMode(null);
+      setOmiError(`Nessuna quotazione OMI trovata per ${result.comune}.`);
     }
-    setOmiResults(result.data);
+
+    nextData.fonteDati = calcFontiMercatoAttive(nextData).join(' + ') || nextData.fonteDati;
+    onChange(nextData);
+
+    if (result.omiZona?.zona) {
+      toast.success(`Zona OMI ${result.omiZona.zona} individuata per ${result.comune}`);
+    } else if (result.compravenduto) {
+      toast.success(`Compravenduto locale caricato per ${result.comune}`);
+    }
   };
 
   const applyOmiFascia = (f: OmiFascia) => {
@@ -147,18 +180,65 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
     });
   };
 
+  const handleGenerateMarketContext = async () => {
+    try {
+      setMarketContextLoading(true);
+      const result = await dbGenerateMarketContext({
+        via,
+        civico,
+        comune: resolvedComune || comune,
+        provincia,
+        cap,
+        tipologia,
+      });
+
+      onChange({
+        ...data,
+        descrizioneMercato: result.text,
+      });
+
+      if (result.comune && result.comune !== (comune || '').toUpperCase()) {
+        setResolvedComune(result.comune);
+      }
+
+      toast.success(`Contesto mercato generato per ${result.comune || comune || 'il comune selezionato'}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Errore nella generazione del contesto di mercato');
+    } finally {
+      setMarketContextLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-3xl">
       <SectionHeader numero={4} title="Analisi di Mercato" />
 
       <div className="space-y-6">
         <SectionCard title="Descrizione Mercato Locale">
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleGenerateMarketContext}
+              disabled={marketContextLoading}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-source font-600 bg-[#1A1A1A] text-[#C8A96E] rounded hover:bg-[#2A2A2A] disabled:opacity-50 transition-colors"
+            >
+              {marketContextLoading ? (
+                <span className="inline-block w-3 h-3 border-2 border-[#C8A96E] border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <span>AI</span>
+              )}
+              {marketContextLoading ? 'Raccolta contesto dal web...' : 'Genera contesto AI dal web'}
+            </button>
+            <p className="text-[11px] font-source text-[#5C5346]/70">
+              Usa indirizzo e comune della pratica, geocoding pubblico e fonti web sul comune per produrre una sintesi iniziale del contesto territoriale e di mercato.
+            </p>
+          </div>
           <FormField label="Analisi del contesto di mercato">
             <TextareaField
               value={data.descrizioneMercato}
               onChange={e => update('descrizioneMercato', e.target.value)}
-              placeholder="Descrivi le caratteristiche del mercato immobiliare locale, i trend, le dinamiche di prezzo e domanda..."
-              rows={5}
+              placeholder="Descrivi il contesto del comune, i driver locali, i servizi, la domanda e le dinamiche di prezzo. Puoi generare una bozza automatica con il pulsante sopra."
+              rows={7}
             />
           </FormField>
         </SectionCard>
@@ -190,6 +270,36 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
               />
             </FormField>
           </FormGrid>
+
+          {(data.zonaOmi || data.compravenditeTotale > 0 || data.comuneCatastale) && (
+            <div className="mt-5 space-y-3">
+              <div className="grid md:grid-cols-4 gap-3">
+                <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
+                  <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Codice comune</p>
+                  <p className="font-playfair text-2xl text-[#1A1A1A]">{data.comuneCatastale || '—'}</p>
+                </div>
+                <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
+                  <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Zona OMI locale</p>
+                  <p className="font-playfair text-2xl text-[#1A1A1A]">{data.zonaOmi || '—'}</p>
+                </div>
+                <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
+                  <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Compravendite 2024</p>
+                  <p className="font-playfair text-2xl text-[#1A1A1A]">{data.compravenditeTotale > 0 ? data.compravenditeTotale.toLocaleString('it-IT') : '—'}</p>
+                </div>
+                <div className="p-4 border border-[#D4C9B0] rounded bg-[#F5F0E8]">
+                  <p className="text-xs font-source uppercase tracking-wider text-[#5C5346] mb-1">Ripartizione NTN</p>
+                  <p className="text-sm font-source text-[#1A1A1A] leading-6">
+                    Res: <strong>{data.compravenditeResidenziale > 0 ? data.compravenditeResidenziale.toLocaleString('it-IT') : '—'}</strong><br />
+                    Com: <strong>{data.compravenditeCommerciale > 0 ? data.compravenditeCommerciale.toLocaleString('it-IT') : '—'}</strong><br />
+                    Pert: <strong>{data.compravenditePertinenze > 0 ? data.compravenditePertinenze.toLocaleString('it-IT') : '—'}</strong>
+                  </p>
+                </div>
+              </div>
+              <p className="text-[11px] font-source text-[#5C5346]/70">
+                Dati locali disponibili per la Puglia: compravenduto comunale 2024 e geometrie OMI territoriali 2025/2. La quotazione OMI viene poi richiesta in app sul comune selezionato e, quando la zona locale è disponibile, viene privilegiata la zona individuata dall'indirizzo.
+              </p>
+            </div>
+          )}
 
           {(data.prezzoOmiMq > 0 || prezzoMqComparabili > 0 || prezzoMqStorico > 0) && (
             <div className="mt-5 grid md:grid-cols-4 gap-3">
@@ -314,7 +424,7 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
                   disabled={omiLoading}
                   className="mt-2 flex items-center gap-2 px-4 py-2 text-xs font-source font-600 border border-[#D4C9B0] text-[#1A1A1A] rounded hover:border-[#C8A96E] hover:text-[#5C5346] disabled:opacity-50 transition-colors"
                 >
-                  {omiLoading ? 'Elaborazione...' : 'Auto localizza da indirizzo + OMI'}
+                  {omiLoading ? 'Elaborazione...' : 'Auto localizza da indirizzo + OMI + mercato locale'}
                 </button>
 
                 <p className="mt-2 text-[11px] font-source text-[#5C5346]/70">
@@ -329,7 +439,7 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
                   <div className="mt-3 border border-[#D4C9B0] rounded overflow-hidden">
                     <div className="bg-[#1A1A1A] px-3 py-2">
                       <p className="text-xs font-source text-[#C8A96E] font-600 uppercase tracking-wide">
-                        Quotazioni OMI — {resolvedComune || comune} — {data.annoOMI} · {getSemestre() === 1 ? '1° semestre' : '2° semestre'}
+                        Quotazioni OMI — {resolvedComune || comune}{data.zonaOmi ? ` · Zona ${data.zonaOmi}` : ''} — {data.annoOMI} · {getSemestre() === 1 ? '1° semestre' : '2° semestre'}
                       </p>
                     </div>
                     <table className="w-full text-xs font-source">
@@ -361,7 +471,7 @@ export default function Sezione4({ data, onChange, comune, tipologia, via, civic
                       </tbody>
                     </table>
                     <p className="text-[10px] text-[#5C5346]/60 px-3 py-2 font-source italic">
-                      Fonte: Osservatorio del Mercato Immobiliare — Agenzia delle Entrate
+                      Fonte: Osservatorio del Mercato Immobiliare — Agenzia delle Entrate{omiMode === 'zone' ? ' · risultato orientato sulla zona locale individuata dall’indirizzo' : ''}
                     </p>
                   </div>
                 )}

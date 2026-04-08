@@ -27,6 +27,8 @@ define('AI_FALLBACK_MODEL', 'google/gemma-3n-e4b-it:free');
 define('AI_API_KEY', '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');
 define('AI_SITE_URL', 'https://www.2dsviluppoimmobiliare.it');
 define('AI_SITE_NAME', '2D Valuta Pro');
+define('LOCAL_OMI_PUGLIA_DIR', __DIR__ . '/_external/omi-puglia-2025-2');
+define('LOCAL_VCN_PUGLIA_DIR', __DIR__ . '/_external/compravendite-puglia-2024');
 
 // CORS — domini autorizzati
 $allowed_origins = [
@@ -180,6 +182,14 @@ try {
 
         case 'ai-draft':
             if ($method === 'POST') { aiDraft(); break; }
+            break;
+
+        case 'market-context':
+            if ($method === 'POST') { marketContext(); break; }
+            break;
+
+        case 'local-market':
+            if ($method === 'GET')  { localMarketLookup(); break; }
             break;
 
         case 'geocode':
@@ -490,8 +500,7 @@ function omiLookup(): void {
     if (!$comune) { http_response_code(400); echo json_encode(['error' => 'Missing comune']); return; }
 
     // Normalizza tipologia OMI (A=residenziale, C=commerciale, B=uffici, ecc.)
-    $mapTipologia = ['A' => 'A', 'B' => 'B', 'C' => 'C', 'D' => 'D', 'E' => 'E', 'F' => 'F'];
-    $tipOMI = $mapTipologia[$tipologia] ?? 'A';
+    $tipOMI = mapOmiTipologia($tipologia);
 
     // 1. Controlla cache DB (valida 180 giorni), ma senza rendere bloccante la lookup.
     $db = null;
@@ -548,6 +557,20 @@ function omiLookup(): void {
     // 3. Nessun dato trovato
     http_response_code(404);
     echo json_encode(['error' => 'Nessuna quotazione OMI trovata per ' . htmlspecialchars($comune)]);
+}
+
+function mapOmiTipologia(string $tipologia): string {
+    $mapTipologia = ['A' => 'A', 'B' => 'B', 'C' => 'C', 'D' => 'D', 'E' => 'E', 'F' => 'F'];
+    return $mapTipologia[strtoupper(trim($tipologia))] ?? 'A';
+}
+
+function lookupOmiRows(string $comune, string $provincia, string $tipologia, int $anno, int $semestre): array {
+    $tipOMI = mapOmiTipologia($tipologia);
+    $result = fetchOmiFromAgenzia($comune, $provincia, $tipOMI, $anno, $semestre);
+    if (empty($result)) {
+        $result = fetchOmiFromCsv($comune, $tipOMI, $anno, $semestre);
+    }
+    return $result;
 }
 
 function httpFetch(string $url, int $timeout = 30): array {
@@ -990,6 +1013,7 @@ function parseOmiHtmlRows(string $html, string $fascia): array {
         $rows[] = [
             'fascia' => $fascia,
             'stato'  => $stato !== '' ? $stato : $descrizione,
+            'zona'   => '',
             'min'    => $min,
             'max'    => $max,
         ];
@@ -1044,6 +1068,10 @@ function fetchOmiFromAgenzia(string $comune, string $provincia, string $tipologi
 
             $rows = parseOmiHtmlRows($res['body'], $fascia);
             if (!empty($rows)) {
+                $rows = array_map(static function ($row) use ($codZona) {
+                    $row['zona'] = $codZona;
+                    return $row;
+                }, $rows);
                 $results = array_merge($results, $rows);
                 break;
             }
@@ -1057,41 +1085,23 @@ function fetchOmiFromAgenzia(string $comune, string $provincia, string $tipologi
  * Geocoding gratuito via Nominatim (OpenStreetMap).
  * NOTA: precisione utile per comune/provincia; non fornisce valore immobiliare.
  */
-function geocodeAddress(): void {
-    $via       = trim($_GET['via'] ?? '');
-    $civico    = trim($_GET['civico'] ?? '');
-    $comune    = trim($_GET['comune'] ?? '');
-    $provincia = trim($_GET['provincia'] ?? '');
-    $cap       = trim($_GET['cap'] ?? '');
-
+function resolveAddressData(string $via = '', string $civico = '', string $comune = '', string $provincia = '', string $cap = ''): ?array {
     $queryParts = array_filter([$via, $civico, $comune, $provincia, $cap, 'Italia']);
     if (empty($queryParts)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Missing address']);
-        return;
+        return null;
     }
 
     $query = implode(', ', $queryParts);
     $url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&q=' . urlencode($query);
+    $res = httpFetch($url, 20);
 
-    $ctx = stream_context_create(['http' => [
-        'timeout'       => 20,
-        'user_agent'    => '2D-Perizie-App/1.0 (info@2dsviluppoimmobiliare.it)',
-        'ignore_errors' => true,
-    ]]);
-    $raw = @file_get_contents($url, false, $ctx);
-
-    if (!$raw) {
-        http_response_code(502);
-        echo json_encode(['error' => 'Geocode provider unavailable']);
-        return;
+    if (!$res['ok'] || $res['body'] === '') {
+        return null;
     }
 
-    $data = json_decode($raw, true);
+    $data = json_decode($res['body'], true);
     if (!$data || empty($data[0])) {
-        http_response_code(404);
-        echo json_encode(['error' => 'Address not found']);
-        return;
+        return null;
     }
 
     $first = $data[0];
@@ -1109,7 +1119,7 @@ function geocodeAddress(): void {
         $addr['state_district'] ??
         $provincia;
 
-    echo json_encode([
+    return [
         'source'    => 'nominatim',
         'display'   => $first['display_name'] ?? $query,
         'lat'       => $first['lat'] ?? null,
@@ -1117,6 +1127,579 @@ function geocodeAddress(): void {
         'comune'    => strtoupper(trim((string)$resolvedComune)),
         'provincia' => strtoupper(trim((string)$resolvedProvincia)),
         'cap'       => $addr['postcode'] ?? $cap,
+    ];
+}
+
+function geocodeAddress(): void {
+    $via       = trim($_GET['via'] ?? '');
+    $civico    = trim($_GET['civico'] ?? '');
+    $comune    = trim($_GET['comune'] ?? '');
+    $provincia = trim($_GET['provincia'] ?? '');
+    $cap       = trim($_GET['cap'] ?? '');
+
+    if (empty(array_filter([$via, $civico, $comune, $provincia, $cap]))) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Missing address']);
+        return;
+    }
+
+    $resolved = resolveAddressData($via, $civico, $comune, $provincia, $cap);
+    if (!$resolved) {
+        http_response_code(502);
+        echo json_encode(['error' => 'Geocode provider unavailable']);
+        return;
+    }
+
+    echo json_encode($resolved);
+}
+
+function normalizeLookupText(string $value): string {
+    $value = strtoupper(trim($value));
+    if ($value === '') {
+        return '';
+    }
+
+    if (function_exists('iconv')) {
+        $transliterated = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
+        if (is_string($transliterated) && $transliterated !== '') {
+            $value = $transliterated;
+        }
+    }
+
+    $value = preg_replace('/[^A-Z0-9]+/', ' ', $value) ?? $value;
+    return trim(preg_replace('/\s+/', ' ', $value) ?? $value);
+}
+
+function provinceToSigla(string $provincia): string {
+    $value = normalizeLookupText($provincia);
+    if ($value === '') {
+        return '';
+    }
+    if (strlen($value) === 2) {
+        return $value;
+    }
+
+    $map = [
+        'BARI' => 'BA',
+        'BARLETTA ANDRIA TRANI' => 'BT',
+        'BAT' => 'BT',
+        'BRINDISI' => 'BR',
+        'FOGGIA' => 'FG',
+        'LECCE' => 'LE',
+        'TARANTO' => 'TA',
+    ];
+
+    return $map[$value] ?? $value;
+}
+
+function isPugliaProvince(string $provincia): bool {
+    return in_array(provinceToSigla($provincia), ['BA', 'BT', 'BR', 'FG', 'LE', 'TA'], true);
+}
+
+function parseCsvDecimal($value): float {
+    return (float)str_replace(',', '.', trim((string)$value));
+}
+
+function readSemicolonCsvAssoc(string $filePath): array {
+    if (!is_file($filePath)) {
+        return [];
+    }
+
+    $handle = fopen($filePath, 'r');
+    if (!$handle) {
+        return [];
+    }
+
+    $rows = [];
+    $header = null;
+    while (($cols = fgetcsv($handle, 0, ';')) !== false) {
+        if ($header === null) {
+            $header = array_map('trim', $cols);
+            continue;
+        }
+
+        if (!$header || count($cols) !== count($header)) {
+            continue;
+        }
+
+        $rows[] = array_combine($header, $cols) ?: [];
+    }
+
+    fclose($handle);
+    return $rows;
+}
+
+function loadPugliaCompravenditeIndex(): array {
+    static $cache = null;
+    if (is_array($cache)) {
+        return $cache;
+    }
+
+    $dir = LOCAL_VCN_PUGLIA_DIR;
+    $listRows = readSemicolonCsvAssoc($dir . '/VCN_2024_PUGLIA_LISTA-COM.csv');
+    $resRows = readSemicolonCsvAssoc($dir . '/VCN_2024_PUGLIA_VALORI-RES.csv');
+    $comRows = readSemicolonCsvAssoc($dir . '/VCN_2024_PUGLIA_VALORI-COM.csv');
+    $perRows = readSemicolonCsvAssoc($dir . '/VCN_2024_PUGLIA_VALORI-PER.csv');
+
+    $byCode = [];
+    foreach ($listRows as $row) {
+        $code = trim((string)($row['2024_CodCom'] ?? ''));
+        if ($code === '') {
+            continue;
+        }
+
+        $byCode[$code] = [
+            'codcom' => $code,
+            'comune' => trim((string)($row['Comune'] ?? '')),
+            'comune_norm' => normalizeLookupText((string)($row['Comune'] ?? '')),
+            'provincia' => provinceToSigla((string)($row['Provincia'] ?? '')),
+            'regione' => trim((string)($row['Regione'] ?? '')),
+            'area' => trim((string)($row['Area'] ?? '')),
+            'taglia_mercato' => trim((string)($row['TAGLIA MERCATO'] ?? '')),
+            'residenziale' => 0.0,
+            'commerciale' => 0.0,
+            'pertinenze' => 0.0,
+            'totale' => 0.0,
+        ];
+    }
+
+    foreach ($resRows as $row) {
+        $code = trim((string)($row['2024_CodCom'] ?? ''));
+        if (!isset($byCode[$code])) {
+            continue;
+        }
+        $byCode[$code]['residenziale'] = parseCsvDecimal($row['NTN_2024'] ?? 0);
+        $byCode[$code]['totale'] += $byCode[$code]['residenziale'];
+    }
+
+    foreach ($comRows as $row) {
+        $code = trim((string)($row['2024_CodCom'] ?? ''));
+        if (!isset($byCode[$code])) {
+            continue;
+        }
+        $commerciale =
+            parseCsvDecimal($row['NTN_2024_Uffici'] ?? 0) +
+            parseCsvDecimal($row['NTN_2024_Negozi_Lab'] ?? 0) +
+            parseCsvDecimal($row['NTN_2024_Depositi_Comm_Autorimesse'] ?? 0) +
+            parseCsvDecimal($row['NTN_2024_TCO_B04'] ?? 0) +
+            parseCsvDecimal($row['NTN_2024_TCO_D02'] ?? 0) +
+            parseCsvDecimal($row['NTN_2024_TCO_D05'] ?? 0) +
+            parseCsvDecimal($row['NTN_2024_TCO_D08'] ?? 0) +
+            parseCsvDecimal($row['NTN_2024_PRO'] ?? 0) +
+            parseCsvDecimal($row['NTN_2024_AGR'] ?? 0);
+        $byCode[$code]['commerciale'] = $commerciale;
+        $byCode[$code]['totale'] += $commerciale;
+    }
+
+    foreach ($perRows as $row) {
+        $code = trim((string)($row['2024_CodCom'] ?? ''));
+        if (!isset($byCode[$code])) {
+            continue;
+        }
+        $pertinenze = parseCsvDecimal($row['NTN_2024_Depositi_Pert'] ?? 0) + parseCsvDecimal($row['NTN_2024_Box'] ?? 0);
+        $byCode[$code]['pertinenze'] = $pertinenze;
+        $byCode[$code]['totale'] += $pertinenze;
+    }
+
+    $byComune = [];
+    foreach ($byCode as $record) {
+        $baseKey = $record['comune_norm'];
+        if ($baseKey === '') {
+            continue;
+        }
+        $byComune[$baseKey . '|' . $record['provincia']] = $record;
+        if (!isset($byComune[$baseKey])) {
+          $byComune[$baseKey] = $record;
+        }
+    }
+
+    $cache = ['byCode' => $byCode, 'byComune' => $byComune];
+    return $cache;
+}
+
+function resolvePugliaComuneRecord(string $comune, string $provincia = ''): ?array {
+    $index = loadPugliaCompravenditeIndex();
+    $comuneKey = normalizeLookupText($comune);
+    if ($comuneKey === '') {
+        return null;
+    }
+
+    $provSigla = provinceToSigla($provincia);
+    if ($provSigla !== '') {
+        $withProv = $comuneKey . '|' . $provSigla;
+        if (isset($index['byComune'][$withProv])) {
+            return $index['byComune'][$withProv];
+        }
+    }
+
+    return $index['byComune'][$comuneKey] ?? null;
+}
+
+function parseKmlCoordinates(string $coords): array {
+    $points = [];
+    $chunks = preg_split('/\s+/', trim($coords)) ?: [];
+    foreach ($chunks as $chunk) {
+        $parts = array_map('trim', explode(',', $chunk));
+        if (count($parts) < 2) {
+            continue;
+        }
+        $points[] = [(float)$parts[0], (float)$parts[1]];
+    }
+    return $points;
+}
+
+function pointInRing(float $lon, float $lat, array $ring): bool {
+    $inside = false;
+    $count = count($ring);
+    if ($count < 3) {
+        return false;
+    }
+
+    for ($i = 0, $j = $count - 1; $i < $count; $j = $i++) {
+        [$xi, $yi] = $ring[$i];
+        [$xj, $yj] = $ring[$j];
+
+        $intersects = (($yi > $lat) !== ($yj > $lat))
+            && ($lon < (($xj - $xi) * ($lat - $yi) / (($yj - $yi) ?: 1e-12)) + $xi);
+
+        if ($intersects) {
+            $inside = !$inside;
+        }
+    }
+
+    return $inside;
+}
+
+function pointInPolygon(float $lon, float $lat, array $polygon): bool {
+    if (!pointInRing($lon, $lat, $polygon['outer'])) {
+        return false;
+    }
+
+    foreach ($polygon['inners'] as $inner) {
+        if (pointInRing($lon, $lat, $inner)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function findPugliaOmiZoneForPoint(string $codcom, float $lat, float $lon): ?array {
+    $filePath = LOCAL_OMI_PUGLIA_DIR . '/' . strtoupper(trim($codcom)) . '.kml';
+    if (!is_file($filePath)) {
+        return null;
+    }
+
+    $dom = new DOMDocument();
+    $previousErrors = libxml_use_internal_errors(true);
+    $loaded = $dom->load($filePath);
+    libxml_clear_errors();
+    libxml_use_internal_errors($previousErrors);
+
+    if (!$loaded) {
+        return null;
+    }
+
+    $xpath = new DOMXPath($dom);
+    $xpath->registerNamespace('k', 'http://www.opengis.net/kml/2.2');
+
+    foreach ($xpath->query('//k:Placemark') as $placemark) {
+        $zonaNode = $xpath->query('.//k:ExtendedData/k:Data[@name="CODZONA"]/k:value', $placemark)->item(0);
+        $nameNode = $xpath->query('./k:name', $placemark)->item(0);
+        $zona = trim((string)($zonaNode?->textContent ?? ''));
+        $label = trim((string)($nameNode?->textContent ?? ''));
+        if ($zona === '') {
+            continue;
+        }
+
+        foreach ($xpath->query('.//k:Polygon', $placemark) as $polygonNode) {
+            $outerNode = $xpath->query('./k:outerBoundaryIs/k:LinearRing/k:coordinates', $polygonNode)->item(0);
+            if (!$outerNode) {
+                continue;
+            }
+
+            $polygon = [
+                'outer' => parseKmlCoordinates((string)$outerNode->textContent),
+                'inners' => [],
+            ];
+
+            foreach ($xpath->query('./k:innerBoundaryIs/k:LinearRing/k:coordinates', $polygonNode) as $innerNode) {
+                $polygon['inners'][] = parseKmlCoordinates((string)$innerNode->textContent);
+            }
+
+            if (pointInPolygon($lon, $lat, $polygon)) {
+                return [
+                    'zona' => $zona,
+                    'label' => $label !== '' ? $label : ('Zona OMI ' . $zona),
+                    'file' => basename($filePath),
+                ];
+            }
+        }
+    }
+
+    return null;
+}
+
+function aggregateSpecificOmiResults(array $rows, string $zona): array {
+    $filtered = array_values(array_filter($rows, static function ($row) use ($zona) {
+        return strtoupper(trim((string)($row['zona'] ?? ''))) === strtoupper(trim($zona));
+    }));
+
+    if (empty($filtered)) {
+        return [];
+    }
+
+    return aggregateOmiResults(array_map(static function ($row) {
+        return [
+            'prezzo_min' => $row['min'] ?? 0,
+            'prezzo_max' => $row['max'] ?? 0,
+            'fascia' => $row['fascia'] ?? 'B',
+        ];
+    }, $filtered));
+}
+
+function localMarketLookup(): void {
+    $via = trim((string)($_GET['via'] ?? ''));
+    $civico = trim((string)($_GET['civico'] ?? ''));
+    $comune = trim((string)($_GET['comune'] ?? ''));
+    $provincia = trim((string)($_GET['provincia'] ?? ''));
+    $cap = trim((string)($_GET['cap'] ?? ''));
+    $tipologia = strtoupper(trim((string)($_GET['tipologia'] ?? 'A')));
+    $anno = (int)($_GET['anno'] ?? date('Y'));
+    $semestre = (int)($_GET['semestre'] ?? 1);
+
+    if ($comune === '' && $via === '') {
+        http_response_code(400);
+        echo json_encode(['error' => 'Comune o indirizzo mancanti']);
+        return;
+    }
+
+    $geo = resolveAddressData($via, $civico, $comune, $provincia, $cap);
+    $resolvedComune = trim((string)($geo['comune'] ?? strtoupper($comune)));
+    $resolvedProvincia = provinceToSigla((string)($geo['provincia'] ?? $provincia));
+
+    $comuneRecord = resolvePugliaComuneRecord($resolvedComune, $resolvedProvincia);
+    $zonaInfo = null;
+    if ($comuneRecord && !empty($geo['lat']) && !empty($geo['lon']) && isPugliaProvince($comuneRecord['provincia'])) {
+        $zonaInfo = findPugliaOmiZoneForPoint($comuneRecord['codcom'], (float)$geo['lat'], (float)$geo['lon']);
+    }
+
+    $omiRows = $resolvedComune !== '' ? lookupOmiRows($resolvedComune, $resolvedProvincia, $tipologia, $anno, $semestre) : [];
+    $omiData = [];
+    $omiMode = 'none';
+
+    if ($zonaInfo && !empty($omiRows)) {
+        $omiData = aggregateSpecificOmiResults($omiRows, $zonaInfo['zona']);
+        if (!empty($omiData)) {
+            $omiMode = 'zone';
+        }
+    }
+
+    if (empty($omiData) && !empty($omiRows)) {
+        $omiData = aggregateOmiResults(array_map(static function ($row) {
+            return [
+                'prezzo_min' => $row['min'] ?? 0,
+                'prezzo_max' => $row['max'] ?? 0,
+                'fascia' => $row['fascia'] ?? 'B',
+            ];
+        }, $omiRows));
+        if (!empty($omiData)) {
+            $omiMode = 'aggregate';
+        }
+    }
+
+    echo json_encode([
+        'comune' => $resolvedComune,
+        'provincia' => $resolvedProvincia,
+        'geo' => $geo,
+        'comuneRecord' => $comuneRecord ? [
+            'codcom' => $comuneRecord['codcom'],
+            'comune' => $comuneRecord['comune'],
+            'provincia' => $comuneRecord['provincia'],
+            'tagliaMercato' => $comuneRecord['taglia_mercato'],
+        ] : null,
+        'compravenduto' => $comuneRecord ? [
+            'anno' => 2024,
+            'totale' => round((float)$comuneRecord['totale'], 2),
+            'residenziale' => round((float)$comuneRecord['residenziale'], 2),
+            'commerciale' => round((float)$comuneRecord['commerciale'], 2),
+            'pertinenze' => round((float)$comuneRecord['pertinenze'], 2),
+        ] : null,
+        'omiZona' => $zonaInfo,
+        'omi' => [
+            'mode' => $omiMode,
+            'data' => $omiData,
+        ],
+        'sources' => array_values(array_filter([
+            $geo ? 'Nominatim OpenStreetMap' : null,
+            $comuneRecord ? 'VCN Puglia 2024' : null,
+            $zonaInfo ? 'OMI Puglia 2025/2 geometrie' : null,
+            !empty($omiRows) ? 'OMI Agenzia Entrate' : null,
+        ])),
+    ]);
+}
+
+function fetchWikipediaSummaryForComune(string $comune, string $provincia = ''): ?array {
+    $queries = array_values(array_unique(array_filter([
+        trim($comune),
+        trim($comune . ' ' . $provincia),
+    ])));
+
+    foreach ($queries as $query) {
+        $searchUrl = 'https://it.wikipedia.org/w/api.php?action=opensearch&format=json&limit=1&namespace=0&search=' . rawurlencode($query);
+        $search = httpGetJson($searchUrl, 20);
+        $title = trim((string)($search[1][0] ?? ''));
+        if ($title === '') {
+            continue;
+        }
+
+        $summaryUrl = 'https://it.wikipedia.org/api/rest_v1/page/summary/' . rawurlencode($title);
+        $summary = httpGetJson($summaryUrl, 20);
+        $extract = trim((string)($summary['extract'] ?? ''));
+        if ($extract === '') {
+            continue;
+        }
+
+        return [
+            'title' => trim((string)($summary['title'] ?? $title)),
+            'extract' => $extract,
+            'url' => trim((string)($summary['content_urls']['desktop']['page'] ?? '')),
+        ];
+    }
+
+    return null;
+}
+
+function buildMarketContextFallback(array $context): string {
+    $chunks = [];
+    $comune = trim((string)($context['comune'] ?? ''));
+    $provincia = trim((string)($context['provincia'] ?? ''));
+    $display = trim((string)($context['display'] ?? ''));
+    $wiki = trim((string)($context['wikiExtract'] ?? ''));
+    $tipologia = trim((string)($context['tipologia'] ?? ''));
+
+    if ($display !== '') {
+        $chunks[] = "L'immobile ricade nel contesto territoriale di {$display}.";
+    } elseif ($comune !== '') {
+        $chunks[] = $provincia !== ''
+            ? "L'immobile è localizzato nel Comune di {$comune}, provincia di {$provincia}."
+            : "L'immobile è localizzato nel Comune di {$comune}.";
+    }
+
+    if ($wiki !== '') {
+        $chunks[] = $wiki;
+    }
+
+    if ($tipologia !== '') {
+        $chunks[] = "Il testo va inteso come inquadramento territoriale generale utile alla lettura del mercato locale per un immobile di tipologia {$tipologia}, senza sostituire l'analisi estimativa puntuale supportata da quotazioni e comparabili.";
+    }
+
+    return trim(implode("\n\n", $chunks));
+}
+
+function marketContext(): void {
+    $payload = json_decode(file_get_contents('php://input'), true);
+    if (!is_array($payload)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Payload non valido']);
+        return;
+    }
+
+    $via = trim((string)($payload['via'] ?? ''));
+    $civico = trim((string)($payload['civico'] ?? ''));
+    $comune = trim((string)($payload['comune'] ?? ''));
+    $provincia = trim((string)($payload['provincia'] ?? ''));
+    $cap = trim((string)($payload['cap'] ?? ''));
+    $tipologia = strtoupper(trim((string)($payload['tipologia'] ?? 'A')));
+
+    if ($comune === '' && $via === '') {
+        http_response_code(400);
+        echo json_encode(['error' => 'Comune o indirizzo mancanti']);
+        return;
+    }
+
+    $geo = resolveAddressData($via, $civico, $comune, $provincia, $cap);
+    $resolvedComune = trim((string)($geo['comune'] ?? strtoupper($comune)));
+    $resolvedProvincia = trim((string)($geo['provincia'] ?? strtoupper($provincia)));
+    $wiki = $resolvedComune !== '' ? fetchWikipediaSummaryForComune($resolvedComune, $resolvedProvincia) : null;
+
+    $sourceNames = [];
+    if ($geo) {
+        $sourceNames[] = 'Nominatim OpenStreetMap';
+    }
+    if ($wiki) {
+        $sourceNames[] = 'Wikipedia';
+    }
+
+    $context = [
+        'indirizzo' => trim(implode(' ', array_filter([$via, $civico]))),
+        'comune' => $resolvedComune,
+        'provincia' => $resolvedProvincia,
+        'cap' => trim((string)($geo['cap'] ?? $cap)),
+        'display' => trim((string)($geo['display'] ?? '')),
+        'tipologia' => $tipologia,
+        'wikiTitle' => trim((string)($wiki['title'] ?? '')),
+        'wikiExtract' => trim((string)($wiki['extract'] ?? '')),
+        'wikiUrl' => trim((string)($wiki['url'] ?? '')),
+    ];
+
+    $text = '';
+    $source = 'web-fallback';
+
+    if (AI_API_KEY !== '') {
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => 'Sei un analista immobiliare italiano. Scrivi un breve inquadramento del contesto comunale per una perizia. Usa solo i dati forniti dal web pubblico, non inventare prezzi, numeri o fatti non presenti. Mantieni un tono sobrio, professionale e utile alla relazione tecnica.',
+            ],
+            [
+                'role' => 'user',
+                'content' => "Redigi 1-2 paragrafi in italiano sul contesto del comune in cui si trova l'immobile, con riferimento generale a posizione, servizi, identità territoriale e fattori che possono influire sulla leggibilità del mercato locale. Non fare promozione. Non fornire valori immobiliari.\n\nCONTESTO WEB:\n" . json_encode($context, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
+            ],
+        ];
+
+        $models = array_values(array_unique(array_filter([AI_MODEL, AI_FALLBACK_MODEL])));
+        foreach ($models as $candidateModel) {
+            $response = httpPostJson(AI_BASE_URL, [
+                'model' => $candidateModel,
+                'temperature' => 0.3,
+                'messages' => prepareAiMessagesForModel($messages, $candidateModel),
+            ], [
+                'Authorization: Bearer ' . AI_API_KEY,
+                'HTTP-Referer: ' . AI_SITE_URL,
+                'X-Title: ' . AI_SITE_NAME,
+            ], 90);
+
+            if (!$response['ok']) {
+                continue;
+            }
+
+            $data = json_decode($response['body'], true);
+            $candidateText = trim((string)($data['choices'][0]['message']['content'] ?? ''));
+            if ($candidateText !== '') {
+                $text = cleanupAiText($candidateText);
+                $source = 'ai+web';
+                break;
+            }
+        }
+    }
+
+    if ($text === '') {
+        $text = buildMarketContextFallback($context);
+    }
+
+    if ($text === '') {
+        http_response_code(404);
+        echo json_encode(['error' => 'Contesto web non disponibile per il comune indicato']);
+        return;
+    }
+
+    echo json_encode([
+        'text' => $text,
+        'comune' => $resolvedComune,
+        'provincia' => $resolvedProvincia,
+        'source' => $source,
+        'sources' => $sourceNames,
     ]);
 }
 
@@ -1178,13 +1761,14 @@ function fetchOmiFromCsv(string $comune, string $tipologia, int $anno, int $seme
         $minVal     = floatval(str_replace(',', '.', $row['prezzi_min'] ?? $row['quotazione_min'] ?? $row[6] ?? 0));
         $maxVal     = floatval(str_replace(',', '.', $row['prezzi_max'] ?? $row['quotazione_max'] ?? $row[7] ?? 0));
         $fascia     = trim($row['fascia'] ?? $row[3] ?? 'B');
+        $zona       = trim($row['zona'] ?? $row['zona_omi'] ?? $row[2] ?? '');
         $stato      = trim($row['stato_conservazione'] ?? $row['stato'] ?? 'Normale');
 
         if (strpos($nomeComune, strtoupper($comune)) === false) continue;
         if (!empty($tipologia) && strpos($tipoRow, $tipologia) === false && $tipoRow !== $tipologia) continue;
         if ($minVal <= 0 || $maxVal <= 0) continue;
 
-        $results[] = ['min' => $minVal, 'max' => $maxVal, 'fascia' => $fascia, 'stato' => $stato];
+        $results[] = ['min' => $minVal, 'max' => $maxVal, 'fascia' => $fascia, 'zona' => $zona, 'stato' => $stato];
     }
 
     return $results;

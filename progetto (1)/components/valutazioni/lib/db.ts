@@ -2,7 +2,7 @@
  * lib/db.ts — Client API per il backend PHP (MariaDB)
  * Source of truth: API perizie servita nella stessa area riservata.
  */
-import { Perizia } from '@/components/valutazioni/types/perizia';
+import { Perizia, normalizePerizia } from '@/components/valutazioni/types/perizia';
 
 const API_URL   = (import.meta.env.VITE_API_URL   as string) || '/2d-perizie-api.php';
 const API_TOKEN = (import.meta.env.VITE_API_TOKEN as string) || '';
@@ -37,7 +37,7 @@ export async function dbListPerizie(): Promise<Array<{
 /** Carica una perizia completa dal DB */
 export async function dbGetPerizia(id: string): Promise<Perizia> {
   const res = await apiFetch(`${API_URL}?action=perizia&id=${encodeURIComponent(id)}`);
-  return res.json();
+  return normalizePerizia(await res.json());
 }
 
 /** Salva (upsert) una perizia nel DB */
@@ -130,6 +130,43 @@ export interface MarketHistoryResult {
   items: MarketHistoryItem[];
 }
 
+export interface MarketContextResult {
+  text: string;
+  comune: string;
+  provincia: string;
+  source: string;
+  sources: string[];
+}
+
+export interface LocalMarketLookupResult {
+  comune: string;
+  provincia: string;
+  geo: GeoResult | null;
+  comuneRecord: {
+    codcom: string;
+    comune: string;
+    provincia: string;
+    tagliaMercato: string;
+  } | null;
+  compravenduto: {
+    anno: number;
+    totale: number;
+    residenziale: number;
+    commerciale: number;
+    pertinenze: number;
+  } | null;
+  omiZona: {
+    zona: string;
+    label: string;
+    file: string;
+  } | null;
+  omi: {
+    mode: 'none' | 'aggregate' | 'zone';
+    data: OmiFascia[];
+  };
+  sources: string[];
+}
+
 /**
  * Consulta quotazioni OMI (Osservatorio Mercato Immobiliare — Agenzia Entrate)
  * tramite proxy PHP che fetcha e cachea i dati open data.
@@ -220,6 +257,49 @@ export async function dbGenerateAiDraft(params: {
   return res.json();
 }
 
+export async function dbGenerateMarketContext(params: {
+  via?: string;
+  civico?: string;
+  comune?: string;
+  provincia?: string;
+  cap?: string;
+  tipologia?: string;
+}): Promise<MarketContextResult> {
+  const res = await apiFetch(`${API_URL}?action=market-context`, {
+    method: 'POST',
+    body: JSON.stringify(params),
+  });
+  return res.json();
+}
+
+export async function dbGetLocalMarketData(params: {
+  via?: string;
+  civico?: string;
+  comune?: string;
+  provincia?: string;
+  cap?: string;
+  tipologia?: string;
+  anno?: number;
+  semestre?: 1 | 2;
+}): Promise<LocalMarketLookupResult | null> {
+  try {
+    const q = new URLSearchParams({ action: 'local-market' });
+    if (params.via) q.set('via', params.via);
+    if (params.civico) q.set('civico', params.civico);
+    if (params.comune) q.set('comune', params.comune);
+    if (params.provincia) q.set('provincia', params.provincia);
+    if (params.cap) q.set('cap', params.cap);
+    if (params.tipologia) q.set('tipologia', params.tipologia);
+    if (params.anno) q.set('anno', String(params.anno));
+    if (params.semestre) q.set('semestre', String(params.semestre));
+
+    const res = await apiFetch(`${API_URL}?${q.toString()}`);
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
 // ─── SYNC UTILITY ───────────────────────────────────────────────
 
 /**
@@ -257,5 +337,5 @@ export async function dbLoadAndMerge(local: Perizia[]): Promise<Perizia[]> {
 
   return Array.from(merged.values()).sort(
     (a, b) => b.dataModifica.localeCompare(a.dataModifica),
-  );
+  ).map(normalizePerizia);
 }

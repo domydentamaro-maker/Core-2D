@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DatiImmobile, CATEGORIE_CATASTALI, COMUNI_PUGLIA } from '@/components/valutazioni/types/perizia';
+import { DatiImmobile, CATEGORIE_CATASTALI, COMUNI_PUGLIA, UnitaCatastale, createEmptyUnitaCatastale, normalizeDatiImmobile } from '@/components/valutazioni/types/perizia';
 import { SectionHeader, SectionCard, FormField, Input, SelectField, ToggleField, FormGrid, TextareaField } from './FormComponents';
 import { cn } from '@/components/valutazioni/lib/utils';
 
@@ -16,7 +16,30 @@ export default function Sezione2({ data, onChange }: Sezione2Props) {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const update = (field: keyof DatiImmobile, value: any) => {
-    onChange({ ...data, [field]: value });
+    onChange(normalizeDatiImmobile({ ...data, [field]: value }));
+  };
+
+  const updateUnitaCatastale = (index: number, field: keyof UnitaCatastale, value: string) => {
+    const next = data.unitaCatastali.map((unita, currentIndex) => currentIndex === index ? { ...unita, [field]: value } : unita);
+    onChange(normalizeDatiImmobile({ ...data, unitaCatastali: next }));
+  };
+
+  const addUnitaCatastale = () => {
+    onChange(normalizeDatiImmobile({
+      ...data,
+      unitaCatastali: [
+        ...data.unitaCatastali,
+        createEmptyUnitaCatastale({ descrizione: `Pertinenza ${data.unitaCatastali.length}` }),
+      ],
+    }));
+  };
+
+  const removeUnitaCatastale = (index: number) => {
+    if (data.unitaCatastali.length <= 1) return;
+    onChange(normalizeDatiImmobile({
+      ...data,
+      unitaCatastali: data.unitaCatastali.filter((_, currentIndex) => currentIndex !== index),
+    }));
   };
 
   const handleComuneChange = (value: string) => {
@@ -95,34 +118,67 @@ export default function Sezione2({ data, onChange }: Sezione2Props) {
         </SectionCard>
 
         <SectionCard title="Dati Catastali">
-          <FormGrid cols={3}>
-            <FormField label="Foglio">
-              <Input value={data.foglio} onChange={e => update('foglio', e.target.value)} placeholder="N. foglio" />
-            </FormField>
-            <FormField label="Particella / Mappale">
-              <Input value={data.particella} onChange={e => update('particella', e.target.value)} placeholder="N. particella" />
-            </FormField>
-            <FormField label="Subalterno">
-              <Input value={data.subalterno} onChange={e => update('subalterno', e.target.value)} placeholder="Sub" />
-            </FormField>
-            <FormField label="Categoria Catastale" required>
-              <SelectField value={data.categoria} onChange={e => update('categoria', e.target.value)}>
-                {CATEGORIE_CATASTALI.map(c => <option key={c} value={c}>{c}</option>)}
-              </SelectField>
-            </FormField>
-            <FormField label="Rendita Catastale (€)">
-              <Input
-                type="number"
-                value={data.rendita || ''}
-                onChange={e => update('rendita', e.target.value)}
-                placeholder="0,00"
-                unit="€"
-              />
-            </FormField>
-            <FormField label="Classe">
-              <Input value={data.classe} onChange={e => update('classe', e.target.value)} placeholder="Classe" />
-            </FormField>
-          </FormGrid>
+          <div className="space-y-4">
+            {data.unitaCatastali.map((unita, index) => (
+              <div key={unita.id} className="rounded border border-[#D4C9B0] bg-white/40 p-4 space-y-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1">
+                    <FormField label={index === 0 ? 'Unita catastale principale' : `Unita catastale ${index + 1}`}>
+                      <Input
+                        value={unita.descrizione}
+                        onChange={e => updateUnitaCatastale(index, 'descrizione', e.target.value)}
+                        placeholder={index === 0 ? 'Unita principale' : 'Es. Box, cantina, pertinenza'}
+                      />
+                    </FormField>
+                  </div>
+                  {data.unitaCatastali.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeUnitaCatastale(index)}
+                      className="mt-6 px-3 py-2 text-sm font-source border border-[#D4C9B0] rounded text-[#7A2E2E] hover:bg-[#7A2E2E] hover:text-white transition-colors"
+                    >
+                      Rimuovi
+                    </button>
+                  )}
+                </div>
+                <FormGrid cols={3}>
+                  <FormField label="Foglio">
+                    <Input value={unita.foglio} onChange={e => updateUnitaCatastale(index, 'foglio', e.target.value)} placeholder="N. foglio" />
+                  </FormField>
+                  <FormField label="Particella / Mappale">
+                    <Input value={unita.particella} onChange={e => updateUnitaCatastale(index, 'particella', e.target.value)} placeholder="N. particella" />
+                  </FormField>
+                  <FormField label="Subalterno">
+                    <Input value={unita.subalterno} onChange={e => updateUnitaCatastale(index, 'subalterno', e.target.value)} placeholder="Sub" />
+                  </FormField>
+                  <FormField label="Categoria Catastale" required>
+                    <SelectField value={unita.categoria} onChange={e => updateUnitaCatastale(index, 'categoria', e.target.value)}>
+                      {CATEGORIE_CATASTALI.map(c => <option key={c} value={c}>{c}</option>)}
+                    </SelectField>
+                  </FormField>
+                  <FormField label="Rendita Catastale (€)">
+                    <Input
+                      type="number"
+                      value={unita.rendita || ''}
+                      onChange={e => updateUnitaCatastale(index, 'rendita', e.target.value)}
+                      placeholder="0,00"
+                      unit="€"
+                    />
+                  </FormField>
+                  <FormField label="Classe">
+                    <Input value={unita.classe} onChange={e => updateUnitaCatastale(index, 'classe', e.target.value)} placeholder="Classe" />
+                  </FormField>
+                </FormGrid>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addUnitaCatastale}
+              className="px-4 py-2 text-sm font-source border border-[#C8A96E] text-[#1A1A1A] rounded hover:bg-[#C8A96E] transition-colors"
+            >
+              Aggiungi foglio/particella/subalterno
+            </button>
+          </div>
         </SectionCard>
 
         <SectionCard title="Provenienza e Proprietà">
