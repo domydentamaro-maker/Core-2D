@@ -1,5 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap');
 
+body.visioni-platform-page #site-header,
+body.visioni-platform-page .site-header,
+body.visioni-platform-page header.site-header,
+body.visioni-platform-page .entry-header,
+body.visioni-platform-page .page-header,
+body.visioni-platform-page .elementor-location-header,
+body.visioni-platform-page .site-breadcrumbs,
+body.visioni-platform-page .breadcrumbs,
+body.visioni-platform-page .post-edit-link,
+body.visioni-platform-page .entry-title,
+body.visioni-platform-page .page-title {
+	display: none !important;
+}
+
+body.visioni-platform-page {
+	background:
+		radial-gradient(circle at top center, rgba(199, 163, 102, 0.08), transparent 24%),
+		linear-gradient(180deg, #f6f1e8 0%, #f0eadf 100%) !important;
+}
+
+body.visioni-platform-page .site-main,
+body.visioni-platform-page main,
+body.visioni-platform-page .content-area,
+body.visioni-platform-page .entry-content {
+	padding-top: 0 !important;
+	margin-top: 0 !important;
+}
+
+body.visioni-platform-page .visioni-platform-app,
+body.visioni-platform-page .visioni-platform-login,
+body.visioni-platform-page .visioni-radar,
+body.visioni-platform-page .visioni-module--anticipa {
+	margin-top: clamp(28px, 5vw, 56px);
+	margin-bottom: 40px;
+}
+
 .visioni-platform-app {
 	--vp-ink: #14110f;
 	--vp-gold: #c7a366;
@@ -15,10 +51,12 @@
 	background:
 		radial-gradient(circle at top left, rgba(199, 163, 102, 0.22), transparent 30%),
 		radial-gradient(circle at bottom right, rgba(27, 95, 109, 0.18), transparent 32%),
+		radial-gradient(circle at center top, rgba(255, 255, 255, 0.08), transparent 36%),
 		linear-gradient(180deg, #191513 0%, #100d0c 100%);
 	color: var(--vp-paper);
 	box-shadow: 0 30px 80px rgba(8, 6, 5, 0.28);
 	font-family: 'Space Grotesk', sans-serif;
+ 	overflow: clip;
 }
 
 body.admin-bar .visioni-platform-app {
@@ -35,7 +73,9 @@ body.admin-bar .visioni-platform-app {
 	padding: 22px;
 	border-radius: 24px;
 	border: 1px solid rgba(255, 255, 255, 0.08);
-	background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
+		radial-gradient(circle at top right, rgba(199, 163, 102, 0.12), transparent 28%);
 }
 
 .visioni-platform-app__brand {
@@ -81,6 +121,23 @@ body.admin-bar .visioni-platform-app {
 	flex-wrap: wrap;
 	gap: 12px;
 	margin-top: 20px;
+}
+
+.visioni-platform-app__ghost {
+	appearance: none;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	background: rgba(255, 255, 255, 0.04);
+	color: var(--vp-paper);
+	border-radius: 999px;
+	padding: 14px 18px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: transform 180ms ease, background 180ms ease, opacity 180ms ease;
+}
+
+.visioni-platform-app__ghost:disabled {
+	opacity: 0.45;
+	cursor: default;
 }
 
 .visioni-platform-app__install,
@@ -140,6 +197,889 @@ body.admin-bar .visioni-platform-app {
 	font-size: 0.84rem;
 }
 
+.visioni-platform-app__adminbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.visioni-platform-app__ghostlink {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 12px 16px;
+	border-radius: 999px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.04);
+	color: var(--vp-paper);
+	text-decoration: none;
+	font-weight: 700;
+	transition: transform 180ms ease, background 180ms ease;
+}
+
+.visioni-platform-app__ghostlink:hover {
+	transform: translateY(-1px);
+}
+
+.visioni-platform-app__onboarding {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+	margin-top: 18px;
+}
+
+.visioni-platform-app__flow,
+.visioni-platform-app__panel {
+	border-radius: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+	padding: 20px;
+}
+
+.visioni-platform-app__flowhead {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 14px;
+	margin-bottom: 16px;
+}
+
+.visioni-platform-app__flowhead h3,
+.visioni-platform-app__stagehead h3,
+.visioni-platform-app__panel h4 {
+	margin: 0;
+	font-family: 'Fraunces', serif;
+	font-size: clamp(1.4rem, 4vw, 2rem);
+	line-height: 1.04;
+}
+
+.visioni-platform-app__stagehead p,
+.visioni-platform-app__panel p,
+.visioni-platform-app__summarylead {
+	margin: 8px 0 0;
+	line-height: 1.6;
+	color: rgba(246, 239, 227, 0.78);
+}
+
+.visioni-platform-app__steps {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.visioni-platform-app__steps li {
+	padding: 10px 12px;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.03);
+	font-size: 0.84rem;
+	font-weight: 700;
+	color: rgba(246, 239, 227, 0.68);
+}
+
+.visioni-platform-app__steps li.is-active {
+	border-color: rgba(199, 163, 102, 0.55);
+	background: rgba(199, 163, 102, 0.16);
+	color: var(--vp-paper);
+}
+
+.visioni-platform-app__steps li.is-complete {
+	border-color: rgba(27, 95, 109, 0.4);
+	color: rgba(246, 239, 227, 0.84);
+}
+
+.visioni-platform-app__stage {
+	min-height: 340px;
+	border-radius: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(9, 7, 6, 0.16);
+	padding: 18px;
+}
+
+.visioni-platform-app__choices,
+.visioni-platform-app__rolegrid,
+.visioni-platform-app__toggles {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.visioni-platform-app__choice,
+.visioni-platform-app__role {
+	appearance: none;
+	text-align: left;
+	padding: 18px;
+	border-radius: 20px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.03);
+	color: var(--vp-paper);
+	cursor: pointer;
+	transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.visioni-platform-app__choice:hover,
+.visioni-platform-app__role:hover,
+.visioni-platform-app__install:hover,
+.visioni-platform-app__launch:hover,
+.visioni-platform-app__ghost:hover {
+	transform: translateY(-1px);
+}
+
+.visioni-platform-app__choice.is-active,
+.visioni-platform-app__role.is-active {
+	border-color: rgba(199, 163, 102, 0.55);
+	background: linear-gradient(145deg, rgba(199, 163, 102, 0.14), rgba(27, 95, 109, 0.1));
+	box-shadow: 0 18px 34px rgba(3, 3, 3, 0.14);
+}
+
+.visioni-platform-app__choice strong,
+.visioni-platform-app__role strong {
+	display: block;
+	font-size: 1rem;
+	margin-bottom: 6px;
+}
+
+.visioni-platform-app__choice span,
+.visioni-platform-app__role span,
+.visioni-platform-app__role small {
+	display: block;
+	line-height: 1.55;
+	color: rgba(246, 239, 227, 0.78);
+}
+
+.visioni-platform-app__role small {
+	margin-top: 8px;
+	font-size: 0.9rem;
+	color: rgba(246, 239, 227, 0.62);
+}
+
+.visioni-platform-app__fieldgrid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.visioni-platform-app__fieldgrid label,
+.visioni-platform-app__toggles label {
+	display: grid;
+	gap: 8px;
+	font-size: 0.92rem;
+	font-weight: 700;
+	color: var(--vp-paper);
+}
+
+.visioni-platform-app__fieldgrid input {
+	width: 100%;
+	padding: 14px 15px;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.05);
+	color: var(--vp-paper);
+	font: inherit;
+}
+
+.visioni-platform-app__fieldgrid input::placeholder {
+	color: rgba(246, 239, 227, 0.4);
+}
+
+.visioni-platform-app__toggle {
+	grid-template-columns: auto 1fr;
+	align-items: start;
+	gap: 14px;
+	padding: 16px;
+	border-radius: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.visioni-platform-app__toggle input {
+	margin-top: 4px;
+	width: 18px;
+	height: 18px;
+	accent-color: var(--vp-gold);
+}
+
+.visioni-platform-app__toggle strong {
+	display: block;
+	margin-bottom: 4px;
+}
+
+.visioni-platform-app__toggle small {
+	display: block;
+	font-weight: 400;
+	line-height: 1.55;
+	color: rgba(246, 239, 227, 0.66);
+}
+
+.visioni-platform-app__sidebar {
+	display: grid;
+	gap: 16px;
+}
+
+.visioni-platform-app__summarylist,
+.visioni-platform-app__checklist {
+	list-style: none;
+	margin: 14px 0 0;
+	padding: 0;
+	display: grid;
+	gap: 10px;
+}
+
+.visioni-platform-app__summarylist li,
+.visioni-platform-app__checklist li {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	font-size: 0.92rem;
+	line-height: 1.5;
+}
+
+.visioni-platform-app__summarylist li span,
+.visioni-platform-app__checklist li {
+	color: rgba(246, 239, 227, 0.72);
+}
+
+.visioni-platform-app__summarylist li strong {
+	color: var(--vp-paper);
+	text-align: right;
+}
+
+.visioni-platform-app__panel--dark {
+	background: linear-gradient(180deg, rgba(10, 8, 7, 0.45), rgba(10, 8, 7, 0.2));
+	border-color: rgba(199, 163, 102, 0.16);
+}
+
+.visioni-platform-app__installbox {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+	margin-top: 18px;
+	padding: 18px;
+	border-radius: 22px;
+	border: 1px solid rgba(199, 163, 102, 0.18);
+	background: linear-gradient(145deg, rgba(199, 163, 102, 0.12), rgba(255, 255, 255, 0.03));
+}
+
+.visioni-platform-app__installactions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+}
+
+.visioni-platform-login {
+	max-width: 1180px;
+	margin: clamp(112px, 16vw, 190px) auto 24px;
+	padding: 22px;
+	border-radius: 28px;
+	border: 1px solid var(--vp-line);
+	background:
+		radial-gradient(circle at top left, rgba(199, 163, 102, 0.22), transparent 30%),
+		radial-gradient(circle at bottom right, rgba(27, 95, 109, 0.18), transparent 32%),
+		linear-gradient(180deg, #191513 0%, #100d0c 100%);
+	color: var(--vp-paper);
+	box-shadow: 0 30px 80px rgba(8, 6, 5, 0.28);
+	font-family: 'Space Grotesk', sans-serif;
+}
+
+.visioni-platform-login__shell {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+}
+
+.visioni-platform-login__hero,
+.visioni-platform-login__panel {
+	padding: 24px;
+	border-radius: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.visioni-platform-login__brandmark {
+	width: min(280px, 100%);
+	height: auto;
+	margin-bottom: 12px;
+}
+
+.visioni-platform-login__hero h1,
+.visioni-platform-login__panel h2 {
+	margin: 8px 0 12px;
+	font-family: 'Fraunces', serif;
+	font-size: clamp(2rem, 5vw, 3.8rem);
+	line-height: 0.98;
+	letter-spacing: -0.04em;
+}
+
+.visioni-platform-login__hero p,
+.visioni-platform-login__panel p {
+	margin: 0;
+	line-height: 1.65;
+	color: rgba(246, 239, 227, 0.78);
+}
+
+.visioni-platform-login__bullets {
+	list-style: none;
+	padding: 0;
+	margin: 18px 0 0;
+	display: grid;
+	gap: 10px;
+}
+
+.visioni-platform-login__bullets li {
+	padding: 12px 14px;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
+	color: rgba(246, 239, 227, 0.84);
+}
+
+.visioni-platform-login__notice {
+	margin-top: 16px;
+	padding: 14px 16px;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 140, 140, 0.36);
+	background: rgba(148, 42, 42, 0.18);
+	color: #ffd7d7;
+	font-weight: 700;
+}
+
+.visioni-platform-login__roles {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.visioni-platform-login__role {
+	appearance: none;
+	text-align: left;
+	padding: 14px 16px;
+	border-radius: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
+	color: var(--vp-paper);
+	cursor: pointer;
+	transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.visioni-platform-login__role.is-active {
+	border-color: rgba(199, 163, 102, 0.55);
+	background: linear-gradient(145deg, rgba(199, 163, 102, 0.14), rgba(27, 95, 109, 0.1));
+}
+
+.visioni-platform-login__role strong {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 0.98rem;
+}
+
+.visioni-platform-login__role span {
+	display: block;
+	line-height: 1.55;
+	color: rgba(246, 239, 227, 0.74);
+}
+
+.visioni-platform-login__form {
+	display: grid;
+	gap: 14px;
+	margin-top: 18px;
+}
+
+.visioni-platform-login__form label {
+	display: grid;
+	gap: 8px;
+	font-size: 0.92rem;
+	font-weight: 700;
+	color: var(--vp-paper);
+}
+
+.visioni-platform-login__form input[type='text'],
+.visioni-platform-login__form input[type='password'] {
+	width: 100%;
+	padding: 14px 15px;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.05);
+	color: var(--vp-paper);
+	font: inherit;
+}
+
+.visioni-platform-login__remember {
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: 10px;
+	font-weight: 400;
+	color: rgba(246, 239, 227, 0.76);
+}
+
+.visioni-platform-login__remember input {
+	width: 18px;
+	height: 18px;
+	accent-color: var(--vp-gold);
+}
+
+.visioni-platform-login__admin {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.visioni-module--anticipa,
+.visioni-module--cantiere,
+.visioni-module--advisor,
+.visioni-module--memoria,
+.visioni-module--score,
+.visioni-module--profezia,
+.visioni-module--ambassador,
+.visioni-module--myarea,
+.visioni-module--vicinato,
+.visioni-module--distretto {
+	--vm-dark: rgba(14, 11, 9, 0.88);
+	max-width: 1180px;
+	padding: 22px;
+	background:
+		radial-gradient(circle at top left, rgba(199, 163, 102, 0.16), transparent 34%),
+		radial-gradient(circle at bottom right, rgba(27, 95, 109, 0.14), transparent 34%),
+		linear-gradient(180deg, #191513 0%, #100d0c 100%);
+	color: var(--vp-paper);
+	box-shadow: 0 30px 80px rgba(8, 6, 5, 0.28);
+	border-color: rgba(199, 163, 102, 0.18);
+}
+
+.visioni-module__hero {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+	padding: 22px;
+	border-radius: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.visioni-module__hero h2,
+.visioni-module__stagehead h3,
+.visioni-module__success h3 {
+	margin: 0;
+	font-family: 'Fraunces', serif;
+	font-size: clamp(1.8rem, 5vw, 3.4rem);
+	line-height: 0.98;
+	letter-spacing: -0.04em;
+}
+
+.visioni-module__hero p,
+.visioni-module__stagehead p,
+.visioni-module__success p {
+	margin: 10px 0 0;
+	line-height: 1.65;
+	color: rgba(246, 239, 227, 0.8);
+}
+
+.visioni-module__hero-signals {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.visioni-module__hero-signals span {
+	padding: 8px 12px;
+	border-radius: 999px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.05);
+	font-size: 0.84rem;
+	color: rgba(246, 239, 227, 0.84);
+}
+
+.visioni-myarea__stats {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.visioni-myarea__stats div,
+.visioni-myarea__card {
+	padding: 18px;
+	border-radius: 22px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.visioni-myarea__stats span {
+	display: block;
+	font-size: 0.78rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: rgba(246, 239, 227, 0.6);
+}
+
+.visioni-myarea__stats strong {
+	display: block;
+	margin-top: 8px;
+	font-size: clamp(1.8rem, 4vw, 2.6rem);
+	line-height: 1;
+}
+
+.visioni-myarea__grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 14px;
+	margin-top: 18px;
+}
+
+.visioni-myarea__card {
+	display: block;
+	text-decoration: none;
+	color: var(--vp-paper);
+	transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.visioni-myarea__card:hover {
+	transform: translateY(-2px);
+	border-color: rgba(199, 163, 102, 0.45);
+}
+
+.visioni-myarea__card--primary {
+	background: linear-gradient(145deg, rgba(199, 163, 102, 0.16), rgba(27, 95, 109, 0.12));
+	border-color: rgba(199, 163, 102, 0.26);
+}
+
+.visioni-myarea__card h3 {
+	margin: 10px 0 8px;
+	font-family: 'Fraunces', serif;
+	font-size: 1.6rem;
+	line-height: 1.05;
+}
+
+.visioni-myarea__card p:last-child {
+	margin: 0;
+	line-height: 1.6;
+	color: rgba(246, 239, 227, 0.78);
+}
+
+.visioni-vicinato__header,
+.visioni-vicinato__empty,
+.visioni-vicinato__card,
+.visioni-distretto__card,
+.visioni-distretto__empty {
+	padding: 18px;
+	border-radius: 22px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.visioni-vicinato__header h4,
+.visioni-vicinato__empty h4,
+.visioni-distretto__card h4,
+.visioni-distretto__empty h4 {
+	margin: 6px 0 0;
+	font-family: 'Fraunces', serif;
+	font-size: 1.35rem;
+	line-height: 1.08;
+}
+
+.visioni-vicinato__cards,
+.visioni-distretto__cards {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 14px;
+	margin-top: 16px;
+}
+
+.visioni-vicinato__meta,
+.visioni-vicinato__footer,
+.visioni-distretto__top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+}
+
+.visioni-vicinato__meta,
+.visioni-vicinato__footer {
+	font-size: 0.84rem;
+	color: rgba(246, 239, 227, 0.68);
+}
+
+.visioni-vicinato__card h4 {
+	margin: 10px 0 8px;
+	font-family: 'Fraunces', serif;
+	font-size: 1.2rem;
+	line-height: 1.1;
+}
+
+.visioni-vicinato__card p,
+.visioni-distretto__card p,
+.visioni-vicinato__empty p,
+.visioni-distretto__empty p {
+	margin: 0;
+	line-height: 1.6;
+	color: rgba(246, 239, 227, 0.78);
+}
+
+.visioni-vicinato__footer {
+	margin-top: 12px;
+}
+
+.visioni-distretto__toolbar {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 14px;
+	margin-top: 18px;
+}
+
+.visioni-distretto__filtergroup {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+}
+
+.visioni-distretto__metrics {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+	margin: 16px 0;
+}
+
+.visioni-distretto__metrics div {
+	padding: 14px;
+	border-radius: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.visioni-distretto__metrics span {
+	display: block;
+	font-size: 0.78rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: rgba(246, 239, 227, 0.58);
+	margin-bottom: 6px;
+}
+
+.visioni-distretto__metrics strong {
+	font-size: 1.02rem;
+	color: var(--vp-paper);
+}
+
+.visioni-advisor__promptbar {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	margin-bottom: 18px;
+}
+
+.visioni-score__result,
+.visioni-profezia__result {
+	margin-top: 18px;
+}
+
+.visioni-score__rangevalue {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 999px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.04);
+	font-weight: 700;
+}
+
+.visioni-profezia__inputs {
+	display: grid;
+	gap: 18px;
+}
+
+.visioni-profezia__scenarios {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	margin-top: 14px;
+}
+
+.visioni-advisor__response,
+.visioni-memoria__timeline {
+	margin-top: 18px;
+}
+
+.visioni-memoria__items {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	margin-top: 14px;
+}
+
+.visioni-memoria__item {
+	padding: 16px;
+	border-radius: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.visioni-memoria__item h4 {
+	margin: 8px 0 6px;
+	font-family: 'Fraunces', serif;
+	font-size: 1.2rem;
+	line-height: 1.1;
+}
+
+.visioni-memoria__item p {
+	margin: 0;
+	line-height: 1.55;
+	color: rgba(246, 239, 227, 0.76);
+}
+
+.visioni-memoria__meta,
+.visioni-memoria__footer {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	align-items: center;
+	font-size: 0.84rem;
+	color: rgba(246, 239, 227, 0.66);
+}
+
+.visioni-memoria__footer {
+	margin-top: 12px;
+}
+
+.visioni-module__shell {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+	margin-top: 18px;
+}
+
+.visioni-module__flow,
+.visioni-module__sidebar > .visioni-platform-app__panel {
+	padding: 20px;
+	border-radius: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.visioni-module__steps {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	margin-bottom: 16px;
+}
+
+.visioni-module__steps span {
+	padding: 10px 12px;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.03);
+	font-size: 0.84rem;
+	font-weight: 700;
+	color: rgba(246, 239, 227, 0.68);
+	text-align: center;
+}
+
+.visioni-module__steps span.is-active {
+	border-color: rgba(199, 163, 102, 0.55);
+	background: rgba(199, 163, 102, 0.16);
+	color: var(--vp-paper);
+}
+
+.visioni-module__steps span.is-complete {
+	border-color: rgba(27, 95, 109, 0.4);
+	color: rgba(246, 239, 227, 0.84);
+}
+
+.visioni-module__stage {
+	min-height: 420px;
+	padding: 18px;
+	border-radius: 22px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(9, 7, 6, 0.16);
+}
+
+.visioni-module__optiongrid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.visioni-module__option {
+	appearance: none;
+	text-align: left;
+	padding: 16px 18px;
+	border-radius: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.03);
+	color: var(--vp-paper);
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+	transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.visioni-module__option.is-active {
+	border-color: rgba(199, 163, 102, 0.55);
+	background: linear-gradient(145deg, rgba(199, 163, 102, 0.14), rgba(27, 95, 109, 0.1));
+	box-shadow: 0 18px 34px rgba(3, 3, 3, 0.14);
+}
+
+.visioni-module__textarea {
+	display: grid;
+	gap: 8px;
+	margin-top: 18px;
+	font-size: 0.92rem;
+	font-weight: 700;
+	color: var(--vp-paper);
+}
+
+.visioni-module__textarea textarea {
+	width: 100%;
+	min-height: 130px;
+	padding: 14px 15px;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.05);
+	color: var(--vp-paper);
+	font: inherit;
+	resize: vertical;
+}
+
+.visioni-module__successgrid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.visioni-module__successgrid div {
+	padding: 16px;
+	border-radius: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.visioni-module__successgrid span {
+	display: block;
+	font-size: 0.82rem;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: rgba(246, 239, 227, 0.6);
+	margin-bottom: 6px;
+}
+
+.visioni-module__successgrid strong {
+	font-size: 1.05rem;
+	color: var(--vp-paper);
+}
+
 .visioni-platform-app__intro {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -155,6 +1095,7 @@ body.admin-bar .visioni-platform-app {
 	background: var(--vp-card);
 	color: var(--vp-ink);
 	backdrop-filter: blur(10px);
+	box-shadow: 0 18px 44px rgba(14, 11, 9, 0.09);
 }
 
 .visioni-platform-app__intro article {
@@ -243,6 +1184,75 @@ body.admin-bar .visioni-platform-app {
 @media (min-width: 860px) {
 	.visioni-platform-app__brand {
 		grid-template-columns: 300px minmax(0, 1fr);
+	}
+
+	.visioni-platform-login__shell {
+		grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+	}
+
+	.visioni-platform-login__roles {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.visioni-platform-app__onboarding {
+		grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.9fr);
+	}
+
+	.visioni-platform-app__flowhead {
+		grid-template-columns: minmax(0, 1fr) 300px;
+		align-items: start;
+	}
+
+	.visioni-platform-app__steps {
+		grid-template-columns: 1fr;
+	}
+
+	.visioni-platform-app__fieldgrid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.visioni-platform-app__choices,
+	.visioni-platform-app__rolegrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.visioni-platform-app__installbox {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+	}
+
+	.visioni-module__hero {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: end;
+	}
+
+	.visioni-module__shell {
+		grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr);
+	}
+
+	.visioni-module__optiongrid,
+	.visioni-module__successgrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.visioni-advisor__promptbar,
+	.visioni-memoria__items,
+	.visioni-profezia__scenarios,
+	.visioni-vicinato__cards,
+	.visioni-distretto__cards {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.visioni-distretto__filtergroup {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.visioni-myarea__stats {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.visioni-myarea__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
 	.visioni-platform-app__intro {

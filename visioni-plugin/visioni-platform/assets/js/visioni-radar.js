@@ -245,6 +245,7 @@
     if (!summaryEl) return;
     const profile = state.profile;
     const summary = [
+      { label: "Intento", value: profile.intent === "investimento" ? "Investimento" : "Prima casa" },
       { label: "Tipologia", value: profile.tipologia || "Non definita" },
       { label: "Budget", value: `${formatPrice(profile.budgetMin)} - ${formatPrice(profile.budgetMax)}` },
       { label: "Vani", value: `${profile.vaniMin || 1} - ${profile.vaniMax || 6}` },
@@ -289,6 +290,10 @@
           <div class="visioni-radar-card__top">
             <strong>${escapeHtml(item.titolo || "Immobile")}</strong>
             <span>${escapeHtml(item.tipologia || "immobile")}</span>
+          </div>
+          <div class="visioni-radar-card__badges">
+            <span>Match ${escapeHtml(String(item.matchScore || 0))}/100</span>
+            <span>${escapeHtml(item.type || "catalogo")}</span>
           </div>
           <p>${escapeHtml(item.zona || "Zona non specificata")}</p>
           <p><b>Prezzo</b> ${formatPrice(item.prezzo)}</p>
@@ -381,10 +386,33 @@
       await loadImmobili();
       watchPosition();
 
+      const score = Number(data.leadScore || 0);
+      const priority = data.priorityLabel || "Attivo";
+      const matchCount = Number(data.matchCount || state.immobili.length || 0);
+      const nextStep = data.nextStep || "Contatto consulenziale e raffinazione del perimetro di ricerca";
+
       app.innerHTML = `
         <div class="visioni-radar-success">
           <h3>Radar attivato con successo</h3>
-          <p>Il tuo profilo e stato salvato. Da questo momento il sistema puo intercettare immobili compatibili e inviarti alert quando entri nel raggio definito.</p>
+          <p>Il tuo profilo e stato salvato. Da questo momento il sistema puo intercettare immobili compatibili, ordinare la domanda e inviarti alert quando entri nel raggio definito.</p>
+          <div class="visioni-radar-success__grid">
+            <div class="visioni-radar-success__card">
+              <span>Score profilo</span>
+              <strong>${escapeHtml(String(score))}/100</strong>
+            </div>
+            <div class="visioni-radar-success__card">
+              <span>Priorita</span>
+              <strong>${escapeHtml(priority)}</strong>
+            </div>
+            <div class="visioni-radar-success__card">
+              <span>Match stimati</span>
+              <strong>${escapeHtml(String(matchCount))}</strong>
+            </div>
+          </div>
+          <div class="visioni-radar-success__nextstep">
+            <span>Prossimo step</span>
+            <strong>${escapeHtml(nextStep)}</strong>
+          </div>
           <div class="visioni-radar-actions">
             <button type="button" data-refresh-results>Aggiorna risultati</button>
             ${cfg.platformUrl ? `<a class="visioni-radar-linkbutton" href="${escapeAttr(cfg.platformUrl)}">Torna all'hub app</a>` : ""}
@@ -410,7 +438,7 @@
   function renderStep1() {
     app.innerHTML = renderStepFrame(
       "Chi sei e cosa cerchi",
-      "Impostiamo un profilo pulito e riconoscibile, senza attrito inutile.",
+      "Impostiamo un profilo chiaro e spendibile subito anche lato consulenza.",
       `
         <label>Nome<input id="radar_nome" value="${escapeAttr(state.profile.nome)}" /></label>
         <label>Email<input id="radar_email" type="email" value="${escapeAttr(state.profile.email)}" /></label>
@@ -439,7 +467,7 @@
   function renderStep2() {
     app.innerHTML = renderStepFrame(
       "Definisci i criteri",
-      "Qui restringiamo il perimetro: tipologia, vani, budget e preferenze di base.",
+      "Qui restringiamo il perimetro: tipologia, vani, budget e soglia economica reale.",
       `
         <label>Tipologia
           <select id="radar_tipologia">
@@ -483,7 +511,7 @@
 
     app.innerHTML = renderStepFrame(
       "Disegna la tua geografia",
-      "Le zone contano piu di tutto: qui definisci dove il sistema dovra lavorare davvero per te.",
+      "Le zone contano piu di tutto: qui definisci dove il sistema deve presidiare davvero il mercato per te.",
       `
         <div id="radar_zone" class="visioni-radar-zone-grid">${quartieri}</div>
         <label>Raggio massimo di ricerca
@@ -514,7 +542,7 @@
   function renderStep4() {
     app.innerHTML = renderStepFrame(
       "Attiva il Radar",
-      "Ultimo passaggio: scegli il raggio alert, abilita geolocalizzazione e autorizza il sistema a notificarti.",
+      "Ultimo passaggio: scegli il raggio alert, abilita geolocalizzazione e autorizza il sistema a trasformare la ricerca in monitoraggio attivo.",
       `
         <label>Raggio alert (metri)
           <select id="radar_alert">

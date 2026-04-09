@@ -227,6 +227,18 @@ class Visioni_Platform_Radar {
         update_post_meta( $post_id, 'radar_profilo', wp_json_encode( $profile ) );
         update_post_meta( $post_id, 'radar_created_at', current_time( 'mysql' ) );
 
+        $match_count = self::estimate_profile_matches( $profile );
+        $score = self::calculate_profile_score( $profile, $match_count );
+        $priority_label = self::priority_label( $score, $profile );
+        $next_step = self::next_step_label( $profile, $match_count );
+
+        update_post_meta( $post_id, 'radar_score', $score );
+        update_post_meta( $post_id, 'radar_match_count', $match_count );
+        update_post_meta( $post_id, 'radar_priority_label', $priority_label );
+        update_post_meta( $post_id, 'radar_next_step', $next_step );
+        update_post_meta( $post_id, 'radar_buyer_type', (string) $profile['buyerType'] );
+        update_post_meta( $post_id, 'radar_intent', (string) $profile['intent'] );
+
         self::touch_profile_rate_limit( $profile );
 
         wp_mail(
@@ -238,8 +250,12 @@ class Visioni_Platform_Radar {
 
         return rest_ensure_response(
             array(
-                'ok'        => true,
-                'profileId' => (int) $post_id,
+                'ok'            => true,
+                'profileId'     => (int) $post_id,
+                'leadScore'     => $score,
+                'priorityLabel' => $priority_label,
+                'matchCount'    => $match_count,
+                'nextStep'      => $next_step,
             )
         );
     }
@@ -319,53 +335,298 @@ class Visioni_Platform_Radar {
             return;
         }
 
-        $profiles = get_posts(
-            array(
-                'post_type'      => 'radar_profile',
-                'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
-                'posts_per_page' => 10,
-                'orderby'        => 'date',
-                'order'          => 'DESC',
-            )
-        );
+        $rows = self::get_admin_rows();
+        $stats = self::build_admin_stats( $rows );
         ?>
         <div class="wrap">
             <h1>2D Radar</h1>
-            <p>Modulo Radar pronto per la fase implementativa: profili ricerca, geofencing e notifiche.</p>
+            <p>Dashboard operativa della domanda attiva: qui leggi priorita, intensita di ricerca, compatibilita stimata e prossima mossa commerciale.</p>
 
-            <h2 style="margin-top:24px;">Snapshot profili recenti</h2>
-            <?php if ( empty( $profiles ) ) : ?>
-                <p>Nessun profilo radar presente al momento.</p>
-            <?php else : ?>
-                <table class="widefat striped" style="max-width:980px;">
-                    <thead>
-                        <tr>
-                            <th>Titolo</th>
-                            <th>Data</th>
-                            <th>Stato</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ( $profiles as $profile ) : ?>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1180px;margin:18px 0 22px;">
+                <?php self::render_stat_card( 'Profili Totali', (string) $stats['total'], 'Domanda intercettata via Radar' ); ?>
+                <?php self::render_stat_card( 'Alta Priorita', (string) $stats['high_priority'], 'Ricerca forte o attivazione immediata' ); ?>
+                <?php self::render_stat_card( 'Con Match Stimati', (string) $stats['with_matches'], 'Profili che trovano gia opportunita coerenti' ); ?>
+                <?php self::render_stat_card( 'Investimento / Operazione', (string) $stats['investor_profiles'], 'Domanda piu strategica da presidiare' ); ?>
+            </div>
+
+            <div style="max-width:1180px;background:#fff;border:1px solid #dcdcde;border-radius:16px;padding:18px 18px 8px;box-shadow:0 12px 30px rgba(0,0,0,0.04);">
+                <h2 style="margin-top:0;">Profili ordinati per priorita</h2>
+                <p style="margin-top:0;color:#50575e;">Non un semplice elenco: qui capisci subito chi ha domanda calda, chi va contattato e quale percorso aprire.</p>
+
+                <?php if ( empty( $rows ) ) : ?>
+                    <p>Nessun profilo Radar presente al momento.</p>
+                <?php else : ?>
+                    <table class="widefat striped" style="margin-top:12px;">
+                        <thead>
                             <tr>
-                                <td>
-                                    <a href="<?php echo esc_url( get_edit_post_link( $profile->ID ) ); ?>">
-                                        <?php echo esc_html( get_the_title( $profile->ID ) ?: 'Profilo senza titolo' ); ?>
-                                    </a>
-                                </td>
-                                <td><?php echo esc_html( get_the_date( 'Y-m-d H:i', $profile->ID ) ); ?></td>
-                                <td><?php echo esc_html( ucfirst( (string) $profile->post_status ) ); ?></td>
+                                <th>Priorita</th>
+                                <th>Score</th>
+                                <th>Contatto</th>
+                                <th>Profilo</th>
+                                <th>Zona</th>
+                                <th>Budget</th>
+                                <th>Match</th>
+                                <th>Prossimo Step</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
+                        </thead>
+                        <tbody>
+                            <?php foreach ( $rows as $row ) : ?>
+                                <?php $edit_link = get_edit_post_link( (int) $row['id'] ); ?>
+                                <tr>
+                                    <td><strong><?php echo esc_html( $row['priority_label'] ); ?></strong></td>
+                                    <td><?php echo esc_html( (string) $row['score'] ); ?>/100</td>
+                                    <td>
+                                        <strong><?php echo esc_html( $row['name'] ); ?></strong><br />
+                                        <span style="color:#50575e;"><?php echo esc_html( $row['email'] ); ?></span>
+                                    </td>
+                                    <td>
+                                        <?php echo esc_html( $row['buyer_label'] ); ?><br />
+                                        <span style="color:#50575e;"><?php echo esc_html( $row['intent_label'] ); ?></span>
+                                    </td>
+                                    <td><?php echo esc_html( $row['city'] ); ?></td>
+                                    <td><?php echo esc_html( $row['budget_label'] ); ?></td>
+                                    <td><?php echo esc_html( (string) $row['match_count'] ); ?></td>
+                                    <td>
+                                        <?php echo esc_html( $row['next_step'] ); ?>
+                                        <?php if ( $edit_link ) : ?>
+                                            <br /><a href="<?php echo esc_url( $edit_link ); ?>">Apri scheda</a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
 
             <p style="margin-top:20px;">
                 Frontend rapido: usa lo shortcode <code>[visioni_radar_form]</code> in una pagina per attivare il wizard Radar pubblico.
             </p>
         </div>
         <?php
+    }
+
+    public static function get_admin_rows() {
+        $posts = get_posts(
+            array(
+                'post_type'      => 'radar_profile',
+                'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
+                'posts_per_page' => 100,
+                'orderby'        => 'date',
+                'order'          => 'DESC',
+            )
+        );
+
+        $rows = array();
+        foreach ( $posts as $post ) {
+            $payload = json_decode( (string) get_post_meta( $post->ID, 'radar_profilo', true ), true );
+            if ( ! is_array( $payload ) ) {
+                $payload = array();
+            }
+
+            $profile = self::sanitize_profile_payload( $payload );
+            $match_count = (int) get_post_meta( $post->ID, 'radar_match_count', true );
+            if ( $match_count <= 0 ) {
+                $match_count = self::estimate_profile_matches( $profile );
+            }
+
+            $score = (int) get_post_meta( $post->ID, 'radar_score', true );
+            if ( $score <= 0 ) {
+                $score = self::calculate_profile_score( $profile, $match_count );
+            }
+
+            $rows[] = array(
+                'id'             => (int) $post->ID,
+                'score'          => $score,
+                'priority_label' => self::priority_label( $score, $profile ),
+                'name'           => (string) ( $profile['nome'] ?: get_the_title( $post->ID ) ?: 'Profilo Radar' ),
+                'email'          => (string) ( $profile['email'] ?: 'n/d' ),
+                'city'           => ! empty( $profile['zone'] ) ? implode( ', ', array_slice( (array) $profile['zone'], 0, 2 ) ) : 'Bari / Puglia',
+                'budget_label'   => self::format_budget_label( $profile ),
+                'buyer_label'    => self::label( (string) $profile['buyerType'], array(
+                    'acquirente' => 'Acquirente',
+                    'affittuario' => 'Affittuario',
+                ) ),
+                'intent_label'   => self::label( (string) $profile['intent'], array(
+                    'prima_casa' => 'Prima casa',
+                    'investimento' => 'Investimento',
+                ) ),
+                'asset_label'    => self::label( (string) $profile['tipologia'], array(
+                    'appartamento' => 'Appartamento',
+                    'villa' => 'Villa',
+                    'commerciale' => 'Commerciale',
+                    'terreno' => 'Terreno',
+                    'operazione' => 'Operazione',
+                ) ),
+                'seller_label'   => self::label( (string) $profile['intent'], array(
+                    'prima_casa' => 'Domanda residenziale',
+                    'investimento' => 'Domanda investimento',
+                ) ),
+                'timing_label'   => self::label( (string) $profile['buyerType'], array(
+                    'acquirente' => 'Ricerca attiva',
+                    'affittuario' => 'Ricerca locazione',
+                ) ),
+                'match_count'    => $match_count,
+                'next_step'      => self::next_step_label( $profile, $match_count ),
+            );
+        }
+
+        usort(
+            $rows,
+            static function( $a, $b ) {
+                if ( $a['score'] !== $b['score'] ) {
+                    return $b['score'] <=> $a['score'];
+                }
+
+                return $b['id'] <=> $a['id'];
+            }
+        );
+
+        return $rows;
+    }
+
+    private static function build_admin_stats( array $rows ) {
+        $stats = array(
+            'total' => count( $rows ),
+            'high_priority' => 0,
+            'with_matches' => 0,
+            'investor_profiles' => 0,
+        );
+
+        foreach ( $rows as $row ) {
+            if ( in_array( $row['priority_label'], array( 'Alta', 'Calda' ), true ) ) {
+                $stats['high_priority']++;
+            }
+            if ( (int) $row['match_count'] > 0 ) {
+                $stats['with_matches']++;
+            }
+            if ( 'Investimento' === $row['intent_label'] || 'Operazione' === $row['asset_label'] ) {
+                $stats['investor_profiles']++;
+            }
+        }
+
+        return $stats;
+    }
+
+    private static function render_stat_card( $title, $value, $copy ) {
+        echo '<div style="background:#fff;border:1px solid #dcdcde;border-radius:16px;padding:16px 18px;box-shadow:0 12px 30px rgba(0,0,0,0.04);">';
+        echo '<div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8a6f3f;font-weight:700;">' . esc_html( $title ) . '</div>';
+        echo '<div style="font-size:30px;line-height:1.05;font-weight:700;margin-top:8px;">' . esc_html( $value ) . '</div>';
+        echo '<div style="margin-top:8px;color:#50575e;line-height:1.5;">' . esc_html( $copy ) . '</div>';
+        echo '</div>';
+    }
+
+    private static function estimate_profile_matches( array $profile ) {
+        $items = self::collect_catalog_immobili();
+
+        if ( isset( $profile['lat'] ) && isset( $profile['lng'] ) && null !== $profile['lat'] && null !== $profile['lng'] ) {
+            $user_lat = (float) $profile['lat'];
+            $user_lng = (float) $profile['lng'];
+            foreach ( $items as &$item ) {
+                $item['distanceKm'] = round( self::haversine_km( $user_lat, $user_lng, (float) $item['lat'], (float) $item['lng'] ), 3 );
+            }
+            unset( $item );
+        }
+
+        $filtered = self::apply_compatibility_filter( $items, $profile );
+        return count( $filtered );
+    }
+
+    private static function calculate_profile_score( array $profile, $match_count ) {
+        $score = 45;
+
+        if ( ! empty( $profile['nome'] ) && ! empty( $profile['email'] ) ) {
+            $score += 10;
+        }
+
+        if ( ! empty( $profile['telefono'] ) ) {
+            $score += 6;
+        }
+
+        if ( ! empty( $profile['zone'] ) ) {
+            $score += min( 12, count( (array) $profile['zone'] ) * 4 );
+        }
+
+        if ( ! empty( $profile['gdpr'] ) ) {
+            $score += 5;
+        }
+
+        if ( null !== $profile['lat'] && null !== $profile['lng'] ) {
+            $score += 8;
+        }
+
+        if ( 'investimento' === (string) $profile['intent'] ) {
+            $score += 8;
+        }
+
+        if ( 'operazione' === (string) $profile['tipologia'] || 'terreno' === (string) $profile['tipologia'] ) {
+            $score += 6;
+        }
+
+        $budget_max = (float) ( $profile['budgetMax'] ?? 0 );
+        if ( $budget_max >= 350000 ) {
+            $score += 8;
+        } elseif ( $budget_max >= 180000 ) {
+            $score += 4;
+        }
+
+        $score += min( 12, max( 0, (int) $match_count ) * 2 );
+
+        return max( 0, min( 100, (int) round( $score ) ) );
+    }
+
+    private static function priority_label( $score, array $profile ) {
+        $score = (int) $score;
+
+        if ( $score >= 85 ) {
+            return 'Alta';
+        }
+
+        if ( 'investimento' === (string) $profile['intent'] || $score >= 72 ) {
+            return 'Calda';
+        }
+
+        if ( $score >= 58 ) {
+            return 'Media';
+        }
+
+        return 'Base';
+    }
+
+    private static function next_step_label( array $profile, $match_count ) {
+        if ( (int) $match_count >= 3 ) {
+            return 'Invio selezione coerente e contatto consulente entro 24 ore';
+        }
+
+        if ( 'investimento' === (string) $profile['intent'] ) {
+            return 'Allineamento strategico su rendimento, ticket e aree obiettivo';
+        }
+
+        if ( empty( $profile['zone'] ) ) {
+            return 'Completare focalizzazione geografica per affinare il matching';
+        }
+
+        return 'Attivare contatto esplorativo e ampliare il perimetro di ricerca';
+    }
+
+    private static function label( $value, array $map ) {
+        $value = (string) $value;
+        return $map[ $value ] ?? ( '' !== $value ? ucfirst( str_replace( '_', ' ', $value ) ) : 'n/d' );
+    }
+
+    private static function format_budget_label( array $profile ) {
+        $min = (float) ( $profile['budgetMin'] ?? 0 );
+        $max = (float) ( $profile['budgetMax'] ?? 0 );
+
+        if ( $min <= 0 && $max <= 0 ) {
+            return 'Budget non definito';
+        }
+
+        if ( $max <= 0 ) {
+            return 'Da ' . number_format_i18n( $min, 0 ) . ' EUR';
+        }
+
+        return number_format_i18n( $min, 0 ) . ' - ' . number_format_i18n( $max, 0 ) . ' EUR';
     }
 
     private static function sanitize_profile_payload( array $raw ) {

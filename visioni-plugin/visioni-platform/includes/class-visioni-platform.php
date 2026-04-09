@@ -11,9 +11,11 @@ class Visioni_Platform {
     private const ACCESS_EMAIL_OPTION = 'visioni_platform_access_email';
     private const ACCESS_PASSWORD_HASH_OPTION = 'visioni_platform_access_password_hash';
     private const ACCESS_UNLOCKED_UNTIL_META = 'visioni_platform_unlocked_until';
+    private const FRONTEND_LOGIN_SLUG = 'accesso-app';
     private const DEFAULT_ACCESS_EMAIL = 'info@2dsviluppoimmobiliare.it';
     private const DEFAULT_ACCESS_PASSWORD_HASH = '$2y$10$Cikbtn3cKxciUUFfUr5mXu1OyPDc19u7tg0jISvWQ.eR//PBkRPBO';
     private const NOINDEX_PATHS = array(
+        'accesso-app',
         'platform',
         'radar',
         'anticipa',
@@ -42,6 +44,7 @@ class Visioni_Platform {
         add_action( 'admin_init', array( __CLASS__, 'handle_access_gate_request' ), 2 );
         add_action( 'admin_notices', array( __CLASS__, 'render_activation_notice' ) );
         add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
+        add_action( 'template_redirect', array( __CLASS__, 'handle_frontend_login_request' ), 0 );
         add_action( 'template_redirect', array( __CLASS__, 'serve_root_service_worker' ), 0 );
         add_action( 'template_redirect', array( __CLASS__, 'enforce_frontend_reserved_access' ), 1 );
         add_action( 'template_redirect', array( __CLASS__, 'send_noindex_headers' ) );
@@ -53,7 +56,9 @@ class Visioni_Platform {
         add_filter( 'rank_math/frontend/robots', array( __CLASS__, 'filter_rankmath_robots' ) );
         add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( __CLASS__, 'exclude_platform_pages_from_yoast_sitemaps' ) );
         add_filter( 'wpseo_robots', array( __CLASS__, 'filter_yoast_robots' ) );
+        add_filter( 'body_class', array( __CLASS__, 'filter_body_class' ) );
         add_shortcode( 'visioni_platform_app', array( __CLASS__, 'render_platform_app' ) );
+        add_shortcode( 'visioni_platform_login', array( __CLASS__, 'render_platform_login' ) );
 
         self::ensure_default_access_credentials();
 
@@ -332,6 +337,138 @@ class Visioni_Platform {
         );
     }
 
+    private static function login_page_url( $redirect_to = '' ) {
+        $url = home_url( '/' . self::FRONTEND_LOGIN_SLUG . '/' );
+        if ( '' === $redirect_to ) {
+            return $url;
+        }
+
+        return add_query_arg( 'redirect_to', $redirect_to, $url );
+    }
+
+    private static function frontend_role_destinations() {
+        return array(
+            'acquirente' => home_url( '/radar/' ),
+            'venditore'  => home_url( '/anticipa/' ),
+            'impresa'    => home_url( '/my-area/cantiere/' ),
+            'partner'    => home_url( '/my-area/ambassador/' ),
+        );
+    }
+
+    private static function normalize_frontend_role( $raw_role ) {
+        $role = sanitize_key( (string) $raw_role );
+        $destinations = self::frontend_role_destinations();
+
+        if ( isset( $destinations[ $role ] ) ) {
+            return $role;
+        }
+
+        return 'acquirente';
+    }
+
+    private static function frontend_role_target_url( $role ) {
+        $destinations = self::frontend_role_destinations();
+        $role = self::normalize_frontend_role( $role );
+
+        return esc_url_raw( $destinations[ $role ] );
+    }
+
+    private static function is_login_page() {
+        if ( is_admin() || ! is_page() ) {
+            return false;
+        }
+
+        $page = get_page_by_path( self::FRONTEND_LOGIN_SLUG );
+        if ( ! $page instanceof WP_Post ) {
+            return false;
+        }
+
+        return (int) get_queried_object_id() === (int) $page->ID;
+    }
+
+    private static function get_frontend_redirect_target() {
+        $redirect_to = isset( $_REQUEST['redirect_to'] ) ? wp_unslash( (string) $_REQUEST['redirect_to'] ) : '';
+        $role = isset( $_REQUEST['visioni_role'] ) ? self::normalize_frontend_role( wp_unslash( (string) $_REQUEST['visioni_role'] ) ) : 'acquirente';
+
+        if ( '' === $redirect_to ) {
+            return self::frontend_role_target_url( $role );
+        }
+
+        $redirect_to = esc_url_raw( $redirect_to );
+        if ( '' === $redirect_to ) {
+            return self::frontend_role_target_url( $role );
+        }
+
+        return $redirect_to;
+    }
+
+    public static function handle_frontend_login_request() {
+        if ( is_admin() || wp_doing_ajax() ) {
+            return;
+        }
+
+        if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+            return;
+        }
+
+        if ( isset( $_GET['visioni_platform_logout'] ) && is_user_logged_in() ) {
+            wp_logout();
+            wp_safe_redirect( self::login_page_url(), 302 );
+            exit;
+        }
+
+        if ( ! self::is_login_page() ) {
+            return;
+        }
+
+        if ( is_user_logged_in() && ! isset( $_POST['visioni_platform_frontend_login_submit'] ) ) {
+            wp_safe_redirect( self::get_frontend_redirect_target(), 302 );
+            exit;
+        }
+
+        if ( ! isset( $_POST['visioni_platform_frontend_login_submit'] ) ) {
+            return;
+        }
+
+        check_admin_referer( 'visioni_platform_frontend_login_action' );
+
+        $username = sanitize_text_field( (string) ( $_POST['log'] ?? '' ) );
+        $password = (string) ( $_POST['pwd'] ?? '' );
+        $remember = ! empty( $_POST['rememberme'] );
+        $redirect_to = self::get_frontend_redirect_target();
+
+        if ( '' !== $username && is_email( $username ) ) {
+            $user_by_email = get_user_by( 'email', $username );
+            if ( $user_by_email instanceof WP_User ) {
+                $username = (string) $user_by_email->user_login;
+            }
+        }
+
+        $user = wp_signon(
+            array(
+                'user_login'    => $username,
+                'user_password' => $password,
+                'remember'      => $remember,
+            ),
+            is_ssl()
+        );
+
+        if ( is_wp_error( $user ) ) {
+            $error_url = add_query_arg(
+                array(
+                    'login'       => 'failed',
+                    'redirect_to' => $redirect_to,
+                ),
+                self::login_page_url()
+            );
+            wp_safe_redirect( $error_url, 302 );
+            exit;
+        }
+
+        wp_safe_redirect( $redirect_to, 302 );
+        exit;
+    }
+
     public static function asset_url( $relative_path ) {
         return esc_url_raw( VISIONI_PLATFORM_URL . ltrim( (string) $relative_path, '/' ) );
     }
@@ -390,6 +527,12 @@ class Visioni_Platform {
             <p>
                 <a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=visioni-platform-guida' ) ); ?>">
                     Apri Guida Utilizzo
+                </a>
+                <a class="button button-secondary" href="<?php echo esc_url( home_url( '/platform/' ) ); ?>" style="margin-left:8px;">
+                    Apri App Frontend
+                </a>
+                <a class="button button-secondary" href="<?php echo esc_url( self::login_page_url() ); ?>" style="margin-left:8px;">
+                    Apri Login Clienti
                 </a>
             </p>
 
@@ -463,6 +606,14 @@ class Visioni_Platform {
                 'swUrl'         => self::pwa_service_worker_url(),
                 'platformUrl'   => esc_url_raw( home_url( '/platform/' ) ),
                 'radarUrl'      => esc_url_raw( home_url( '/radar/' ) ),
+                'anticipaUrl'   => esc_url_raw( home_url( '/anticipa/' ) ),
+                'cantiereUrl'   => esc_url_raw( home_url( '/my-area/cantiere/' ) ),
+                'advisorUrl'    => esc_url_raw( home_url( '/my-area/advisor/' ) ),
+                'memoriaUrl'    => esc_url_raw( home_url( '/my-area/memoria/' ) ),
+                'ambassadorUrl' => esc_url_raw( home_url( '/my-area/ambassador/' ) ),
+                'loginUrl'      => esc_url_raw( self::login_page_url() ),
+                'logoutUrl'     => esc_url_raw( add_query_arg( 'visioni_platform_logout', '1', home_url( '/platform/' ) ) ),
+                'adminUrl'      => esc_url_raw( admin_url( 'admin.php?page=visioni-platform' ) ),
                 'installTitle'  => '2D Radar',
                 'manifestUrl'   => self::pwa_manifest_url(),
             )
@@ -476,75 +627,243 @@ class Visioni_Platform {
                     <img src="<?php echo esc_url( self::asset_url( 'assets/branding/visioni-radar-wordmark.svg' ) ); ?>" alt="2D Radar" class="visioni-platform-app__brandmark" />
                     <div class="visioni-platform-app__copy">
                         <p class="visioni-platform-app__eyebrow">2D Ecosystem App</p>
-                        <h2>La tua piattaforma immobiliare predittiva, installabile sul telefono.</h2>
-                        <p class="visioni-platform-app__lede">Radar e i moduli strategici di Visioni vivono qui: accesso rapido, esperienza privata, interfaccia premium e logica pronta per crescere con il tuo ecosistema.</p>
+                        <h2>Ingresso unico alla tua esperienza immobiliare riservata.</h2>
+                        <p class="visioni-platform-app__lede">Qui non entri in un semplice portale. Entri in una app privata che capisce chi sei, attiva i consensi iniziali, ti guida all'installazione e apre il percorso giusto per acquirenti, venditori e imprese.</p>
                     </div>
                 </div>
-
-                <div class="visioni-platform-app__actions">
-                    <button type="button" id="visioni-platform-install" class="visioni-platform-app__install">Installa l'app</button>
-                    <a href="<?php echo esc_url( home_url( '/radar/' ) ); ?>" class="visioni-platform-app__launch">Apri Radar</a>
-                </div>
-                <p id="visioni-platform-install-hint" class="visioni-platform-app__hint"></p>
 
                 <div class="visioni-platform-app__signals">
                     <span>Privata</span>
                     <span>Noindex</span>
                     <span>PWA installabile</span>
+                    <span>Onboarding guidato</span>
                 </div>
+
+                <?php if ( current_user_can( 'manage_options' ) ) : ?>
+                    <div class="visioni-platform-app__adminbar">
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=visioni-platform' ) ); ?>" class="visioni-platform-app__launch">Backend Visioni Platform</a>
+                        <a href="<?php echo esc_url( admin_url() ); ?>" class="visioni-platform-app__ghostlink">Backend WordPress</a>
+                        <a href="<?php echo esc_url( add_query_arg( 'visioni_platform_logout', '1', home_url( '/platform/' ) ) ); ?>" class="visioni-platform-app__ghostlink">Esci dall'area riservata</a>
+                    </div>
+                <?php endif; ?>
             </header>
+
+            <section class="visioni-platform-app__onboarding" id="visioni-platform-onboarding" data-default-role="acquirente">
+                <div class="visioni-platform-app__flow">
+                    <div class="visioni-platform-app__flowhead">
+                        <div>
+                            <p class="visioni-platform-app__eyebrow">Ingresso App</p>
+                            <h3>Configura l'accesso prima di entrare nell'area riservata</h3>
+                        </div>
+                        <ol class="visioni-platform-app__steps">
+                            <li class="is-active">Accesso</li>
+                            <li>Profilo</li>
+                            <li>Consensi</li>
+                            <li>Installazione</li>
+                        </ol>
+                    </div>
+
+                    <div class="visioni-platform-app__stage" id="visioni-platform-stage"></div>
+
+                    <div class="visioni-platform-app__actions">
+                        <button type="button" id="visioni-platform-prev" class="visioni-platform-app__ghost" disabled>Indietro</button>
+                        <button type="button" id="visioni-platform-next" class="visioni-platform-app__install">Continua</button>
+                    </div>
+                    <p id="visioni-platform-install-hint" class="visioni-platform-app__hint"></p>
+                </div>
+
+                <aside class="visioni-platform-app__sidebar">
+                    <div class="visioni-platform-app__summary" id="visioni-platform-summary"></div>
+
+                    <div class="visioni-platform-app__panel">
+                        <p class="visioni-platform-app__eyebrow">Cosa succede dopo</p>
+                        <h4>Una volta entrato</h4>
+                        <ul class="visioni-platform-app__checklist">
+                            <li>Installi la PWA sul telefono se vuoi l'esperienza piena.</li>
+                            <li>Accedi al percorso corretto in base al tuo profilo.</li>
+                            <li>Prosegui con moduli dedicati: Radar, Anticipa, Cantiere, Advisor.</li>
+                        </ul>
+                    </div>
+                </aside>
+            </section>
 
             <section class="visioni-platform-app__intro">
                 <article>
-                    <h3>Perche esiste</h3>
-                    <p>Non e una vetrina. E il punto d'accesso a un sistema che intercetta, qualifica e accompagna la ricerca immobiliare prima, durante e dopo il contatto con 2D.</p>
+                    <h3>Ingresso pulito</h3>
+                    <p>Prima si chiarisce il ruolo del cliente, poi si attivano solo i moduli coerenti. Questo evita caos, attrito e codice incoerente nel prosieguo.</p>
                 </article>
                 <article>
-                    <h3>Esperienza mobile</h3>
-                    <p>Installi l'app dal browser, apri i moduli con interfaccia dedicata e lavori in un ambiente separato dal sito pubblico, piu leggero e piu controllato.</p>
+                    <h3>Esperienza mobile-first</h3>
+                    <p>L'installazione PWA non e piu un bottone isolato: diventa parte del percorso di accesso, subito prima dell'uso operativo della piattaforma.</p>
                 </article>
                 <article>
-                    <h3>Base strategica</h3>
-                    <p>Radar e il primo motore operativo. Gli altri moduli restano accessibili da qui come estensioni del sistema, non come pagine scollegate.</p>
+                    <h3>Base per i test</h3>
+                    <p>Questa struttura ti permette di testare oggi il funnel completo d'ingresso senza aspettare tutta la logica finale di backend.</p>
                 </article>
             </section>
 
             <section class="visioni-platform-app__grid">
                 <a href="<?php echo esc_url( home_url( '/radar/' ) ); ?>" class="visioni-platform-app__card visioni-platform-app__card--primary">
                     <strong>Radar</strong>
-                    <span>Geofencing, matching e attivazione in tempo reale.</span>
+                    <span>Ingresso ideale per acquirenti, matching e prossimita controllata.</span>
                     <em>Pronto</em>
-                </a>
-                <a href="<?php echo esc_url( home_url( '/my-area/memoria/' ) ); ?>" class="visioni-platform-app__card">
-                    <strong>Memoria</strong>
-                    <span>Diario intelligente della ricerca e ricapitolazioni.</span>
-                    <em>Roadmap</em>
-                </a>
-                <a href="<?php echo esc_url( home_url( '/my-area/advisor/' ) ); ?>" class="visioni-platform-app__card">
-                    <strong>Advisor</strong>
-                    <span>Supporto decisionale personalizzato per acquisto e investimento.</span>
-                    <em>Roadmap</em>
-                </a>
-                <a href="<?php echo esc_url( home_url( '/distretto/' ) ); ?>" class="visioni-platform-app__card">
-                    <strong>Distretto</strong>
-                    <span>Quartieri, trend e intelligence iperlocale.</span>
-                    <em>Roadmap</em>
-                </a>
-                <a href="<?php echo esc_url( home_url( '/profezia/' ) ); ?>" class="visioni-platform-app__card">
-                    <strong>Profezia</strong>
-                    <span>Valore futuro e scenario evolutivo dell'immobile.</span>
-                    <em>Roadmap</em>
                 </a>
                 <a href="<?php echo esc_url( home_url( '/anticipa/' ) ); ?>" class="visioni-platform-app__card">
                     <strong>Anticipa</strong>
-                    <span>Intenzioni di vendita prima del mercato pubblico.</span>
-                    <em>Roadmap</em>
+                    <span>Primo modulo naturale per venditori e immobili in arrivo sul mercato.</span>
+                    <em>Strutturato</em>
+                </a>
+                <a href="<?php echo esc_url( home_url( '/my-area/cantiere/' ) ); ?>" class="visioni-platform-app__card">
+                    <strong>Cantiere</strong>
+                    <span>Area ideale per prevendita, aggiornamenti e accesso controllato alle unita.</span>
+                    <em>Operativo</em>
+                </a>
+                <a href="<?php echo esc_url( home_url( '/score/' ) ); ?>" class="visioni-platform-app__card">
+                    <strong>Score</strong>
+                    <span>Scoring decisionale rapido per leggere la forza reale di un caso.</span>
+                    <em>Decisione</em>
+                </a>
+                <a href="<?php echo esc_url( home_url( '/profezia/' ) ); ?>" class="visioni-platform-app__card">
+                    <strong>Profezia</strong>
+                    <span>Scenari di valore a 1, 3 e 5 anni per asset, sviluppo e strategia.</span>
+                    <em>Scenario</em>
+                </a>
+                <a href="<?php echo esc_url( home_url( '/distretto/' ) ); ?>" class="visioni-platform-app__card">
+                    <strong>Distretto</strong>
+                    <span>Leggi quartieri, microzone e frizione urbana come intelligence per scegliere meglio.</span>
+                    <em>Territorio</em>
+                </a>
+                <a href="<?php echo esc_url( home_url( '/my-area/vicinato/' ) ); ?>" class="visioni-platform-app__card">
+                    <strong>Vicinato</strong>
+                    <span>Raccogli segnali iperlocali, percezione di zona e contatti che anticipano il mercato.</span>
+                    <em>Iperlocale</em>
+                </a>
+                <a href="<?php echo esc_url( home_url( '/my-area/' ) ); ?>" class="visioni-platform-app__card">
+                    <strong>My Area</strong>
+                    <span>Hub riservato per rientrare in tutti i percorsi attivi dell'app.</span>
+                    <em>Hub</em>
                 </a>
             </section>
 
             <section class="visioni-platform-app__footer">
-                <p>L'app e progettata per uso mobile-first, installazione rapida e accesso privato. Il frontend pubblico del sito resta separato.</p>
+                <p>Questa pagina ora e pensata come hall d'ingresso dell'app. Il sito pubblico resta fuori. Qui dentro inizia il percorso riservato.</p>
             </section>
+        </section>
+        <?php
+
+        return (string) ob_get_clean();
+    }
+
+    public static function render_platform_login() {
+        wp_enqueue_style( 'visioni-platform-app' );
+        wp_enqueue_script( 'visioni-platform-app' );
+
+        wp_localize_script(
+            'visioni-platform-app',
+            'VisioniPlatformAppConfig',
+            array(
+                'swUrl'         => self::pwa_service_worker_url(),
+                'platformUrl'   => esc_url_raw( home_url( '/platform/' ) ),
+                'radarUrl'      => esc_url_raw( home_url( '/radar/' ) ),
+                'anticipaUrl'   => esc_url_raw( home_url( '/anticipa/' ) ),
+                'cantiereUrl'   => esc_url_raw( home_url( '/my-area/cantiere/' ) ),
+                'advisorUrl'    => esc_url_raw( home_url( '/my-area/advisor/' ) ),
+                'memoriaUrl'    => esc_url_raw( home_url( '/my-area/memoria/' ) ),
+                'ambassadorUrl' => esc_url_raw( home_url( '/my-area/ambassador/' ) ),
+                'loginUrl'      => esc_url_raw( self::login_page_url() ),
+                'logoutUrl'     => esc_url_raw( add_query_arg( 'visioni_platform_logout', '1', home_url( '/platform/' ) ) ),
+                'adminUrl'      => esc_url_raw( admin_url( 'admin.php?page=visioni-platform' ) ),
+                'installTitle'  => '2D Radar',
+                'manifestUrl'   => self::pwa_manifest_url(),
+            )
+        );
+
+        $redirect_to = self::get_frontend_redirect_target();
+        $has_error = isset( $_GET['login'] ) && 'failed' === sanitize_key( (string) $_GET['login'] );
+        $selected_role = isset( $_REQUEST['visioni_role'] ) ? self::normalize_frontend_role( wp_unslash( (string) $_REQUEST['visioni_role'] ) ) : 'acquirente';
+        $role_labels = array(
+            'acquirente' => array(
+                'title' => 'Acquirente',
+                'copy'  => 'Radar, preferenze, prossimita e percorso di scelta guidato.',
+            ),
+            'venditore' => array(
+                'title' => 'Venditore',
+                'copy'  => 'Anticipa, attivazione domanda e raccolta immobile prima del mercato pubblico.',
+            ),
+            'impresa' => array(
+                'title' => 'Impresa',
+                'copy'  => 'Cantiere, prevendita, disponibilita e accessi riservati per operazioni in sviluppo.',
+            ),
+            'partner' => array(
+                'title' => 'Partner',
+                'copy'  => 'Ambassador, referral qualificati e segnalazioni sotto controllo.',
+            ),
+        );
+
+        ob_start();
+        ?>
+        <section class="visioni-platform-login">
+            <div class="visioni-platform-login__shell">
+                <div class="visioni-platform-login__hero">
+                    <img src="<?php echo esc_url( self::asset_url( 'assets/branding/visioni-radar-wordmark.svg' ) ); ?>" alt="2D Radar" class="visioni-platform-login__brandmark" />
+                    <p class="visioni-platform-app__eyebrow">Area Riservata Visioni</p>
+                    <h1>Accedi alla app senza vedere WordPress.</h1>
+                    <p>Questa e la porta pulita per clienti, venditori, imprese e partner. Dopo l'accesso entri direttamente nella piattaforma riservata.</p>
+                    <ul class="visioni-platform-login__bullets">
+                        <li>Esperienza privata e noindex</li>
+                        <li>Accesso mobile-first alla PWA</li>
+                        <li>Percorsi dedicati per ruolo</li>
+                    </ul>
+                </div>
+
+                <div class="visioni-platform-login__panel">
+                    <p class="visioni-platform-app__eyebrow">Login</p>
+                    <h2>Entra nella piattaforma</h2>
+                    <p>Usa le credenziali che ti sono state fornite. Una volta dentro, il sistema ti porterà nel percorso corretto.</p>
+
+                    <div class="visioni-platform-login__roles" id="visioni-platform-login-roles">
+                        <?php foreach ( $role_labels as $role_key => $role_data ) : ?>
+                            <button type="button" class="visioni-platform-login__role <?php echo $selected_role === $role_key ? 'is-active' : ''; ?>" data-role="<?php echo esc_attr( $role_key ); ?>" data-target="<?php echo esc_url( self::frontend_role_target_url( $role_key ) ); ?>">
+                                <strong><?php echo esc_html( $role_data['title'] ); ?></strong>
+                                <span><?php echo esc_html( $role_data['copy'] ); ?></span>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <?php if ( $has_error ) : ?>
+                        <div class="visioni-platform-login__notice">Credenziali non valide. Riprova oppure contatta 2D per l'attivazione.</div>
+                    <?php endif; ?>
+
+                    <form method="post" class="visioni-platform-login__form">
+                        <?php wp_nonce_field( 'visioni_platform_frontend_login_action' ); ?>
+                        <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
+                        <input type="hidden" name="visioni_role" id="visioni-platform-login-role-input" value="<?php echo esc_attr( $selected_role ); ?>" />
+
+                        <label>
+                            <span>Email o username</span>
+                            <input type="text" name="log" autocomplete="username" required />
+                        </label>
+                        <label>
+                            <span>Password</span>
+                            <input type="password" name="pwd" autocomplete="current-password" required />
+                        </label>
+                        <label class="visioni-platform-login__remember">
+                            <input type="checkbox" name="rememberme" value="forever" />
+                            <span>Ricordami su questo dispositivo</span>
+                        </label>
+
+                        <button type="submit" name="visioni_platform_frontend_login_submit" class="visioni-platform-app__install">Accedi alla app</button>
+                    </form>
+
+                    <?php if ( current_user_can( 'manage_options' ) ) : ?>
+                        <div class="visioni-platform-login__admin">
+                            <a href="<?php echo esc_url( home_url( '/platform/' ) ); ?>" class="visioni-platform-app__launch">Apri subito Platform</a>
+                            <a href="<?php echo esc_url( home_url( '/radar/' ) ); ?>" class="visioni-platform-app__ghostlink">Apri Radar</a>
+                            <a href="<?php echo esc_url( admin_url( 'admin.php?page=visioni-platform' ) ); ?>" class="visioni-platform-app__ghostlink">Vai al backend</a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
         </section>
         <?php
 
@@ -649,6 +968,23 @@ class Visioni_Platform {
         return array_values( array_unique( array_filter( $ids ) ) );
     }
 
+    public static function filter_body_class( $classes ) {
+        if ( is_admin() || ! is_page() ) {
+            return $classes;
+        }
+
+        if ( self::is_platform_public_page() ) {
+            $classes[] = 'visioni-platform-page';
+            $classes[] = 'visioni-platform-shell';
+        }
+
+        if ( self::is_login_page() ) {
+            $classes[] = 'visioni-platform-login-page';
+        }
+
+        return array_values( array_unique( $classes ) );
+    }
+
     public static function send_noindex_headers() {
         if ( ! self::is_platform_public_page() ) {
             return;
@@ -666,11 +1002,11 @@ class Visioni_Platform {
             return;
         }
 
-        if ( ! self::is_platform_public_page() || is_user_logged_in() ) {
+        if ( ! self::is_platform_public_page() || self::is_login_page() || is_user_logged_in() ) {
             return;
         }
 
-        wp_safe_redirect( wp_login_url( self::current_request_url() ), 302 );
+        wp_safe_redirect( self::login_page_url( self::current_request_url() ), 302 );
         exit;
     }
 
@@ -765,6 +1101,7 @@ class Visioni_Platform {
     }
 
     public static function ensure_platform_pages() {
+        self::upsert_page( 'Accesso App', self::FRONTEND_LOGIN_SLUG, '[visioni_platform_login]' );
         $hub_id = self::upsert_page( 'Platform', 'platform', '[visioni_platform_app]' );
 
         self::upsert_page( 'Radar', 'radar', '[visioni_radar_form]' );

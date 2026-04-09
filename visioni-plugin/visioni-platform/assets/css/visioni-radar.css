@@ -319,6 +319,75 @@ body.admin-bar .visioni-radar {
   box-shadow: 0 16px 40px rgba(14,11,9,0.08);
 }
 
+.visioni-radar-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+
+.visioni-radar-card__badges span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(199, 163, 102, 0.14);
+  border: 1px solid rgba(199, 163, 102, 0.2);
+  color: rgba(20,17,15,0.74);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.visioni-radar-success {
+  padding: 22px;
+}
+
+.visioni-radar-success h3 {
+  margin: 0 0 10px;
+  font-family: 'Fraunces', serif;
+  font-size: 1.8rem;
+}
+
+.visioni-radar-success p {
+  margin: 0;
+  line-height: 1.6;
+  color: rgba(20,17,15,0.76);
+}
+
+.visioni-radar-success__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 14px;
+}
+
+.visioni-radar-success__card,
+.visioni-radar-success__nextstep {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(199,163,102,0.18);
+}
+
+.visioni-radar-success__card span,
+.visioni-radar-success__nextstep span {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(20,17,15,0.56);
+}
+
+.visioni-radar-success__card strong,
+.visioni-radar-success__nextstep strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.visioni-radar-success__nextstep {
+  margin-bottom: 16px;
+}
+
 .visioni-radar-card__top {
   display: flex;
   justify-content: space-between;
