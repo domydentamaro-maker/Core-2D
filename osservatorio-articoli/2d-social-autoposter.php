@@ -59,6 +59,9 @@ add_action('admin_init', function() {
         'sap_message_template'  => '{title} – {excerpt} 👉 {url}',
         'sap_hashtags'          => '#immobiliare #sviluppoimmobiliare #Bari #Puglia #DomenicoDentamaro',
         'sap_delay_minutes'     => '0',
+        'sap_ai_enabled'        => '0',
+        'sap_ai_model'          => 'gemini-2.0-flash',
+        'sap_ai_api_key'        => '',
     ];
     foreach ($fields as $key => $default) {
         register_setting('sap_settings_group', $key);
@@ -110,6 +113,30 @@ function sap_settings_page() {
                         <td>
                             <input type="number" name="sap_delay_minutes" value="<?php echo esc_attr(get_option('sap_delay_minutes', '0')); ?>" min="0" max="60" style="width:80px">
                             <p class="description">0 = pubblica immediatamente</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>AI copywriting</th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="sap_ai_enabled" value="1" <?php checked(get_option('sap_ai_enabled', '0'), '1'); ?>>
+                                Attiva generazione copy con AI lato server
+                            </label>
+                            <p class="description">Se attiva, il plugin prova a generare una caption migliore del template fisso.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Modello AI</th>
+                        <td>
+                            <input type="text" name="sap_ai_model" value="<?php echo esc_attr(get_option('sap_ai_model', 'gemini-2.0-flash')); ?>" style="width:100%;max-width:320px">
+                            <p class="description">Default consigliato: <code>gemini-2.0-flash</code>.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>API Key AI</th>
+                        <td>
+                            <input type="password" name="sap_ai_api_key" value="<?php echo esc_attr(get_option('sap_ai_api_key', '')); ?>" style="width:100%;max-width:500px" autocomplete="off">
+                            <p class="description">Lascia vuoto se vuoi usare la variabile ambiente <code>GEMINI_API_KEY</code>.</p>
                         </td>
                     </tr>
                 </table>
@@ -274,24 +301,26 @@ function sap_publish_to_all($post_id) {
     // Controlla se già postato
     if (get_post_meta($post_id, '_sap_posted', true)) return;
 
-    $message  = sap_build_message($post);
+    $permalink = get_permalink($post);
     $image_url = sap_get_featured_image($post_id);
 
     $results = [];
 
     // Facebook 2D
     if (get_option('sap_fb_enabled') === '1') {
+        $message = sap_build_message($post, 'facebook_2d');
         $results['Facebook 2D'] = sap_post_facebook(
             get_option('sap_fb_page_id'),
             get_option('sap_fb_access_token'),
             $message,
-            get_permalink($post),
+            sap_get_tracked_link($permalink, 'social-fb-2d'),
             $image_url
         );
     }
 
     // Instagram 2D
     if (get_option('sap_ig_enabled') === '1' && $image_url) {
+        $message = sap_build_message($post, 'instagram_2d');
         $results['Instagram 2D'] = sap_post_instagram(
             get_option('sap_ig_account_id'),
             get_option('sap_ig_access_token'),
@@ -302,11 +331,12 @@ function sap_publish_to_all($post_id) {
 
     // LinkedIn
     if (get_option('sap_li_enabled') === '1') {
+        $message = sap_build_message($post, 'linkedin_domenico');
         $results['LinkedIn'] = sap_post_linkedin(
             get_option('sap_li_page_id'),
             get_option('sap_li_access_token'),
             $message,
-            get_permalink($post),
+            sap_get_tracked_link($permalink, 'social-linkedin'),
             $image_url,
             $post->post_title
         );
@@ -314,17 +344,19 @@ function sap_publish_to_all($post_id) {
 
     // Facebook Osservatorio
     if (get_option('sap_obs_fb_enabled') === '1') {
+        $message = sap_build_message($post, 'facebook_osservatorio');
         $results['Facebook Osservatorio'] = sap_post_facebook(
             get_option('sap_obs_fb_page_id'),
             get_option('sap_obs_fb_access_token'),
             $message,
-            get_permalink($post),
+            sap_get_tracked_link($permalink, 'social-fb-osservatorio'),
             $image_url
         );
     }
 
     // Instagram Osservatorio
     if (get_option('sap_obs_ig_enabled') === '1' && $image_url) {
+        $message = sap_build_message($post, 'instagram_osservatorio');
         $results['Instagram Osservatorio'] = sap_post_instagram(
             get_option('sap_obs_ig_account_id'),
             get_option('sap_obs_ig_access_token'),
@@ -341,11 +373,18 @@ function sap_publish_to_all($post_id) {
 // ─────────────────────────────────────────
 // BUILD MESSAGE
 // ─────────────────────────────────────────
-function sap_build_message($post) {
+function sap_build_message($post, $channel = 'generic') {
+    $context = sap_build_content_context($post, $channel);
+    $ai_message = sap_build_ai_message($post, $channel);
+    if (!empty($ai_message)) {
+        return $ai_message;
+    }
+
     $template  = get_option('sap_message_template', '{title} – {excerpt} 👉 {url}');
     $hashtags  = get_option('sap_hashtags', '#immobiliare #Bari');
     $excerpt   = wp_trim_words(strip_tags($post->post_content), 30, '...');
     $cats      = implode(', ', wp_list_pluck(get_the_category($post->ID), 'name'));
+    $cta_line  = $context['cta'];
 
     $message = str_replace(
         ['{title}', '{excerpt}', '{url}', '{categories}'],
@@ -353,7 +392,242 @@ function sap_build_message($post) {
         $template
     );
 
-    return $message . "\n\n" . $hashtags;
+    return trim($message . "\n\n" . $cta_line . "\n\n" . $hashtags);
+}
+
+function sap_get_tracked_link($url, $context) {
+    $url = esc_url_raw($url);
+    if ($url === '') {
+        return '';
+    }
+
+    if (function_exists('twod_crosslink_get_tracked_url')) {
+        return twod_crosslink_get_tracked_url($url, $context);
+    }
+
+    return $url;
+}
+
+function sap_build_ai_message($post, $channel = 'generic') {
+    if (get_option('sap_ai_enabled', '0') !== '1') {
+        return '';
+    }
+
+    $api_key = sap_get_ai_api_key();
+    if (empty($api_key)) {
+        sap_log('AI: chiave non disponibile, uso template standard', 'info');
+        return '';
+    }
+
+    $model = trim((string) get_option('sap_ai_model', 'gemini-2.0-flash'));
+    if ($model === '') {
+        $model = 'gemini-2.0-flash';
+    }
+
+    $excerpt = wp_trim_words(wp_strip_all_tags($post->post_content), 40, '...');
+    $categories = implode(', ', wp_list_pluck(get_the_category($post->ID), 'name'));
+    $hashtags = trim((string) get_option('sap_hashtags', '#immobiliare #Bari'));
+    $site_name = get_bloginfo('name');
+    $url = get_permalink($post);
+    $channel_rules = sap_channel_prompt_rules($channel);
+    $context = sap_build_content_context($post, $channel);
+
+    $prompt = implode("\n", [
+        'Sei il copywriter premium dell\'ecosistema 2D Sviluppo Immobiliare.',
+        'Scrivi una caption social in italiano, pulita, autorevole, concreta e non artefatta.',
+        'Niente emoji inutili, niente tono da guru, niente formule da spam.',
+        'Mantieni il focus sul contenuto e chiudi con una CTA breve verso il link.',
+        'Restituisci solo il testo finale del post.',
+        '',
+        'Brand sorgente: ' . $site_name,
+        'Profilo brand: ' . $context['brand_label'],
+        'Audience: ' . $context['audience'],
+        'Obiettivo: ' . $context['goal'],
+        'CTA desiderata: ' . $context['cta'],
+        'Canale: ' . $channel_rules['label'],
+        'Regole canale: ' . $channel_rules['rules'],
+        'Titolo: ' . $post->post_title,
+        'Categorie: ' . $categories,
+        'Estratto: ' . $excerpt,
+        'URL: ' . $url,
+        'Hashtag da riusare se coerenti: ' . $hashtags,
+    ]);
+
+    $response = wp_remote_post(
+        'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($model) . ':generateContent?key=' . rawurlencode($api_key),
+        [
+            'headers' => [ 'Content-Type' => 'application/json' ],
+            'body'    => wp_json_encode([
+                'contents' => [
+                    [
+                        'parts' => [
+                            [ 'text' => $prompt ],
+                        ],
+                    ],
+                ],
+            ]),
+            'timeout' => 30,
+        ]
+    );
+
+    if (is_wp_error($response)) {
+        sap_log('AI errore richiesta: ' . $response->get_error_message(), 'error');
+        return '';
+    }
+
+    $code = wp_remote_retrieve_response_code($response);
+    $data = json_decode(wp_remote_retrieve_body($response), true);
+    if ($code < 200 || $code >= 300) {
+        $message = $data['error']['message'] ?? ('HTTP ' . $code);
+        sap_log('AI errore API: ' . $message, 'error');
+        return '';
+    }
+
+    $text = trim((string) ($data['candidates'][0]['content']['parts'][0]['text'] ?? ''));
+    if ($text === '') {
+        sap_log('AI: risposta vuota, uso template standard', 'info');
+        return '';
+    }
+
+    return $text;
+}
+
+function sap_build_content_context($post, $channel = 'generic') {
+    $brand = sap_detect_brand_profile();
+    $channel_rules = sap_channel_prompt_rules($channel);
+    $primary_category = '';
+    $categories = get_the_category($post->ID);
+    if (!empty($categories) && isset($categories[0]->name)) {
+        $primary_category = (string) $categories[0]->name;
+    }
+
+    return [
+        'brand' => $brand['key'],
+        'brand_label' => $brand['label'],
+        'audience' => $brand['audience'],
+        'goal' => $channel_rules['goal'] ?: $brand['goal'],
+        'cta' => sap_cta_for_brand_channel($brand['key'], $channel),
+        'category' => $primary_category,
+    ];
+}
+
+function sap_detect_brand_profile() {
+    $host = strtolower((string) wp_parse_url(home_url('/'), PHP_URL_HOST));
+    $name = strtolower((string) get_bloginfo('name'));
+
+    if (strpos($host, 'osservatorio.') !== false || strpos($name, 'osservatorio') !== false) {
+        return [
+            'key' => 'osservatorio',
+            'label' => 'Osservatorio Sviluppo Immobiliare',
+            'audience' => 'lettori interessati a mercato, dati, quartieri, trend e scenario immobiliare',
+            'goal' => 'autorevolezza editoriale e traffico qualificato verso analisi e dossier',
+        ];
+    }
+
+    if (strpos($host, 'materiaprima.') !== false || strpos($name, 'materia prima') !== false) {
+        return [
+            'key' => 'materiaprima',
+            'label' => 'Materia Prima',
+            'audience' => 'lettori che cercano guide pratiche, contenuti utili e spiegazioni operative',
+            'goal' => 'utilita percepita, traffico agli articoli e conversione morbida verso Visioni o contatto',
+        ];
+    }
+
+    if (strpos($host, 'visioniimmobiliari.') !== false || strpos($name, 'visioni') !== false) {
+        return [
+            'key' => 'visioni',
+            'label' => 'Visioni Immobiliari',
+            'audience' => 'utenti con intenzione immobiliare concreta: ricerca, vendita, impresa, territorio',
+            'goal' => 'attivazione di accessi, traffico verso la app e segnali di conversione',
+        ];
+    }
+
+    return [
+        'key' => 'twod',
+        'label' => '2D Sviluppo Immobiliare',
+        'audience' => 'persone che cercano competenza, progetto, cantieri, opportunita e visione imprenditoriale',
+        'goal' => 'credibilita commerciale e traffico verso asset, app o contatto',
+    ];
+}
+
+function sap_cta_for_brand_channel($brand, $channel) {
+    $map = [
+        'osservatorio' => [
+            'facebook_osservatorio' => 'Leggi l\'analisi completa dal link.',
+            'instagram_osservatorio' => 'Apri il link e leggi il quadro completo.',
+            'generic' => 'Approfondisci dal link.',
+        ],
+        'materiaprima' => [
+            'facebook_2d' => 'Leggi la guida completa dal link.',
+            'instagram_2d' => 'Apri il link e vai alla guida completa.',
+            'generic' => 'Approfondisci nel blog dal link.',
+        ],
+        'visioni' => [
+            'facebook_2d' => 'Entra nel percorso giusto dal link.',
+            'instagram_2d' => 'Apri il link e attiva il tuo accesso.',
+            'generic' => 'Accedi alla piattaforma dal link.',
+        ],
+        'twod' => [
+            'facebook_2d' => 'Guarda il contenuto completo dal link.',
+            'instagram_2d' => 'Apri il link per il contenuto completo.',
+            'linkedin_domenico' => 'Se vuoi approfondire, trovi il contenuto completo dal link.',
+            'generic' => 'Approfondisci dal link.',
+        ],
+    ];
+
+    $brand_map = $map[$brand] ?? $map['twod'];
+    return $brand_map[$channel] ?? $brand_map['generic'];
+}
+
+function sap_channel_prompt_rules($channel) {
+    $map = [
+        'facebook_2d' => [
+            'label' => 'Facebook 2D',
+            'rules' => 'Tono operativo e concreto. 3-5 frasi. Deve sembrare un contenuto utile, non un annuncio.',
+            'goal'  => 'portare click qualificati senza sembrare pubblicita aggressiva',
+        ],
+        'instagram_2d' => [
+            'label' => 'Instagram 2D',
+            'rules' => 'Hook forte nella prima riga. Testo piu corto. Pensato per caption visuale con CTA finale netta.',
+            'goal'  => 'fermare lo scroll e portare al link o alla story successiva',
+        ],
+        'linkedin_domenico' => [
+            'label' => 'LinkedIn Domenico',
+            'rules' => 'Tono professionale, imprenditoriale e lucido. Evita hashtag eccessivi. Deve sembrare una riflessione competente.',
+            'goal'  => 'costruire autorevolezza personale e conversazioni di qualita',
+        ],
+        'facebook_osservatorio' => [
+            'label' => 'Facebook Osservatorio',
+            'rules' => 'Tono editoriale e istituzionale. Focus su dato, scenario o lettura di mercato.',
+            'goal'  => 'portare traffico ad analisi e contenuti authority',
+        ],
+        'instagram_osservatorio' => [
+            'label' => 'Instagram Osservatorio',
+            'rules' => 'Tono editoriale ma piu compatto. Prima riga forte e leggibile. Chiusura con invito a leggere l\'analisi.',
+            'goal'  => 'trasformare un contenuto editoriale in attenzione visuale e click',
+        ],
+        'generic' => [
+            'label' => 'Generico',
+            'rules' => 'Tono premium, chiaro, essenziale e coerente con il brand.',
+            'goal'  => 'spostare attenzione verso il contenuto completo',
+        ],
+    ];
+
+    return $map[$channel] ?? $map['generic'];
+}
+
+function sap_get_ai_api_key() {
+    $saved = trim((string) get_option('sap_ai_api_key', ''));
+    if ($saved !== '') {
+        return $saved;
+    }
+
+    $env = getenv('GEMINI_API_KEY');
+    if (is_string($env) && trim($env) !== '') {
+        return trim($env);
+    }
+
+    return '';
 }
 
 function sap_get_featured_image($post_id) {

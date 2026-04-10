@@ -13,6 +13,9 @@
   var loginRoleRoot = null;
   var loginRoleInput = null;
   var loginRedirectInput = null;
+  var registerRoleRoot = null;
+  var registerRoleInput = null;
+  var registerFeedback = null;
 
   var roles = {
     acquirente: {
@@ -158,6 +161,26 @@
     }
   }
 
+  function syncRolePickers() {
+    if (loginRoleRoot) {
+      loginRoleRoot.querySelectorAll("[data-role]").forEach(function (item) {
+        item.classList.toggle("is-active", item.getAttribute("data-role") === state.role);
+      });
+    }
+
+    if (registerRoleRoot) {
+      registerRoleRoot.querySelectorAll("[data-role]").forEach(function (item) {
+        item.classList.toggle("is-active", item.getAttribute("data-role") === state.role);
+      });
+    }
+
+    if (registerRoleInput) {
+      registerRoleInput.value = state.role;
+    }
+
+    syncLoginRedirect();
+  }
+
   function bindLoginRolePicker() {
     loginRoleRoot = document.getElementById("visioni-platform-login-roles");
     loginRoleInput = document.getElementById("visioni-platform-login-role-input");
@@ -170,15 +193,91 @@
         var selected = button.getAttribute("data-role") || "acquirente";
         state.role = selected;
         saveState();
-        syncLoginRedirect();
-
-        loginRoleRoot.querySelectorAll("[data-role]").forEach(function (item) {
-          item.classList.toggle("is-active", item === button);
-        });
+        syncRolePickers();
       });
     });
 
-    syncLoginRedirect();
+    syncRolePickers();
+  }
+
+  function bindRegisterRolePicker() {
+    registerRoleRoot = document.getElementById("visioni-platform-register-roles");
+    registerRoleInput = document.getElementById("visioni-platform-register-role-input");
+    registerFeedback = document.getElementById("visioni-platform-register-feedback");
+
+    if (!registerRoleRoot || !registerRoleInput) return;
+
+    registerRoleRoot.querySelectorAll("[data-role]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        state.role = button.getAttribute("data-role") || "acquirente";
+        saveState();
+        syncRolePickers();
+      });
+    });
+
+    syncRolePickers();
+  }
+
+  function setRegisterFeedback(text, isError) {
+    if (!registerFeedback) return;
+    registerFeedback.textContent = text || "";
+    registerFeedback.classList.toggle("is-error", !!isError);
+    registerFeedback.classList.toggle("is-success", !!text && !isError);
+  }
+
+  function bindRegisterForm() {
+    var form = document.getElementById("visioni-platform-register-form");
+    if (!form || form.getAttribute("data-bound") === "1") return;
+
+    form.setAttribute("data-bound", "1");
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      if (!cfg.registerUrl) {
+        setRegisterFeedback("Endpoint di attivazione non disponibile.", true);
+        return;
+      }
+
+      var formData = new window.FormData(form);
+      var payload = {
+        name: String(formData.get("name") || "").trim(),
+        email: String(formData.get("email") || "").trim(),
+        phone: String(formData.get("phone") || "").trim(),
+        role: String(formData.get("visioni_role") || state.role || "acquirente").trim(),
+        privacy: formData.get("privacy") === "1",
+      };
+
+      var submit = form.querySelector("button[type='submit']");
+      if (submit) submit.disabled = true;
+      setRegisterFeedback("Invio attivazione in corso...", false);
+
+      try {
+        var response = await window.fetch(cfg.registerUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-WP-Nonce": cfg.restNonce || "",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        var result = await response.json();
+        if (!response.ok) {
+          var message = (result && result.message) || "Non sono riuscito ad attivare il tuo accesso.";
+          throw new Error(message);
+        }
+
+        setRegisterFeedback((result && result.message ? result.message : "Attivazione inviata.") + " Controlla la tua email.", false);
+        form.reset();
+        state.role = payload.role;
+        saveState();
+        syncRolePickers();
+      } catch (error) {
+        setRegisterFeedback(error && error.message ? error.message : "Errore durante l'attivazione.", true);
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
   }
 
   function renderStepIndicators() {
@@ -466,6 +565,8 @@
 
     loadState();
     bindLoginRolePicker();
+    bindRegisterRolePicker();
+    bindRegisterForm();
 
     if (root && root.dataset.defaultRole && !state.role) {
       state.role = root.dataset.defaultRole;

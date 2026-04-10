@@ -348,20 +348,38 @@ class TwoD_Ecosystem_Crosslink {
 		);
 	}
 
-	private static function is_allowed_ecosystem_url( $url ) {
-		$target_host = wp_parse_url( $url, PHP_URL_HOST );
+	private static function ecosystem_site_key_for_url( $target_url ) {
+		$target_host = wp_parse_url( $target_url, PHP_URL_HOST );
 		if ( ! $target_host ) {
-			return false;
+			return '';
 		}
 
-		foreach ( self::$ecosystem as $site ) {
+		foreach ( self::$ecosystem as $site_key => $site ) {
 			$host = wp_parse_url( $site['url'], PHP_URL_HOST );
 			if ( $host && strtolower( $host ) === strtolower( $target_host ) ) {
-				return true;
+				return (string) $site_key;
 			}
 		}
 
-		return false;
+		return '';
+	}
+
+	public static function public_tracked_url( $target_url, $context = 'external' ) {
+		$target_url = esc_url_raw( $target_url );
+		if ( '' === $target_url ) {
+			return '#';
+		}
+
+		$site_key = self::ecosystem_site_key_for_url( $target_url );
+		if ( '' === $site_key ) {
+			return $target_url;
+		}
+
+		return self::build_tracked_url( $site_key, $target_url, $context );
+	}
+
+	private static function is_allowed_ecosystem_url( $url ) {
+		return '' !== self::ecosystem_site_key_for_url( $url );
 	}
 
 	private static function register_click( $site_key, $context, $target_url ) {
@@ -583,6 +601,12 @@ class TwoD_Ecosystem_Crosslink {
 			<?php endif; ?>
 		</div>
 		<?php
+	}
+}
+
+if ( ! function_exists( 'twod_crosslink_get_tracked_url' ) ) {
+	function twod_crosslink_get_tracked_url( $target_url, $context = 'external' ) {
+		return TwoD_Ecosystem_Crosslink::public_tracked_url( $target_url, $context );
 	}
 }
 
