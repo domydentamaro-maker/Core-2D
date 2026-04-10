@@ -7,8 +7,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+$request_path = trim( (string) wp_parse_url( $_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH ), '/' );
+$app_shell_prefixes = array(
+    'platform',
+    'accesso-app',
+    'radar',
+    'anticipa',
+    'distretto',
+    'vicinato',
+    'score',
+    'profezia',
+    'advisor',
+    'eredita',
+    'live',
+    'my-area',
+);
+$is_app_shell = false;
+
+foreach ( $app_shell_prefixes as $prefix ) {
+    if ( $request_path === $prefix || str_starts_with( $request_path, $prefix . '/' ) ) {
+        $is_app_shell = true;
+        break;
+    }
+}
+
 $html_inline_style = '-webkit-tap-highlight-color: transparent !important;';
-if ( is_admin_bar_showing() ) {
+if ( is_admin_bar_showing() && ! $is_app_shell ) {
     $html_inline_style .= ' margin-top: 32px !important;';
 }
 ?>
@@ -107,7 +131,7 @@ if ( is_admin_bar_showing() ) {
     </style>
 	<?php wp_head(); ?>
 </head>
-<body <?php body_class( 'page-preload' ); ?> style="-webkit-tap-highlight-color: transparent !important; touch-action: manipulation;">
+<body <?php body_class( $is_app_shell ? array( 'page-preload', 'visioni-app-shell' ) : 'page-preload' ); ?> style="-webkit-tap-highlight-color: transparent !important; touch-action: manipulation;">
 <?php wp_body_open(); ?>
 <?php
 $show_reserved_cta = is_front_page();
@@ -115,6 +139,7 @@ $reserved_target_url = home_url( '/platform/' );
 $reserved_area_url = is_user_logged_in() ? $reserved_target_url : wp_login_url( $reserved_target_url );
 ?>
 
+<?php if ( ! $is_app_shell ) : ?>
 <header id="site-header" class="header-preload">
     <div class="site-header-inner max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
         <!-- Logo -->
@@ -270,5 +295,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<?php endif; ?>
 
 <main class="site-main">

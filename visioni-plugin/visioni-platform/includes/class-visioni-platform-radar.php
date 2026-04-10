@@ -170,9 +170,8 @@ class Visioni_Platform_Radar {
                     </div>
                 </div>
                 <div class="visioni-radar__header-side">
-                    <span>Privato</span>
-                    <span>Noindex</span>
-                    <span>Installabile</span>
+                    <button type="button" id="visioni-radar-install" class="visioni-radar-linkbutton visioni-radar-linkbutton--install">Scarica app</button>
+                    <p id="visioni-radar-install-hint" class="visioni-radar__installhint">Scaricala da questo dispositivo e continua dall'icona sul telefono.</p>
                 </div>
             </div>
             <div class="visioni-radar__wizard-shell">

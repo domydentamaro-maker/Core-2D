@@ -6,7 +6,11 @@
   const mapEl = document.getElementById("visioni-radar-map");
   const resultsEl = document.getElementById("visioni-radar-results");
   const summaryEl = document.getElementById("visioni-radar-summary");
+  const installBtn = document.getElementById("visioni-radar-install");
+  const installHint = document.getElementById("visioni-radar-install-hint");
   if (!app || !resultsEl) return;
+
+  let deferredPrompt = null;
 
   const storageKey = "visioni_radar_profile";
   const notifiedKey = "visioni_radar_notified";
@@ -98,6 +102,75 @@
   function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || !cfg.swUrl) return;
     navigator.serviceWorker.register(cfg.swUrl, { scope: "/" }).catch(() => {});
+  }
+
+  function isStandalone() {
+    return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  }
+
+  function isIos() {
+    return /iphone|ipad|ipod/i.test(window.navigator.userAgent || "");
+  }
+
+  function setInstallHint(message) {
+    if (!installHint) return;
+    installHint.textContent = message || "";
+  }
+
+  function updateInstallUi() {
+    if (!installBtn) return;
+
+    if (isStandalone()) {
+      installBtn.disabled = true;
+      installBtn.textContent = "App gia installata";
+      setInstallHint("La app e gia presente su questo dispositivo. Puoi usarla dall'icona in Home.");
+      return;
+    }
+
+    installBtn.disabled = false;
+
+    if (deferredPrompt) {
+      installBtn.textContent = "Scarica app";
+      setInstallHint("Download diretto disponibile da questo browser su questo dispositivo.");
+      return;
+    }
+
+    if (isIos()) {
+      installBtn.textContent = "Scarica app";
+      setInstallHint("Su iPhone usa Condividi > Aggiungi a Home per scaricarla sul dispositivo.");
+      return;
+    }
+
+    installBtn.textContent = "Scarica app";
+    setInstallHint("Se il browser non mostra il prompt, apri il menu del browser e scegli Installa app sul dispositivo corrente.");
+  }
+
+  function bindInstallButton() {
+    if (!installBtn || installBtn.getAttribute("data-bound") === "1") return;
+
+    installBtn.setAttribute("data-bound", "1");
+    installBtn.addEventListener("click", async () => {
+      if (isStandalone()) return;
+
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        try {
+          await deferredPrompt.userChoice;
+        } catch (_) {
+          // noop
+        }
+        deferredPrompt = null;
+        updateInstallUi();
+        return;
+      }
+
+      if (isIos()) {
+        window.alert("Per scaricare 2D Radar su iPhone: apri il menu Condividi di Safari e scegli 'Aggiungi a Home'.");
+        return;
+      }
+
+      window.alert("Download diretto non disponibile in questo momento. Usa il menu del browser e scegli Installa app sul dispositivo corrente.");
+    });
   }
 
   function requestNotificationPermission() {
@@ -583,7 +656,20 @@
     return renderStep4();
   }
 
+  window.addEventListener("beforeinstallprompt", function (event) {
+    event.preventDefault();
+    deferredPrompt = event;
+    updateInstallUi();
+  });
+
+  window.addEventListener("appinstalled", function () {
+    deferredPrompt = null;
+    updateInstallUi();
+  });
+
   registerServiceWorker();
+  bindInstallButton();
+  updateInstallUi();
   loadProfile();
   renderSummary();
   renderResults();

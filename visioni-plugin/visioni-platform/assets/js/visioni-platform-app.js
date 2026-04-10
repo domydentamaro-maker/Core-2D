@@ -401,7 +401,7 @@
     var role = selectedRole();
     var installCopy = isStandalone()
       ? 'L\'app e gia installata. Puoi entrare subito nel modulo consigliato.'
-      : 'Installa ora la PWA per lavorare in modo piu pulito e far partire l\'esperienza dal telefono.';
+      : 'Scarica ora la app sul dispositivo che stai usando, cosi il cliente prosegue dall\'icona giusta e con un\'esperienza adattata al suo telefono.';
 
     stage.innerHTML = [
       '<div class="visioni-platform-app__stagehead">',
@@ -415,7 +415,7 @@
       '<p>' + escapeHtml(role.description) + '</p>',
       '</div>',
       '<div class="visioni-platform-app__installactions">',
-      '<button type="button" id="visioni-platform-install" class="visioni-platform-app__install">Installa l\'app</button>',
+      '<button type="button" id="visioni-platform-install" class="visioni-platform-app__install">Scarica app</button>',
       '<a href="' + escapeHtml(role.destination) + '" class="visioni-platform-app__launch" id="visioni-platform-open-module">Apri ' + escapeHtml(role.module) + '</a>',
       '</div>',
       '</div>'
@@ -489,21 +489,21 @@
 
     if (deferredPrompt) {
       btn.disabled = false;
-      btn.textContent = "Installa l'app";
-      setHint("Installazione diretta disponibile da questo browser.");
+      btn.textContent = "Scarica app";
+      setHint("Download diretto disponibile da questo browser su questo dispositivo.");
       return;
     }
 
     if (isIos()) {
       btn.disabled = false;
-      btn.textContent = "Guida installazione";
-      setHint("Su iPhone usa Condividi > Aggiungi a Home per installarla.");
+      btn.textContent = "Scarica app";
+      setHint("Su iPhone usa Condividi > Aggiungi a Home per scaricarla sul dispositivo.");
       return;
     }
 
     btn.disabled = false;
-    btn.textContent = "Installa l'app";
-      setHint("Se il browser non mostra il prompt, puoi continuare dal browser e installare l'app in un secondo momento.");
+    btn.textContent = "Scarica app";
+      setHint("Se il browser non mostra il prompt, apri il menu del browser e scegli Installa app sul dispositivo corrente.");
   }
 
   function registerServiceWorker() {
@@ -535,11 +535,11 @@
       }
 
       if (isIos()) {
-        window.alert("Per installare 2D Radar su iPhone: apri il menu Condividi di Safari e scegli 'Aggiungi a Home'.");
+        window.alert("Per scaricare 2D Radar su iPhone: apri il menu Condividi di Safari e scegli 'Aggiungi a Home'.");
         return;
       }
 
-      window.alert("Installazione non disponibile in questo momento. Puoi comunque proseguire dal browser e installare la PWA in seguito.");
+      window.alert("Download diretto non disponibile in questo momento. Puoi proseguire dal browser oppure usare il menu del browser per installare la app su questo dispositivo.");
     });
   }
 

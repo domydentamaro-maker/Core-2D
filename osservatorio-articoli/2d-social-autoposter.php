@@ -3,7 +3,7 @@
  * Plugin Name: 2D Social AutoPoster
  * Plugin URI: https://www.2dsviluppoimmobiliare.it
  * Description: Pubblica automaticamente gli articoli su Facebook, Instagram e LinkedIn. Plugin leggero, gratuito e senza dipendenze esterne. By Domenico Dentamaro – 2D Sviluppo Immobiliare.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Domenico Dentamaro
  * Author URI: https://www.2dsviluppoimmobiliare.it
  * License: GPL2
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('SAP_VERSION', '1.0.0');
+define('SAP_VERSION', '1.0.1');
 define('SAP_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SAP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -38,10 +38,14 @@ add_action('admin_init', function() {
         'sap_fb_enabled'        => '0',
         'sap_fb_page_id'        => '',
         'sap_fb_access_token'   => '',
-        // Instagram
+        // Instagram 2D
         'sap_ig_enabled'        => '0',
         'sap_ig_account_id'     => '',
         'sap_ig_access_token'   => '',
+        // Instagram Domenico
+        'sap_dom_ig_enabled'      => '0',
+        'sap_dom_ig_account_id'   => '',
+        'sap_dom_ig_access_token' => '',
         // LinkedIn
         'sap_li_enabled'        => '0',
         'sap_li_page_id'        => '',
@@ -92,6 +96,21 @@ function sap_settings_page() {
 
         <form method="post" action="options.php">
             <?php settings_fields('sap_settings_group'); ?>
+
+            <?php sap_section('🧭 Mappatura social attuale', function() { ?>
+                <div style="background:#f9f9f9;border-left:4px solid #C8A96E;padding:16px;border-radius:4px;font-size:13px;line-height:1.8;">
+                    <strong>Facebook</strong><br>
+                    • Domenico Dentamaro: profilo personale Facebook. Nota: Meta non consente autopubblicazione affidabile su profili personali tramite questo flusso plugin.<br>
+                    • 2D Sviluppo Immobiliare: configurare come pagina Facebook nel blocco dedicato.<br>
+                    • Osservatorio Sviluppo Immobiliare: configurare come pagina Facebook nel blocco dedicato.<br><br>
+                    <strong>Instagram</strong><br>
+                    • @domenicodentaamro: nuovo blocco dedicato Instagram Domenico qui sotto.<br>
+                    • @2dsviluppo: usare il blocco Instagram 2D Sviluppo Immobiliare.<br>
+                    • @osservatoriosviluppo: usare il blocco Instagram Osservatorio.<br><br>
+                    <strong>Importante</strong><br>
+                    Per Instagram l'account deve essere Business o Creator e collegato alla stessa app Meta usata per il token.
+                </div>
+            <?php }); ?>
 
             <?php sap_section('⚙️ Impostazioni Generali', function() { ?>
                 <table class="form-table">
@@ -145,27 +164,32 @@ function sap_settings_page() {
             <?php sap_channel_section('📘 Facebook – 2D Sviluppo Immobiliare', 'sap_fb', [
                 'Page ID'      => 'sap_fb_page_id',
                 'Access Token' => 'sap_fb_access_token',
-            ]); ?>
+            ], 'Pagina da collegare: 2D Sviluppo Immobiliare. Inserisci il Page ID della pagina Facebook e il relativo token long-lived.'); ?>
 
-            <?php sap_channel_section('📸 Instagram – 2D Sviluppo Immobiliare', 'sap_ig', [
+            <?php sap_channel_section('📸 Instagram – @2dsviluppo', 'sap_ig', [
                 'Account ID'   => 'sap_ig_account_id',
                 'Access Token' => 'sap_ig_access_token',
-            ], 'Richiede un account Instagram Business collegato alla stessa app Facebook.'); ?>
+            ], 'Profilo da collegare: @2dsviluppo. Richiede un account Instagram Business o Creator collegato alla stessa app Meta.'); ?>
+
+            <?php sap_channel_section('📸 Instagram – @domenicodentaamro', 'sap_dom_ig', [
+                'Account ID'   => 'sap_dom_ig_account_id',
+                'Access Token' => 'sap_dom_ig_access_token',
+            ], 'Profilo da collegare: @domenicodentaamro. Se resta personale e non Business/Creator, la pubblicazione automatica non funzionera.'); ?>
 
             <?php sap_channel_section('💼 LinkedIn – Domenico Dentamaro', 'sap_li', [
                 'Organization ID / URN' => 'sap_li_page_id',
                 'Access Token'          => 'sap_li_access_token',
-            ]); ?>
+            ], 'Canale professionale personale consigliato per Domenico, soprattutto dove Facebook personale non e supportato.'); ?>
 
             <?php sap_channel_section('🏛️ Facebook – Osservatorio Sviluppo Immobiliare', 'sap_obs_fb', [
                 'Page ID'      => 'sap_obs_fb_page_id',
                 'Access Token' => 'sap_obs_fb_access_token',
-            ]); ?>
+            ], 'Pagina da collegare: Osservatorio Sviluppo Immobiliare. Inserisci il Page ID della pagina Facebook e il relativo token long-lived.'); ?>
 
-            <?php sap_channel_section('📸 Instagram – Osservatorio', 'sap_obs_ig', [
+            <?php sap_channel_section('📸 Instagram – @osservatoriosviluppo', 'sap_obs_ig', [
                 'Account ID'   => 'sap_obs_ig_account_id',
                 'Access Token' => 'sap_obs_ig_access_token',
-            ]); ?>
+            ], 'Profilo da collegare: @osservatoriosviluppo. Richiede un account Instagram Business o Creator collegato alla stessa app Meta.'); ?>
 
             <?php submit_button('💾 Salva impostazioni'); ?>
         </form>
@@ -189,6 +213,8 @@ function sap_settings_page() {
                 3. In Graph API Explorer genera un token con permessi: <code>pages_manage_posts</code>, <code>pages_read_engagement</code>, <code>instagram_basic</code>, <code>instagram_content_publish</code><br>
                 4. Converti in token permanente (long-lived) con la tool Token Debugger<br>
                 5. Copia il Page ID dalla pagina Facebook → Info della pagina<br>
+                6. Per Instagram usa l'Account ID dell'account Business/Creator collegato a quella app Meta<br>
+                7. Facebook personale non e gestito da questo plugin: usa pagine Facebook, Instagram Business/Creator o LinkedIn<br>
                 <br>
                 <strong>LINKEDIN</strong><br>
                 1. Vai su <a href="https://www.linkedin.com/developers" target="_blank">linkedin.com/developers</a> → crea app<br>
@@ -324,6 +350,17 @@ function sap_publish_to_all($post_id) {
         $results['Instagram 2D'] = sap_post_instagram(
             get_option('sap_ig_account_id'),
             get_option('sap_ig_access_token'),
+            $message,
+            $image_url
+        );
+    }
+
+    // Instagram Domenico
+    if (get_option('sap_dom_ig_enabled') === '1' && $image_url) {
+        $message = sap_build_message($post, 'instagram_domenico');
+        $results['Instagram Domenico'] = sap_post_instagram(
+            get_option('sap_dom_ig_account_id'),
+            get_option('sap_dom_ig_access_token'),
             $message,
             $image_url
         );
@@ -570,6 +607,7 @@ function sap_cta_for_brand_channel($brand, $channel) {
         'twod' => [
             'facebook_2d' => 'Guarda il contenuto completo dal link.',
             'instagram_2d' => 'Apri il link per il contenuto completo.',
+            'instagram_domenico' => 'Apri il link e guarda il contenuto completo.',
             'linkedin_domenico' => 'Se vuoi approfondire, trovi il contenuto completo dal link.',
             'generic' => 'Approfondisci dal link.',
         ],
@@ -590,6 +628,11 @@ function sap_channel_prompt_rules($channel) {
             'label' => 'Instagram 2D',
             'rules' => 'Hook forte nella prima riga. Testo piu corto. Pensato per caption visuale con CTA finale netta.',
             'goal'  => 'fermare lo scroll e portare al link o alla story successiva',
+        ],
+        'instagram_domenico' => [
+            'label' => 'Instagram Domenico',
+            'rules' => 'Tono personale ma premium. Prima riga forte, caption breve, chiusura con invito chiaro ad approfondire.',
+            'goal'  => 'rafforzare il profilo personale e spostare attenzione verso il contenuto completo',
         ],
         'linkedin_domenico' => [
             'label' => 'LinkedIn Domenico',
@@ -806,6 +849,9 @@ function sap_run_test($channel) {
     }
     if (get_option('sap_ig_enabled') === '1') {
         sap_log('Instagram: test non disponibile senza immagine reale', 'info');
+    }
+    if (get_option('sap_dom_ig_enabled') === '1') {
+        sap_log('Instagram Domenico: test non disponibile senza immagine reale', 'info');
     }
     if (get_option('sap_li_enabled') === '1') {
         sap_post_linkedin(get_option('sap_li_page_id'), get_option('sap_li_access_token'), $test_message, $test_url, '', 'Test 2D AutoPoster');

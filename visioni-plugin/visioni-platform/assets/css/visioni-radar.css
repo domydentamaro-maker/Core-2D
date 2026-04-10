@@ -1,14 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap');
 
+body.visioni-platform-page #site-header,
+body.visioni-platform-page .site-header,
+body.visioni-platform-page header.site-header,
+body.visioni-platform-page header#site-header,
+body.visioni-app-shell #site-header,
+body.visioni-app-shell .site-header,
+body.visioni-app-shell header.site-header,
+body.visioni-platform-page .entry-header,
+body.visioni-platform-page .page-header,
+body.visioni-platform-page .entry-title,
+body.visioni-platform-page .page-title {
+  display: none !important;
+}
+
 .visioni-radar {
   --vr-ink: #14110f;
   --vr-paper: #f6efe3;
   --vr-gold: #c7a366;
   --vr-line: rgba(199, 163, 102, 0.22);
   --vr-soft: rgba(255, 251, 245, 0.86);
-  max-width: 1180px;
-  margin: clamp(112px, 16vw, 190px) auto 24px;
-  padding: 22px;
+  max-width: 1360px;
+  margin: clamp(18px, 4vw, 40px) auto 32px;
+  padding: clamp(22px, 3.6vw, 40px);
   border-radius: 28px;
   border: 1px solid var(--vr-line);
   background:
@@ -21,19 +35,19 @@
 }
 
 body.admin-bar .visioni-radar {
-  margin-top: calc(clamp(112px, 16vw, 190px) + 32px);
+  margin-top: clamp(18px, 3vw, 34px);
 }
 
 @media (max-width: 782px) {
   body.admin-bar .visioni-radar {
-    margin-top: calc(clamp(112px, 16vw, 190px) + 46px);
+    margin-top: clamp(12px, 4vw, 24px);
   }
 }
 
 .visioni-radar__header {
   display: grid;
-  gap: 18px;
-  padding: 20px;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 38px);
   border-radius: 24px;
   background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
   border: 1px solid rgba(255,255,255,0.08);
@@ -42,7 +56,7 @@ body.admin-bar .visioni-radar {
 .visioni-radar__header-main {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 28px;
   align-items: center;
 }
 
@@ -54,8 +68,8 @@ body.admin-bar .visioni-radar {
 .visioni-radar__header h2 {
   margin: 8px 0 10px;
   font-family: 'Fraunces', serif;
-  font-size: clamp(2rem, 5vw, 3.8rem);
-  line-height: 0.98;
+  font-size: clamp(1.9rem, 4.8vw, 3.6rem);
+  line-height: 1.02;
   letter-spacing: -0.04em;
 }
 
@@ -76,25 +90,24 @@ body.admin-bar .visioni-radar {
 }
 
 .visioni-radar__header-side {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  gap: 12px;
+  justify-items: start;
 }
 
-.visioni-radar__header-side span {
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(246,239,227,0.86);
-  font-size: 0.82rem;
+.visioni-radar__installhint {
+  margin: 0;
+  max-width: 30ch;
+  color: rgba(246, 239, 227, 0.72);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .visioni-radar__wizard-shell {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
-  margin-top: 18px;
+  gap: 26px;
+  margin-top: 28px;
 }
 
 .visioni-radar__wizard,
@@ -112,7 +125,7 @@ body.admin-bar .visioni-radar {
 
 .visioni-radar__wizard,
 .visioni-radar__summary {
-  padding: 18px;
+  padding: clamp(22px, 3.2vw, 32px);
 }
 
 .visioni-radar-progress {
@@ -156,7 +169,7 @@ body.admin-bar .visioni-radar {
 
 .visioni-radar-fields {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
 .visioni-radar-step label {
@@ -181,7 +194,15 @@ body.admin-bar .visioni-radar {
 .visioni-radar-actions {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 20px;
+}
+
+.visioni-radar-choicegroup {
+  margin-top: 22px;
+}
+
+.visioni-radar-actions {
+  margin-top: 32px;
 }
 
 .visioni-radar-choicegroup button,
@@ -190,13 +211,46 @@ body.admin-bar .visioni-radar {
   appearance: none;
   border: 0;
   border-radius: 999px;
-  padding: 14px 16px;
+  min-height: 58px;
+  padding: 16px 20px;
   background: #161210;
   color: var(--vr-paper);
   font-weight: 700;
   text-align: center;
   cursor: pointer;
   text-decoration: none;
+}
+
+.visioni-radar-linkbutton--install {
+  background: linear-gradient(135deg, #f5d29a 0%, #c7a366 100%);
+  color: var(--vr-ink);
+  box-shadow: 0 14px 30px rgba(199, 163, 102, 0.26);
+}
+
+.visioni-radar-actions > :only-child {
+  grid-column: 1 / -1;
+  justify-self: start;
+  width: min(280px, 100%);
+}
+
+@media (max-width: 680px) {
+  .visioni-radar {
+    padding: 18px;
+  }
+
+  .visioni-radar__header,
+  .visioni-radar__wizard,
+  .visioni-radar__summary {
+    padding: 20px;
+  }
+
+  .visioni-radar-zone-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .visioni-radar-actions > :only-child {
+    width: 100%;
+  }
 }
 
 .visioni-radar-choicegroup button.is-active {
@@ -439,11 +493,11 @@ body.admin-bar .visioni-radar {
 
 @media (min-width: 860px) {
   .visioni-radar__header-main {
-    grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
   }
 
   .visioni-radar__wizard-shell {
-    grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+    grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
   }
 
   .visioni-radar-fieldgrid,

@@ -858,10 +858,9 @@ class Visioni_Platform {
                 </div>
 
                 <div class="visioni-platform-app__signals">
-                    <span>Privata</span>
-                    <span>Noindex</span>
-                    <span>PWA installabile</span>
-                    <span>Onboarding guidato</span>
+                    <span>Ingresso guidato</span>
+                    <span>Percorso dedicato</span>
+                    <span>Esperienza mobile</span>
                 </div>
 
                 <?php if ( current_user_can( 'manage_options' ) ) : ?>
