@@ -1222,35 +1222,67 @@ class Visioni_Platform {
         ?>
         <div class="wrap">
             <h1>Visioni Platform - Istruzioni di Utilizzo</h1>
-            <p>Questa guida e visibile subito dopo l'attivazione del plugin e resta sempre accessibile da menu <strong>Visioni Platform > Guida Utilizzo</strong>.</p>
+            <p>Questa guida e visibile subito dopo l'attivazione del plugin e resta sempre accessibile da menu <strong>Visioni Platform > Guida Utilizzo</strong>. Le istruzioni qui sotto riflettono il flusso attuale della piattaforma: accesso app, hub Platform, moduli frontend e verifiche PWA.</p>
 
-            <h2>1) Configurazione iniziale</h2>
+            <h2>1) Prima attivazione e pagine piattaforma</h2>
             <ol>
                 <li>Vai in <strong>Visioni Platform > Visioni Platform</strong>.</li>
-                <li>Compila eventuale <strong>Google Maps API Key</strong> (facoltativa).</li>
-                <li>Salva le impostazioni.</li>
+                <li>Clicca <strong>Genera/Aggiorna pagine piattaforma</strong> se vuoi rigenerare gli URL standard del sistema.</li>
+                <li>Il plugin crea e mantiene automaticamente le pagine principali: <code>/accesso-app/</code>, <code>/platform/</code>, <code>/radar/</code>, <code>/anticipa/</code>, <code>/distretto/</code>, <code>/profezia/</code>, <code>/live/</code> e l'area riservata <code>/my-area/</code> con i moduli collegati.</li>
             </ol>
 
-            <h2>2) Attivare il modulo Radar sul frontend</h2>
+            <h2>2) Configurazione backend</h2>
             <ol>
-                <li>Crea una pagina WordPress (es. "Radar").</li>
-                <li>Inserisci lo shortcode <code>[visioni_radar_form]</code>.</li>
-                <li>Pubblica la pagina e verifica il wizard a 4 step.</li>
+                <li>Nel pannello <strong>Visioni Platform</strong> imposta le chiavi opzionali che ti servono davvero.</li>
+                <li><strong>Google Maps API Key</strong> e facoltativa e serve solo dove vuoi mappe o geocoding piu ricchi.</li>
+                <li><strong>Firebase Sender ID</strong> e facoltativo e va usato solo se stai lavorando su notifiche push o estensioni collegate.</li>
+                <li>Salva sempre le impostazioni prima di fare test frontend.</li>
             </ol>
 
-            <h2>3) Verifiche rapide</h2>
+            <h2>3) Come funziona oggi il frontend</h2>
+            <ol>
+                <li><strong>/accesso-app/</strong> e il punto di ingresso clienti, con login, registrazione e instradamento per ruolo.</li>
+                <li><strong>/platform/</strong> e l'hub centrale da cui l'utente viene guidato ai moduli corretti.</li>
+                <li><strong>/radar/</strong> raccoglie domanda acquirente.</li>
+                <li><strong>/anticipa/</strong> raccoglie intenzioni vendita.</li>
+                <li><strong>/my-area/</strong> ospita i moduli riservati come Memoria, Advisor, Vicinato, Ambassador e Cantiere.</li>
+            </ol>
+
+            <h2>4) Shortcode e pagine</h2>
             <ul style="list-style:disc; margin-left:18px;">
-                <li>Endpoint profili: <code>/wp-json/visioni-platform/v1/radar/profiles</code></li>
-                <li>Endpoint immobili: <code>/wp-json/visioni-platform/v1/radar/immobili</code></li>
-                <li>Endpoint compatibilita: <code>/wp-json/visioni-platform/v1/radar/compatibility</code></li>
+                <li>Il plugin usa shortcode interni per costruire le pagine, ma nel flusso standard non devi creare a mano una nuova pagina Radar se usi il generatore interno.</li>
+                <li>Shortcode hub accesso: <code>[visioni_platform_login]</code></li>
+                <li>Shortcode hub platform: <code>[visioni_platform_app]</code></li>
+                <li>Shortcode modulo Radar: <code>[visioni_radar_form]</code></li>
+                <li>Shortcode moduli estesi: <code>[visioni_anticipa]</code>, <code>[visioni_memoria]</code>, <code>[visioni_advisor]</code>, <code>[visioni_vicinato]</code>, <code>[visioni_ambassador]</code>, <code>[visioni_cantiere]</code>, <code>[visioni_live]</code>, <code>[visioni_profezia]</code>, <code>[visioni_distretto]</code>, <code>[visioni_eredita]</code>.</li>
             </ul>
 
-            <h2>4) Flusso operativo consigliato</h2>
+            <h2>5) Verifiche rapide consigliate</h2>
+            <ul style="list-style:disc; margin-left:18px;">
+                <li>Apri <code>/accesso-app/</code> e verifica caricamento login, registrazione e CTA <strong>Scarica app</strong>.</li>
+                <li>Apri <code>/platform/</code> e controlla che il percorso ruoli indirizzi correttamente a Radar, Anticipa o agli altri moduli.</li>
+                <li>Apri <code>/radar/</code> e completa il wizard fino alla creazione del profilo.</li>
+                <li>Apri <code>/anticipa/</code> e verifica che la richiesta venga registrata correttamente.</li>
+                <li>Controlla che manifest e service worker siano disponibili: <code>/visioni-platform-sw.js</code> e webmanifest del plugin.</li>
+            </ul>
+
+            <h2>6) Endpoint utili</h2>
+            <ul style="list-style:disc; margin-left:18px;">
+                <li>Registrazione accesso app: <code>/wp-json/visioni-platform/v1/access/register</code></li>
+                <li>Profili Radar: <code>/wp-json/visioni-platform/v1/radar/profiles</code></li>
+                <li>Immobili Radar: <code>/wp-json/visioni-platform/v1/radar/immobili</code></li>
+                <li>Compatibilita Radar: <code>/wp-json/visioni-platform/v1/radar/compatibility</code></li>
+                <li>Anticipa: <code>/wp-json/visioni-platform/v1/anticipa/intentions</code></li>
+                <li>Telemetria installazione app: <code>/wp-json/visioni-platform/v1/app/install-event</code></li>
+            </ul>
+
+            <h2>7) Flusso operativo consigliato oggi</h2>
             <ol>
-                <li>Attiva plugin.</li>
-                <li>Configura chiavi/API in dashboard.</li>
-                <li>Pubblica pagina Radar con shortcode.</li>
-                <li>Testa creazione profilo e ricerca compatibilita.</li>
+                <li>Attiva plugin e genera/aggiorna le pagine piattaforma.</li>
+                <li>Configura solo le chiavi esterne realmente necessarie.</li>
+                <li>Verifica accesso app, Platform, Radar e Anticipa su frontend.</li>
+                <li>Controlla il backoffice operativo in <strong>Visioni > Lead Hub</strong> per vedere i lead raccolti da Radar, Anticipa e dalle altre pipeline.</li>
+                <li>Se stai testando la PWA, usa i contatori installazione per capire se <strong>Scarica app</strong> sta producendo prompt, click e installazioni reali.</li>
             </ol>
         </div>
         <?php
