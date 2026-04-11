@@ -225,6 +225,14 @@ class Visioni_Platform_Radar {
         update_post_meta( $post_id, 'radar_telefono', $telefono );
         update_post_meta( $post_id, 'radar_profilo', wp_json_encode( $profile ) );
         update_post_meta( $post_id, 'radar_created_at', current_time( 'mysql' ) );
+        update_post_meta( $post_id, 'visioni_lead_source', (string) $profile['lead_source'] );
+        update_post_meta( $post_id, 'visioni_lead_offer', (string) $profile['lead_offer'] );
+        update_post_meta( $post_id, 'visioni_lead_variant', (string) $profile['lead_variant'] );
+        update_post_meta( $post_id, 'visioni_utm_source', (string) $profile['utm_source'] );
+        update_post_meta( $post_id, 'visioni_utm_medium', (string) $profile['utm_medium'] );
+        update_post_meta( $post_id, 'visioni_utm_campaign', (string) $profile['utm_campaign'] );
+        update_post_meta( $post_id, 'visioni_utm_content', (string) $profile['utm_content'] );
+        update_post_meta( $post_id, 'visioni_utm_term', (string) $profile['utm_term'] );
 
         $match_count = self::estimate_profile_matches( $profile );
         $score = self::calculate_profile_score( $profile, $match_count );
@@ -666,6 +674,14 @@ class Visioni_Platform_Radar {
             'nome'         => sanitize_text_field( (string) ( $raw['nome'] ?? '' ) ),
             'email'        => sanitize_email( (string) ( $raw['email'] ?? '' ) ),
             'telefono'     => sanitize_text_field( (string) ( $raw['telefono'] ?? '' ) ),
+            'lead_source'  => sanitize_text_field( (string) ( $raw['lead_source'] ?? '' ) ),
+            'lead_offer'   => sanitize_text_field( (string) ( $raw['lead_offer'] ?? '' ) ),
+            'lead_variant' => sanitize_text_field( (string) ( $raw['lead_variant'] ?? '' ) ),
+            'utm_source'   => sanitize_text_field( (string) ( $raw['utm_source'] ?? '' ) ),
+            'utm_medium'   => sanitize_text_field( (string) ( $raw['utm_medium'] ?? '' ) ),
+            'utm_campaign' => sanitize_text_field( (string) ( $raw['utm_campaign'] ?? '' ) ),
+            'utm_content'  => sanitize_text_field( (string) ( $raw['utm_content'] ?? '' ) ),
+            'utm_term'     => sanitize_text_field( (string) ( $raw['utm_term'] ?? '' ) ),
             'buyerType'    => sanitize_key( (string) ( $raw['buyerType'] ?? '' ) ),
             'intent'       => sanitize_key( (string) ( $raw['intent'] ?? '' ) ),
             'tipologia'    => $tipologia,

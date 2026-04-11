@@ -110,6 +110,19 @@
     });
   }
 
+  function readLeadContext() {
+    var params = new URLSearchParams(window.location.search || '');
+    var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'lead_source', 'lead_offer', 'lead_variant'];
+    var context = {};
+
+    keys.forEach(function (key) {
+      var value = params.get(key);
+      if (value) context[key] = value;
+    });
+
+    return context;
+  }
+
   function renderSummary() {
     if (!summary) return;
 
@@ -272,7 +285,7 @@
     renderStage();
     setHint('Sto registrando il tuo ingresso in Anticipa.');
 
-    api('/anticipa/intentions', 'POST', state)
+    api('/anticipa/intentions', 'POST', Object.assign({}, state, readLeadContext()))
       .then(function (data) {
         stage.innerHTML = [
           '<div class="visioni-module__success">',

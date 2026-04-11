@@ -100,6 +100,19 @@
     });
   }
 
+  function readLeadContext() {
+    var params = new URLSearchParams(window.location.search || "");
+    var keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "lead_source", "lead_offer", "lead_variant"];
+    var context = {};
+
+    keys.forEach(function (key) {
+      var value = params.get(key);
+      if (value) context[key] = value;
+    });
+
+    return context;
+  }
+
   function registerServiceWorker() {
     if (!("serviceWorker" in navigator) || !cfg.swUrl) return;
     navigator.serviceWorker.register(cfg.swUrl, { scope: "/" }).catch(() => {});
@@ -476,7 +489,7 @@
     try {
       await initRadar();
       await requestNotificationPermission();
-      const data = await api("/radar/profiles", "POST", state.profile);
+      const data = await api("/radar/profiles", "POST", Object.assign({}, state.profile, readLeadContext()));
       if (!data || !data.ok) throw new Error("Profilo non salvato");
       registerServiceWorker();
       await loadImmobili();

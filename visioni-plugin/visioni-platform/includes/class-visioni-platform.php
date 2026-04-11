@@ -9,6 +9,8 @@ require_once VISIONI_PLATFORM_DIR . 'includes/class-visioni-platform-modules.php
 
 class Visioni_Platform {
     private const API_NAMESPACE = 'visioni-platform/v1';
+    private const LEAD_PREVIEW_ACQUIRENTE_SLUG = 'lead-preview-acquirente';
+    private const LEAD_PREVIEW_VENDITORE_SLUG = 'lead-preview-venditore';
     private const ACCESS_EMAIL_OPTION = 'visioni_platform_access_email';
     private const ACCESS_PASSWORD_HASH_OPTION = 'visioni_platform_access_password_hash';
     private const ACCESS_UNLOCKED_UNTIL_META = 'visioni_platform_unlocked_until';
@@ -67,6 +69,8 @@ class Visioni_Platform {
         add_filter( 'body_class', array( __CLASS__, 'filter_body_class' ) );
         add_shortcode( 'visioni_platform_app', array( __CLASS__, 'render_platform_app' ) );
         add_shortcode( 'visioni_platform_login', array( __CLASS__, 'render_platform_login' ) );
+        add_shortcode( 'visioni_lead_preview_acquirente', array( __CLASS__, 'render_lead_preview_acquirente' ) );
+        add_shortcode( 'visioni_lead_preview_venditore', array( __CLASS__, 'render_lead_preview_venditore' ) );
 
         self::ensure_default_access_credentials();
 
@@ -815,6 +819,9 @@ class Visioni_Platform {
                 <a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=visioni-lead-hub' ) ); ?>" style="margin-left:8px;">
                     Apri Lead Hub
                 </a>
+                <a class="button button-secondary" href="<?php echo esc_url( home_url( '/' . self::LEAD_PREVIEW_ACQUIRENTE_SLUG . '/' ) ); ?>" style="margin-left:8px;">
+                    Anteprima Landing Lead
+                </a>
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1180px;margin:18px 0 22px;">
@@ -1086,6 +1093,116 @@ class Visioni_Platform {
         <?php
 
         return (string) ob_get_clean();
+    }
+
+    public static function render_lead_preview_acquirente() {
+        return self::render_lead_preview_page( 'acquirente' );
+    }
+
+    public static function render_lead_preview_venditore() {
+        return self::render_lead_preview_page( 'venditore' );
+    }
+
+    private static function render_lead_preview_page( $persona ) {
+        wp_enqueue_style( 'visioni-platform-app' );
+
+        $is_vendor = 'venditore' === $persona;
+        $target_url = $is_vendor ? home_url( '/anticipa/' ) : home_url( '/radar/' );
+        $role = $is_vendor ? 'venditore' : 'acquirente';
+        $defaults = array(
+            'lead_source'  => $is_vendor ? 'landing_preview_venditore' : 'landing_preview_acquirente',
+            'lead_offer'   => $is_vendor ? 'anticipa' : 'radar',
+            'lead_variant' => 'preview_internal',
+        );
+        $direct_url = self::build_tracked_url( $target_url, $defaults );
+        $login_url = add_query_arg(
+            array(
+                'visioni_role' => $role,
+                'redirect_to'  => $direct_url,
+            ),
+            self::login_page_url()
+        );
+
+        $title = $is_vendor ? 'Capisci la domanda reale prima di pubblicare il tuo immobile.' : 'Scopri prima gli immobili compatibili, senza inseguire portali e rumore.';
+        $lede = $is_vendor ? 'Questa landing e pensata per chi vuole qualificare domanda, timing e strategia prima di mettere fuori un immobile o aprire una prevendita.' : 'Questa landing e pensata per trasformare curiosita e ricerca dispersa in una domanda qualificata dentro Radar, con percorso mobile e lead gia leggibile dal backoffice.';
+        $eyebrow = $is_vendor ? 'Preview Landing Venditore' : 'Preview Landing Acquirente';
+        $primary_cta = $is_vendor ? 'Entra in Anticipa' : 'Attiva il mio Radar';
+        $secondary_cta = $is_vendor ? 'Apri accesso venditore' : 'Apri accesso acquirente';
+        $bullets = $is_vendor
+            ? array(
+                'Capisci se esiste domanda reale prima di esporti al mercato pubblico.',
+                'Qualifichi il contatto con timing, obiettivo e strategia già letti dal sistema.',
+                'Il lead entra nel Lead Hub pronto per essere lavorato, non come richiesta vaga.',
+            )
+            : array(
+                'Definisci il profilo acquirente prima di disperderti tra annunci e portali.',
+                'Attivi un percorso mobile con criteri, geolocalizzazione e compatibilità reale.',
+                'Il lead entra nel Lead Hub con segnali già utilizzabili commercialmente.',
+            );
+
+        ob_start();
+        ?>
+        <section class="visioni-lead-preview <?php echo esc_attr( $is_vendor ? 'visioni-lead-preview--venditore' : 'visioni-lead-preview--acquirente' ); ?>">
+            <div class="visioni-lead-preview__hero">
+                <p class="visioni-platform-app__eyebrow"><?php echo esc_html( $eyebrow ); ?></p>
+                <h1><?php echo esc_html( $title ); ?></h1>
+                <p class="visioni-lead-preview__lede"><?php echo esc_html( $lede ); ?></p>
+                <div class="visioni-lead-preview__actions">
+                    <a href="<?php echo esc_url( $direct_url ); ?>" class="visioni-platform-app__install"><?php echo esc_html( $primary_cta ); ?></a>
+                    <a href="<?php echo esc_url( $login_url ); ?>" class="visioni-platform-app__ghostlink"><?php echo esc_html( $secondary_cta ); ?></a>
+                </div>
+                <p class="visioni-lead-preview__hint">Preview interna: i link passano già sorgente, offerta e variante fino al modulo finale.</p>
+            </div>
+
+            <div class="visioni-lead-preview__grid">
+                <div class="visioni-lead-preview__card visioni-lead-preview__card--primary">
+                    <p class="visioni-platform-app__eyebrow">Promessa</p>
+                    <h3><?php echo esc_html( $is_vendor ? 'Non partire dall’annuncio: parti dalla domanda.' : 'Non partire dal portale: parti dal profilo giusto.' ); ?></h3>
+                    <ul class="visioni-lead-preview__list">
+                        <?php foreach ( $bullets as $bullet ) : ?>
+                            <li><?php echo esc_html( $bullet ); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <div class="visioni-lead-preview__card">
+                    <p class="visioni-platform-app__eyebrow">Come funziona</p>
+                    <ol class="visioni-lead-preview__steps">
+                        <li>La campagna porta su questa landing.</li>
+                        <li>La landing manda al percorso corretto con tracciamento già attivo.</li>
+                        <li><?php echo esc_html( $is_vendor ? 'Anticipa' : 'Radar' ); ?> crea il lead qualificato.</li>
+                        <li>Il Lead Hub lo prende in carico con priorità, assegnazione e prossima azione.</li>
+                    </ol>
+                </div>
+                <div class="visioni-lead-preview__card">
+                    <p class="visioni-platform-app__eyebrow">Uso previsto</p>
+                    <h3><?php echo esc_html( $is_vendor ? 'Meta Ads, contenuti proprietari, relazioni dirette.' : 'Meta Ads, SEO locale, contenuti e campagne quartiere.' ); ?></h3>
+                    <p>Questa non è la pagina finale di sistema. È la soglia pubblica che filtra l’intenzione e la porta dentro Visioni senza far cadere il traffico su un generico “contattaci”.</p>
+                </div>
+            </div>
+        </section>
+        <?php
+
+        return (string) ob_get_clean();
+    }
+
+    private static function build_tracked_url( $base_url, array $defaults = array() ) {
+        $params = array_merge( self::current_attribution_params(), $defaults );
+        return add_query_arg( array_filter( $params, static function( $value ) {
+            return '' !== (string) $value;
+        } ), $base_url );
+    }
+
+    private static function current_attribution_params() {
+        $keys = array( 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'lead_source', 'lead_offer', 'lead_variant' );
+        $params = array();
+
+        foreach ( $keys as $key ) {
+            if ( isset( $_GET[ $key ] ) ) {
+                $params[ $key ] = sanitize_text_field( wp_unslash( (string) $_GET[ $key ] ) );
+            }
+        }
+
+        return $params;
     }
 
     public static function render_platform_login() {
@@ -1392,6 +1509,11 @@ class Visioni_Platform {
             $classes[] = 'visioni-platform-shell';
         }
 
+		if ( self::is_lead_preview_page() ) {
+			$classes[] = 'visioni-platform-page';
+			$classes[] = 'visioni-lead-preview-page';
+		}
+
         if ( self::is_login_page() ) {
             $classes[] = 'visioni-platform-login-page';
         }
@@ -1515,6 +1637,8 @@ class Visioni_Platform {
     }
 
     public static function ensure_platform_pages() {
+        self::upsert_page( 'Lead Preview Acquirente', self::LEAD_PREVIEW_ACQUIRENTE_SLUG, '[visioni_lead_preview_acquirente]' );
+        self::upsert_page( 'Lead Preview Venditore', self::LEAD_PREVIEW_VENDITORE_SLUG, '[visioni_lead_preview_venditore]' );
         self::upsert_page( 'Accesso App', self::FRONTEND_LOGIN_SLUG, '[visioni_platform_login]' );
         $hub_id = self::upsert_page( 'Platform', 'platform', '[visioni_platform_app]' );
 
@@ -1559,5 +1683,26 @@ class Visioni_Platform {
 
         $created = wp_insert_post( $args, true );
         return is_wp_error( $created ) ? 0 : (int) $created;
+    }
+
+    private static function is_lead_preview_page() {
+        if ( is_admin() || ! is_page() ) {
+            return false;
+        }
+
+        $post_id = (int) get_queried_object_id();
+        if ( $post_id <= 0 ) {
+            return false;
+        }
+
+        $slugs = array( self::LEAD_PREVIEW_ACQUIRENTE_SLUG, self::LEAD_PREVIEW_VENDITORE_SLUG );
+        foreach ( $slugs as $slug ) {
+            $page = get_page_by_path( $slug );
+            if ( $page instanceof WP_Post && (int) $page->ID === $post_id ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

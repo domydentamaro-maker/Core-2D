@@ -35,9 +35,110 @@ body.visioni-platform-page .entry-content {
 body.visioni-platform-page .visioni-platform-app,
 body.visioni-platform-page .visioni-platform-login,
 body.visioni-platform-page .visioni-radar,
-body.visioni-platform-page .visioni-module--anticipa {
+body.visioni-platform-page .visioni-module--anticipa,
+body.visioni-platform-page .visioni-lead-preview {
 	margin-top: clamp(16px, 3vw, 36px);
 	margin-bottom: 40px;
+}
+
+.visioni-lead-preview {
+	--vp-ink: #14110f;
+	--vp-gold: #c7a366;
+	--vp-paper: #f6efe3;
+	max-width: 1360px;
+	margin: clamp(18px, 4vw, 40px) auto 32px;
+	padding: clamp(22px, 3.6vw, 40px);
+	border-radius: 28px;
+	border: 1px solid rgba(199, 163, 102, 0.24);
+	background:
+		radial-gradient(circle at top left, rgba(199, 163, 102, 0.22), transparent 30%),
+		radial-gradient(circle at bottom right, rgba(27, 95, 109, 0.18), transparent 32%),
+		linear-gradient(180deg, #191513 0%, #100d0c 100%);
+	color: var(--vp-paper);
+	box-shadow: 0 30px 80px rgba(8, 6, 5, 0.28);
+	font-family: 'Space Grotesk', sans-serif;
+}
+
+.visioni-lead-preview__hero {
+	padding: clamp(24px, 4vw, 42px);
+	border-radius: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
+}
+
+.visioni-lead-preview__hero h1 {
+	margin: 8px 0 14px;
+	max-width: 14ch;
+	font-family: 'Fraunces', serif;
+	font-size: clamp(2.3rem, 5vw, 4.6rem);
+	line-height: 1.02;
+	letter-spacing: -0.04em;
+}
+
+.visioni-lead-preview__lede,
+.visioni-lead-preview__hint {
+	max-width: 62ch;
+	margin: 0;
+	color: rgba(246, 239, 227, 0.8);
+	font-size: 1.02rem;
+	line-height: 1.65;
+}
+
+.visioni-lead-preview__hint {
+	margin-top: 14px;
+	font-size: 0.92rem;
+	color: rgba(246, 239, 227, 0.68);
+}
+
+.visioni-lead-preview__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 18px 22px;
+	margin-top: 28px;
+}
+
+.visioni-lead-preview__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 18px;
+	margin-top: 22px;
+}
+
+.visioni-lead-preview__card {
+	padding: 22px;
+	border-radius: 22px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.visioni-lead-preview__card--primary {
+	background: linear-gradient(145deg, rgba(199, 163, 102, 0.14), rgba(255, 255, 255, 0.04));
+}
+
+.visioni-lead-preview__card h3 {
+	margin: 8px 0 12px;
+	font-family: 'Fraunces', serif;
+	font-size: clamp(1.35rem, 3vw, 2rem);
+	line-height: 1.1;
+}
+
+.visioni-lead-preview__list,
+.visioni-lead-preview__steps {
+	margin: 0;
+	padding-left: 18px;
+	color: rgba(246, 239, 227, 0.84);
+	line-height: 1.7;
+}
+
+.visioni-lead-preview__steps li,
+.visioni-lead-preview__list li {
+	margin-bottom: 8px;
+}
+
+@media (max-width: 980px) {
+	.visioni-lead-preview__grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 .visioni-platform-app {

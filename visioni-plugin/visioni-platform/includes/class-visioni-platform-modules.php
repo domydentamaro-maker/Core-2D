@@ -1808,6 +1808,14 @@ class Visioni_Platform_Modules {
         update_post_meta( $id, 'anticipa_timing', $payload['timing'] );
         update_post_meta( $id, 'anticipa_obiettivo', $payload['objective'] );
         update_post_meta( $id, 'anticipa_score', $lead_score );
+        update_post_meta( $id, 'visioni_lead_source', $payload['lead_source'] );
+        update_post_meta( $id, 'visioni_lead_offer', $payload['lead_offer'] );
+        update_post_meta( $id, 'visioni_lead_variant', $payload['lead_variant'] );
+        update_post_meta( $id, 'visioni_utm_source', $payload['utm_source'] );
+        update_post_meta( $id, 'visioni_utm_medium', $payload['utm_medium'] );
+        update_post_meta( $id, 'visioni_utm_campaign', $payload['utm_campaign'] );
+        update_post_meta( $id, 'visioni_utm_content', $payload['utm_content'] );
+        update_post_meta( $id, 'visioni_utm_term', $payload['utm_term'] );
 
         return rest_ensure_response( array(
             'ok' => true,
@@ -1860,6 +1868,14 @@ class Visioni_Platform_Modules {
             'nome' => sanitize_text_field( (string) ( $payload['nome'] ?? '' ) ),
             'email' => sanitize_email( (string) ( $payload['email'] ?? '' ) ),
             'telefono' => sanitize_text_field( (string) ( $payload['telefono'] ?? '' ) ),
+            'lead_source' => sanitize_text_field( (string) ( $payload['lead_source'] ?? '' ) ),
+            'lead_offer' => sanitize_text_field( (string) ( $payload['lead_offer'] ?? '' ) ),
+            'lead_variant' => sanitize_text_field( (string) ( $payload['lead_variant'] ?? '' ) ),
+            'utm_source' => sanitize_text_field( (string) ( $payload['utm_source'] ?? '' ) ),
+            'utm_medium' => sanitize_text_field( (string) ( $payload['utm_medium'] ?? '' ) ),
+            'utm_campaign' => sanitize_text_field( (string) ( $payload['utm_campaign'] ?? '' ) ),
+            'utm_content' => sanitize_text_field( (string) ( $payload['utm_content'] ?? '' ) ),
+            'utm_term' => sanitize_text_field( (string) ( $payload['utm_term'] ?? '' ) ),
             'sellerType' => $seller_type,
             'assetType' => $asset_type,
             'city' => sanitize_text_field( (string) ( $payload['city'] ?? '' ) ),

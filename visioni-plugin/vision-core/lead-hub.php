@@ -18,10 +18,12 @@ function visioni_lead_hub_page() {
 		$lead_id = isset( $_POST['lead_id'] ) ? absint( $_POST['lead_id'] ) : 0;
 		$source = isset( $_POST['lead_source'] ) ? sanitize_key( wp_unslash( (string) $_POST['lead_source'] ) ) : '';
 		$status = isset( $_POST['lead_status'] ) ? sanitize_key( wp_unslash( (string) $_POST['lead_status'] ) ) : '';
+		$priority = isset( $_POST['lead_priority'] ) ? sanitize_key( wp_unslash( (string) $_POST['lead_priority'] ) ) : '';
+		$owner = isset( $_POST['lead_owner'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['lead_owner'] ) ) : '';
 		$next_action = isset( $_POST['lead_next_action'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['lead_next_action'] ) ) : '';
 		$note = isset( $_POST['lead_note'] ) ? sanitize_textarea_field( wp_unslash( (string) $_POST['lead_note'] ) ) : '';
 
-		$result = visioni_lead_hub_save_state( $lead_id, $source, $status, $next_action, $note );
+		$result = visioni_lead_hub_save_state( $lead_id, $source, $status, $priority, $owner, $next_action, $note );
 		if ( is_wp_error( $result ) ) {
 			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $result->get_error_message() ) . '</p></div>';
 		} else {
@@ -96,6 +98,8 @@ function visioni_lead_hub_page() {
 							<th>Lead</th>
 							<th>Contatto</th>
 							<th>Temperatura</th>
+							<th>Priorita</th>
+							<th>Assegnato</th>
 							<th>Stato</th>
 							<th>Punteggio</th>
 							<th>Interesse</th>
@@ -131,6 +135,8 @@ function visioni_lead_hub_page() {
 									<span style="color:#50575e;"><?php echo esc_html( $row['phone'] ?: 'telefono non disponibile' ); ?></span>
 								</td>
 								<td><?php echo esc_html( ucfirst( $row['temperature'] ) ); ?></td>
+								<td><?php echo esc_html( $row['priority_label'] ); ?></td>
+								<td><?php echo esc_html( $row['owner'] !== '' ? $row['owner'] : 'Non assegnato' ); ?></td>
 								<td><?php echo esc_html( $row['status_label'] ); ?></td>
 								<td><strong><?php echo esc_html( (string) $row['score'] ); ?></strong></td>
 								<td><?php echo esc_html( $row['interest'] ); ?></td>
@@ -163,6 +169,12 @@ function visioni_lead_hub_page() {
 												<option value="<?php echo esc_attr( $status_key ); ?>" <?php selected( $row['status'], $status_key ); ?>><?php echo esc_html( $status_label ); ?></option>
 											<?php endforeach; ?>
 										</select>
+										<select name="lead_priority">
+											<?php foreach ( visioni_lead_hub_allowed_priorities() as $priority_key => $priority_label ) : ?>
+												<option value="<?php echo esc_attr( $priority_key ); ?>" <?php selected( $row['priority'], $priority_key ); ?>><?php echo esc_html( $priority_label ); ?></option>
+											<?php endforeach; ?>
+										</select>
+										<input type="text" name="lead_owner" value="<?php echo esc_attr( $row['owner'] ); ?>" placeholder="Assegnato a">
 										<input type="text" name="lead_next_action" value="<?php echo esc_attr( $row['next_action_raw'] ); ?>" placeholder="Prossima azione">
 										<textarea name="lead_note" rows="2" placeholder="Nota rapida"><?php echo esc_textarea( $row['note_raw'] ); ?></textarea>
 										<button type="submit" class="button button-secondary">Salva regia</button>
@@ -229,6 +241,8 @@ function visioni_lead_hub_collect_radar_rows() {
 		$next_action_raw = (string) get_post_meta( $post->ID, 'visioni_lead_next_action', true );
 		$next_action = $next_action_raw !== '' ? $next_action_raw : (string) get_post_meta( $post->ID, 'radar_next_step', true );
 		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
+		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
+		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
 
 		$rows[] = array(
 			'id'                     => (int) $post->ID,
@@ -238,6 +252,9 @@ function visioni_lead_hub_collect_radar_rows() {
 			'email'                  => (string) get_post_meta( $post->ID, 'radar_email', true ),
 			'phone'                  => (string) get_post_meta( $post->ID, 'radar_telefono', true ),
 			'temperature'            => visioni_lead_hub_temperature_from_score( $score ),
+			'priority'               => $priority,
+			'priority_label'         => visioni_lead_hub_priority_label( $priority ),
+			'owner'                  => $owner,
 			'status'                 => $status,
 			'status_label'           => $status_label !== '' ? $status_label : 'Nuovo Radar',
 			'score'                  => $score,
@@ -273,6 +290,9 @@ function visioni_lead_hub_collect_client_rows() {
 		$status = (string) get_post_meta( $post->ID, 'stato_lead', true );
 		$note_raw = (string) get_post_meta( $post->ID, 'note_riservate', true );
 		$next_action_raw = (string) get_post_meta( $post->ID, 'visioni_lead_next_action', true );
+		$score = visioni_lead_hub_client_score( $post->ID, $status );
+		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
+		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
 		$rows[] = array(
 			'id'                     => (int) $post->ID,
 			'source'                 => 'cliente',
@@ -281,9 +301,12 @@ function visioni_lead_hub_collect_client_rows() {
 			'email'                  => (string) get_post_meta( $post->ID, 'email_cliente', true ),
 			'phone'                  => (string) get_post_meta( $post->ID, 'telefono', true ),
 			'temperature'            => visioni_lead_hub_temperature_from_status( $status ),
+			'priority'               => $priority,
+			'priority_label'         => visioni_lead_hub_priority_label( $priority ),
+			'owner'                  => $owner,
 			'status'                 => $status !== '' ? $status : 'nuovo',
 			'status_label'           => visioni_lead_hub_status_label( $status ),
-			'score'                  => visioni_lead_hub_client_score( $post->ID, $status ),
+			'score'                  => $score,
 			'interest'               => visioni_lead_hub_build_client_interest( $post->ID ),
 			'next_action'            => $next_action_raw !== '' ? $next_action_raw : visioni_lead_hub_client_next_action( $status ),
 			'next_action_raw'        => $next_action_raw,
@@ -328,6 +351,8 @@ function visioni_lead_hub_collect_anticipa_rows() {
 		$next_action_raw = (string) get_post_meta( $post->ID, 'visioni_lead_next_action', true );
 		$next_action = $next_action_raw !== '' ? $next_action_raw : visioni_lead_hub_anticipa_next_action( $payload, $score );
 		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
+		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
+		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
 
 		$rows[] = array(
 			'id'                      => (int) $post->ID,
@@ -337,6 +362,9 @@ function visioni_lead_hub_collect_anticipa_rows() {
 			'email'                   => (string) ( $payload['email'] ?? get_post_meta( $post->ID, 'anticipa_email', true ) ),
 			'phone'                   => (string) ( $payload['telefono'] ?? get_post_meta( $post->ID, 'anticipa_telefono', true ) ),
 			'temperature'             => visioni_lead_hub_temperature_from_score( $score ),
+			'priority'                => $priority,
+			'priority_label'          => visioni_lead_hub_priority_label( $priority ),
+			'owner'                   => $owner,
 			'status'                  => $status,
 			'status_label'            => $status_label !== '' ? $status_label : 'Da qualificare',
 			'score'                   => $score,
@@ -381,6 +409,8 @@ function visioni_lead_hub_collect_cantiere_rows() {
 		}
 		$next_action_raw = (string) get_post_meta( $post->ID, 'visioni_lead_next_action', true );
 		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
+		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
+		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
 
 		$rows[] = array(
 			'id'                      => (int) $post->ID,
@@ -390,6 +420,9 @@ function visioni_lead_hub_collect_cantiere_rows() {
 			'email'                   => (string) ( $payload['email'] ?? '' ),
 			'phone'                   => (string) ( $payload['telefono'] ?? '' ),
 			'temperature'             => visioni_lead_hub_temperature_from_score( $score ),
+			'priority'                => $priority,
+			'priority_label'          => visioni_lead_hub_priority_label( $priority ),
+			'owner'                   => $owner,
 			'status'                  => $status,
 			'status_label'            => visioni_lead_hub_status_label( $status ),
 			'score'                   => $score,
@@ -434,6 +467,8 @@ function visioni_lead_hub_collect_ambassador_rows() {
 		}
 		$next_action_raw = (string) get_post_meta( $post->ID, 'visioni_lead_next_action', true );
 		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
+		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
+		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
 
 		$rows[] = array(
 			'id'                      => (int) $post->ID,
@@ -443,6 +478,9 @@ function visioni_lead_hub_collect_ambassador_rows() {
 			'email'                   => (string) ( $payload['email'] ?? '' ),
 			'phone'                   => (string) ( $payload['telefono'] ?? '' ),
 			'temperature'             => visioni_lead_hub_temperature_from_score( $score ),
+			'priority'                => $priority,
+			'priority_label'          => visioni_lead_hub_priority_label( $priority ),
+			'owner'                   => $owner,
 			'status'                  => $status,
 			'status_label'            => visioni_lead_hub_status_label( $status ),
 			'score'                   => $score,
@@ -506,6 +544,47 @@ function visioni_lead_hub_allowed_statuses() {
 		'in_attesa'      => 'In attesa',
 		'chiuso'         => 'Chiuso',
 	);
+}
+
+function visioni_lead_hub_allowed_priorities() {
+	return array(
+		'bassa'   => 'Bassa',
+		'media'   => 'Media',
+		'alta'    => 'Alta',
+		'urgente' => 'Urgente',
+	);
+}
+
+function visioni_lead_hub_priority_from_score( $score ) {
+	if ( $score >= 85 ) {
+		return 'urgente';
+	}
+
+	if ( $score >= 70 ) {
+		return 'alta';
+	}
+
+	if ( $score >= 45 ) {
+		return 'media';
+	}
+
+	return 'bassa';
+}
+
+function visioni_lead_hub_priority_label( $priority ) {
+	$map = visioni_lead_hub_allowed_priorities();
+	return $map[ $priority ] ?? 'Media';
+}
+
+function visioni_lead_hub_get_priority( $post_id, $score ) {
+	$priority = sanitize_key( (string) get_post_meta( $post_id, 'visioni_lead_priority', true ) );
+	$allowed = visioni_lead_hub_allowed_priorities();
+
+	if ( isset( $allowed[ $priority ] ) ) {
+		return $priority;
+	}
+
+	return visioni_lead_hub_priority_from_score( $score );
 }
 
 function visioni_lead_hub_status_label( $status ) {
@@ -923,16 +1002,21 @@ function visioni_lead_hub_convert_anticipa_to_cliente( $anticipa_id ) {
 	return $cliente_id;
 }
 
-function visioni_lead_hub_save_state( $lead_id, $source, $status, $next_action, $note ) {
+function visioni_lead_hub_save_state( $lead_id, $source, $status, $priority, $owner, $next_action, $note ) {
 	$post = get_post( $lead_id );
 	if ( ! $post instanceof WP_Post ) {
 		return new WP_Error( 'invalid_lead', 'Lead non valido.' );
 	}
 
 	$allowed = visioni_lead_hub_allowed_statuses();
+	$allowed_priorities = visioni_lead_hub_allowed_priorities();
 	if ( ! isset( $allowed[ $status ] ) ) {
 		$status = 'nuovo';
 	}
+	if ( ! isset( $allowed_priorities[ $priority ] ) ) {
+		$priority = 'media';
+	}
+	$owner = sanitize_text_field( (string) $owner );
 
 	if ( 'radar' === $source ) {
 		if ( 'radar_profile' !== $post->post_type ) {
@@ -940,6 +1024,8 @@ function visioni_lead_hub_save_state( $lead_id, $source, $status, $next_action, 
 		}
 
 		update_post_meta( $lead_id, 'visioni_lead_status', $status );
+		update_post_meta( $lead_id, 'visioni_lead_priority', $priority );
+		update_post_meta( $lead_id, 'visioni_lead_owner', $owner );
 		update_post_meta( $lead_id, 'visioni_lead_next_action', $next_action );
 		update_post_meta( $lead_id, 'visioni_lead_note', $note );
 
@@ -952,6 +1038,8 @@ function visioni_lead_hub_save_state( $lead_id, $source, $status, $next_action, 
 		}
 
 		update_post_meta( $lead_id, 'stato_lead', $status );
+		update_post_meta( $lead_id, 'visioni_lead_priority', $priority );
+		update_post_meta( $lead_id, 'visioni_lead_owner', $owner );
 		update_post_meta( $lead_id, 'visioni_lead_next_action', $next_action );
 		update_post_meta( $lead_id, 'note_riservate', $note );
 
@@ -964,6 +1052,8 @@ function visioni_lead_hub_save_state( $lead_id, $source, $status, $next_action, 
 		}
 
 		update_post_meta( $lead_id, 'visioni_lead_status', $status );
+		update_post_meta( $lead_id, 'visioni_lead_priority', $priority );
+		update_post_meta( $lead_id, 'visioni_lead_owner', $owner );
 		update_post_meta( $lead_id, 'visioni_lead_next_action', $next_action );
 		update_post_meta( $lead_id, 'visioni_lead_note', $note );
 
@@ -976,6 +1066,8 @@ function visioni_lead_hub_save_state( $lead_id, $source, $status, $next_action, 
 		}
 
 		update_post_meta( $lead_id, 'visioni_lead_status', $status );
+		update_post_meta( $lead_id, 'visioni_lead_priority', $priority );
+		update_post_meta( $lead_id, 'visioni_lead_owner', $owner );
 		update_post_meta( $lead_id, 'visioni_lead_next_action', $next_action );
 		update_post_meta( $lead_id, 'visioni_lead_note', $note );
 
@@ -988,6 +1080,8 @@ function visioni_lead_hub_save_state( $lead_id, $source, $status, $next_action, 
 		}
 
 		update_post_meta( $lead_id, 'visioni_lead_status', $status );
+		update_post_meta( $lead_id, 'visioni_lead_priority', $priority );
+		update_post_meta( $lead_id, 'visioni_lead_owner', $owner );
 		update_post_meta( $lead_id, 'visioni_lead_next_action', $next_action );
 		update_post_meta( $lead_id, 'visioni_lead_note', $note );
 
