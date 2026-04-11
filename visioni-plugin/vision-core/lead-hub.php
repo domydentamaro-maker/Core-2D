@@ -112,6 +112,8 @@ function visioni_lead_hub_page() {
 									$source_styles = array(
 										'radar'    => array( 'bg' => '#fff7ed', 'border' => '#fdba74' ),
 										'anticipa' => array( 'bg' => '#ecfeff', 'border' => '#67e8f9' ),
+										'cantiere' => array( 'bg' => '#fef3c7', 'border' => '#fbbf24' ),
+										'ambassador' => array( 'bg' => '#f3e8ff', 'border' => '#c084fc' ),
 										'cliente'  => array( 'bg' => '#eef2ff', 'border' => '#c7d2fe' ),
 									);
 									$style = $source_styles[ $row['source'] ] ?? $source_styles['cliente'];
@@ -180,6 +182,8 @@ function visioni_lead_hub_collect_rows() {
 	$rows = array_merge(
 		visioni_lead_hub_collect_radar_rows(),
 		visioni_lead_hub_collect_anticipa_rows(),
+		visioni_lead_hub_collect_cantiere_rows(),
+		visioni_lead_hub_collect_ambassador_rows(),
 		visioni_lead_hub_collect_client_rows()
 	);
 
@@ -352,6 +356,112 @@ function visioni_lead_hub_collect_anticipa_rows() {
 	return $rows;
 }
 
+function visioni_lead_hub_collect_cantiere_rows() {
+	$posts = get_posts(
+		array(
+			'post_type'      => 'cantiere_intake',
+			'post_status'    => array( 'publish', 'pending', 'draft', 'private' ),
+			'posts_per_page' => 100,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		)
+	);
+
+	$rows = array();
+	foreach ( $posts as $post ) {
+		$payload = json_decode( (string) get_post_meta( $post->ID, 'payload', true ), true );
+		if ( ! is_array( $payload ) ) {
+			$payload = array();
+		}
+
+		$score = (int) get_post_meta( $post->ID, 'cantiere_score', true );
+		$status = (string) get_post_meta( $post->ID, 'visioni_lead_status', true );
+		if ( '' === $status ) {
+			$status = visioni_lead_hub_status_from_score( $score );
+		}
+		$next_action_raw = (string) get_post_meta( $post->ID, 'visioni_lead_next_action', true );
+		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
+
+		$rows[] = array(
+			'id'                      => (int) $post->ID,
+			'source'                  => 'cantiere',
+			'source_label'            => 'Cantiere',
+			'title'                   => (string) ( $payload['projectName'] ?? '' ) ?: (string) ( $payload['nome'] ?? '' ) ?: $post->post_title,
+			'email'                   => (string) ( $payload['email'] ?? '' ),
+			'phone'                   => (string) ( $payload['telefono'] ?? '' ),
+			'temperature'             => visioni_lead_hub_temperature_from_score( $score ),
+			'status'                  => $status,
+			'status_label'            => visioni_lead_hub_status_label( $status ),
+			'score'                   => $score,
+			'interest'                => visioni_lead_hub_build_cantiere_interest( $payload ),
+			'next_action'             => $next_action_raw !== '' ? $next_action_raw : visioni_lead_hub_cantiere_next_action( $payload, $score ),
+			'next_action_raw'         => $next_action_raw,
+			'note_raw'                => $note_raw,
+			'note_preview'            => $note_raw !== '' ? wp_trim_words( $note_raw, 10, '...' ) : 'Nessuna nota',
+			'edit_url'                => get_edit_post_link( $post->ID, '' ),
+			'created_at_raw'          => $post->post_date,
+			'created_at'              => get_the_date( 'd/m/Y H:i', $post ),
+			'linked_cliente_id'       => 0,
+			'linked_cliente_edit_url' => '',
+		);
+	}
+
+	return $rows;
+}
+
+function visioni_lead_hub_collect_ambassador_rows() {
+	$posts = get_posts(
+		array(
+			'post_type'      => 'ambassador_referral',
+			'post_status'    => array( 'publish', 'pending', 'draft', 'private' ),
+			'posts_per_page' => 100,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		)
+	);
+
+	$rows = array();
+	foreach ( $posts as $post ) {
+		$payload = json_decode( (string) get_post_meta( $post->ID, 'payload', true ), true );
+		if ( ! is_array( $payload ) ) {
+			$payload = array();
+		}
+
+		$score = (int) get_post_meta( $post->ID, 'ambassador_score', true );
+		$status = (string) get_post_meta( $post->ID, 'visioni_lead_status', true );
+		if ( '' === $status ) {
+			$status = visioni_lead_hub_status_from_score( $score );
+		}
+		$next_action_raw = (string) get_post_meta( $post->ID, 'visioni_lead_next_action', true );
+		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
+
+		$rows[] = array(
+			'id'                      => (int) $post->ID,
+			'source'                  => 'ambassador',
+			'source_label'            => 'Ambassador',
+			'title'                   => (string) ( $payload['nome'] ?? '' ) ?: $post->post_title,
+			'email'                   => (string) ( $payload['email'] ?? '' ),
+			'phone'                   => (string) ( $payload['telefono'] ?? '' ),
+			'temperature'             => visioni_lead_hub_temperature_from_score( $score ),
+			'status'                  => $status,
+			'status_label'            => visioni_lead_hub_status_label( $status ),
+			'score'                   => $score,
+			'interest'                => visioni_lead_hub_build_ambassador_interest( $payload ),
+			'next_action'             => $next_action_raw !== '' ? $next_action_raw : visioni_lead_hub_ambassador_next_action( $payload, $score ),
+			'next_action_raw'         => $next_action_raw,
+			'note_raw'                => $note_raw,
+			'note_preview'            => $note_raw !== '' ? wp_trim_words( $note_raw, 10, '...' ) : 'Nessuna nota',
+			'edit_url'                => get_edit_post_link( $post->ID, '' ),
+			'created_at_raw'          => $post->post_date,
+			'created_at'              => get_the_date( 'd/m/Y H:i', $post ),
+			'linked_cliente_id'       => 0,
+			'linked_cliente_edit_url' => '',
+		);
+	}
+
+	return $rows;
+}
+
 function visioni_lead_hub_temperature_from_score( $score ) {
 	if ( $score >= 75 ) {
 		return 'caldo';
@@ -509,6 +619,70 @@ function visioni_lead_hub_build_anticipa_interest( $payload, $post_id ) {
 	return ! empty( $parts ) ? implode( ' • ', $parts ) : 'Venditore da qualificare';
 }
 
+function visioni_lead_hub_build_cantiere_interest( $payload ) {
+	$labels = array(
+		'cantiere'            => 'Cantiere',
+		'operazione'          => 'Operazione',
+		'lottizzazione'       => 'Lotto',
+		'riqualificazione'    => 'Riqualificazione',
+		'prevendita'          => 'Prevendita',
+		'raccolta_domanda'    => 'Raccolta domanda',
+		'analisi'             => 'Analisi',
+		'commercializzazione' => 'Commercializzazione',
+		'subito'              => 'Subito',
+		'30_90'               => '30-90 giorni',
+		'3_6_mesi'            => '3-6 mesi',
+		'6_mesi_plus'         => 'Oltre 6 mesi',
+	);
+
+	$parts = array();
+	foreach ( array( 'projectType', 'city', 'objective', 'timing' ) as $key ) {
+		$value = (string) ( $payload[ $key ] ?? '' );
+		if ( '' === $value ) {
+			continue;
+		}
+		$parts[] = $labels[ $value ] ?? $value;
+	}
+
+	$units = isset( $payload['units'] ) ? (int) $payload['units'] : 0;
+	if ( $units > 0 ) {
+		$parts[] = $units . ' unita';
+	}
+
+	return ! empty( $parts ) ? implode( ' • ', $parts ) : 'Operazione da qualificare';
+}
+
+function visioni_lead_hub_build_ambassador_interest( $payload ) {
+	$labels = array(
+		'domanda'        => 'Domanda',
+		'immobili'       => 'Immobili',
+		'sviluppo'       => 'Sviluppo',
+		'network_misto'  => 'Network misto',
+		'segnalatore'    => 'Segnalatore',
+		'professionista' => 'Professionista',
+		'investitore'    => 'Investitore',
+		'advisor_locale' => 'Advisor locale',
+		'referral'       => 'Referral',
+		'acquisizione'   => 'Acquisizione',
+		'partnership'    => 'Partnership',
+		'subito'         => 'Subito',
+		'30_90'          => '30-90 giorni',
+		'3_6_mesi'       => '3-6 mesi',
+		'6_mesi_plus'    => 'Oltre 6 mesi',
+	);
+
+	$parts = array();
+	foreach ( array( 'networkType', 'partnerType', 'objective', 'timing', 'city' ) as $key ) {
+		$value = (string) ( $payload[ $key ] ?? '' );
+		if ( '' === $value ) {
+			continue;
+		}
+		$parts[] = $labels[ $value ] ?? $value;
+	}
+
+	return ! empty( $parts ) ? implode( ' • ', $parts ) : 'Partner da qualificare';
+}
+
 function visioni_lead_hub_client_next_action( $status ) {
 	$map = array(
 		'nuovo'          => 'Primo contatto e qualificazione',
@@ -538,6 +712,28 @@ function visioni_lead_hub_anticipa_next_action( $payload, $score ) {
 	}
 
 	return 'Qualifica il venditore e definisci la strategia di ingresso';
+}
+
+function visioni_lead_hub_cantiere_next_action( $payload, $score ) {
+	$objective = (string) ( $payload['objective'] ?? '' );
+	if ( $score >= 80 ) {
+		return 'Apri call operativa con impresa e definisci setup commerciale';
+	}
+	if ( 'prevendita' === $objective ) {
+		return 'Verifica assorbimento, tagli e timing di prevendita';
+	}
+	return 'Qualifica progetto, timing e leva commerciale';
+}
+
+function visioni_lead_hub_ambassador_next_action( $payload, $score ) {
+	$objective = (string) ( $payload['objective'] ?? '' );
+	if ( $score >= 80 ) {
+		return 'Richiama il partner e struttura il perimetro della collaborazione';
+	}
+	if ( 'partnership' === $objective ) {
+		return 'Definisci modello partnership, ruoli e primo test operativo';
+	}
+	return 'Qualifica il network e decidi la prossima attivazione';
 }
 
 function visioni_lead_hub_build_stats( $rows ) {
@@ -765,6 +961,30 @@ function visioni_lead_hub_save_state( $lead_id, $source, $status, $next_action, 
 	if ( 'anticipa' === $source ) {
 		if ( 'anticipa_intention' !== $post->post_type ) {
 			return new WP_Error( 'invalid_source', 'Il lead Anticipa selezionato non e valido.' );
+		}
+
+		update_post_meta( $lead_id, 'visioni_lead_status', $status );
+		update_post_meta( $lead_id, 'visioni_lead_next_action', $next_action );
+		update_post_meta( $lead_id, 'visioni_lead_note', $note );
+
+		return true;
+	}
+
+	if ( 'cantiere' === $source ) {
+		if ( 'cantiere_intake' !== $post->post_type ) {
+			return new WP_Error( 'invalid_source', 'Il lead Cantiere selezionato non e valido.' );
+		}
+
+		update_post_meta( $lead_id, 'visioni_lead_status', $status );
+		update_post_meta( $lead_id, 'visioni_lead_next_action', $next_action );
+		update_post_meta( $lead_id, 'visioni_lead_note', $note );
+
+		return true;
+	}
+
+	if ( 'ambassador' === $source ) {
+		if ( 'ambassador_referral' !== $post->post_type ) {
+			return new WP_Error( 'invalid_source', 'Il lead Ambassador selezionato non e valido.' );
 		}
 
 		update_post_meta( $lead_id, 'visioni_lead_status', $status );
