@@ -1486,6 +1486,23 @@ class Visioni_Platform {
         return in_array( $post_id, self::get_noindex_page_ids(), true );
     }
 
+        private static function get_preview_page_ids() {
+		$ids = array();
+
+		foreach ( array( self::LEAD_PREVIEW_ACQUIRENTE_SLUG, self::LEAD_PREVIEW_VENDITORE_SLUG ) as $path ) {
+			$page = get_page_by_path( $path );
+			if ( $page instanceof WP_Post ) {
+				$ids[] = (int) $page->ID;
+			}
+		}
+
+		return array_values( array_unique( array_filter( $ids ) ) );
+        }
+
+        private static function get_search_excluded_page_ids() {
+		return array_values( array_unique( array_merge( self::get_noindex_page_ids(), self::get_preview_page_ids() ) ) );
+        }
+
     private static function get_noindex_page_ids() {
         $ids = array();
 
@@ -1522,7 +1539,7 @@ class Visioni_Platform {
     }
 
     public static function send_noindex_headers() {
-        if ( ! self::is_platform_public_page() ) {
+        if ( ! self::is_platform_public_page() && ! self::is_lead_preview_page() ) {
             return;
         }
 
@@ -1559,7 +1576,7 @@ class Visioni_Platform {
     }
 
     public static function render_noindex_meta() {
-        if ( ! self::is_platform_public_page() ) {
+        if ( ! self::is_platform_public_page() && ! self::is_lead_preview_page() ) {
             return;
         }
 
@@ -1567,7 +1584,7 @@ class Visioni_Platform {
     }
 
     public static function filter_wp_robots( $robots ) {
-        if ( ! self::is_platform_public_page() ) {
+        if ( ! self::is_platform_public_page() && ! self::is_lead_preview_page() ) {
             return $robots;
         }
 
@@ -1582,7 +1599,7 @@ class Visioni_Platform {
             return $args;
         }
 
-        $exclude_ids = self::get_noindex_page_ids();
+        $exclude_ids = self::get_search_excluded_page_ids();
         if ( empty( $exclude_ids ) ) {
             return $args;
         }
@@ -1602,18 +1619,18 @@ class Visioni_Platform {
         }
 
         $existing = array_map( 'intval', (array) $excluded_ids );
-        $exclude_ids = self::get_noindex_page_ids();
+        $exclude_ids = self::get_search_excluded_page_ids();
         return array_values( array_unique( array_merge( $existing, $exclude_ids ) ) );
     }
 
     public static function exclude_platform_pages_from_yoast_sitemaps( $excluded_ids ) {
         $existing = array_map( 'intval', (array) $excluded_ids );
-        $exclude_ids = self::get_noindex_page_ids();
+        $exclude_ids = self::get_search_excluded_page_ids();
         return array_values( array_unique( array_merge( $existing, $exclude_ids ) ) );
     }
 
     public static function filter_rankmath_robots( $robots ) {
-        if ( ! self::is_platform_public_page() ) {
+        if ( ! self::is_platform_public_page() && ! self::is_lead_preview_page() ) {
             return $robots;
         }
 
@@ -1629,7 +1646,7 @@ class Visioni_Platform {
     }
 
     public static function filter_yoast_robots( $robots ) {
-        if ( ! self::is_platform_public_page() ) {
+        if ( ! self::is_platform_public_page() && ! self::is_lead_preview_page() ) {
             return $robots;
         }
 

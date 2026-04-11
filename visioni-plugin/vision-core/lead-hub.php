@@ -97,6 +97,7 @@ function visioni_lead_hub_page() {
 							<th style="width:92px;">Fonte</th>
 							<th>Lead</th>
 							<th>Contatto</th>
+							<th>Sorgente</th>
 							<th>Temperatura</th>
 							<th>Priorita</th>
 							<th>Assegnato</th>
@@ -134,6 +135,7 @@ function visioni_lead_hub_page() {
 									<?php echo esc_html( $row['email'] ?: 'email non disponibile' ); ?><br>
 									<span style="color:#50575e;"><?php echo esc_html( $row['phone'] ?: 'telefono non disponibile' ); ?></span>
 								</td>
+								<td><?php echo esc_html( $row['campaign_source'] ); ?></td>
 								<td><?php echo esc_html( ucfirst( $row['temperature'] ) ); ?></td>
 								<td><?php echo esc_html( $row['priority_label'] ); ?></td>
 								<td><?php echo esc_html( $row['owner'] !== '' ? $row['owner'] : 'Non assegnato' ); ?></td>
@@ -243,6 +245,7 @@ function visioni_lead_hub_collect_radar_rows() {
 		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
 		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
 		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
+		$campaign_source = visioni_lead_hub_campaign_source_label( $post->ID );
 
 		$rows[] = array(
 			'id'                     => (int) $post->ID,
@@ -251,6 +254,7 @@ function visioni_lead_hub_collect_radar_rows() {
 			'title'                  => (string) get_post_meta( $post->ID, 'radar_nome', true ) ?: $post->post_title,
 			'email'                  => (string) get_post_meta( $post->ID, 'radar_email', true ),
 			'phone'                  => (string) get_post_meta( $post->ID, 'radar_telefono', true ),
+			'campaign_source'        => $campaign_source,
 			'temperature'            => visioni_lead_hub_temperature_from_score( $score ),
 			'priority'               => $priority,
 			'priority_label'         => visioni_lead_hub_priority_label( $priority ),
@@ -293,6 +297,7 @@ function visioni_lead_hub_collect_client_rows() {
 		$score = visioni_lead_hub_client_score( $post->ID, $status );
 		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
 		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
+		$campaign_source = visioni_lead_hub_campaign_source_label( $post->ID );
 		$rows[] = array(
 			'id'                     => (int) $post->ID,
 			'source'                 => 'cliente',
@@ -300,6 +305,7 @@ function visioni_lead_hub_collect_client_rows() {
 			'title'                  => $post->post_title,
 			'email'                  => (string) get_post_meta( $post->ID, 'email_cliente', true ),
 			'phone'                  => (string) get_post_meta( $post->ID, 'telefono', true ),
+			'campaign_source'        => $campaign_source,
 			'temperature'            => visioni_lead_hub_temperature_from_status( $status ),
 			'priority'               => $priority,
 			'priority_label'         => visioni_lead_hub_priority_label( $priority ),
@@ -353,6 +359,7 @@ function visioni_lead_hub_collect_anticipa_rows() {
 		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
 		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
 		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
+		$campaign_source = visioni_lead_hub_campaign_source_label( $post->ID );
 
 		$rows[] = array(
 			'id'                      => (int) $post->ID,
@@ -361,6 +368,7 @@ function visioni_lead_hub_collect_anticipa_rows() {
 			'title'                   => (string) ( $payload['nome'] ?? get_post_meta( $post->ID, 'anticipa_nome', true ) ?: $post->post_title ),
 			'email'                   => (string) ( $payload['email'] ?? get_post_meta( $post->ID, 'anticipa_email', true ) ),
 			'phone'                   => (string) ( $payload['telefono'] ?? get_post_meta( $post->ID, 'anticipa_telefono', true ) ),
+			'campaign_source'         => $campaign_source,
 			'temperature'             => visioni_lead_hub_temperature_from_score( $score ),
 			'priority'                => $priority,
 			'priority_label'          => visioni_lead_hub_priority_label( $priority ),
@@ -411,6 +419,7 @@ function visioni_lead_hub_collect_cantiere_rows() {
 		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
 		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
 		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
+		$campaign_source = visioni_lead_hub_campaign_source_label( $post->ID );
 
 		$rows[] = array(
 			'id'                      => (int) $post->ID,
@@ -419,6 +428,7 @@ function visioni_lead_hub_collect_cantiere_rows() {
 			'title'                   => (string) ( $payload['projectName'] ?? '' ) ?: (string) ( $payload['nome'] ?? '' ) ?: $post->post_title,
 			'email'                   => (string) ( $payload['email'] ?? '' ),
 			'phone'                   => (string) ( $payload['telefono'] ?? '' ),
+			'campaign_source'         => $campaign_source,
 			'temperature'             => visioni_lead_hub_temperature_from_score( $score ),
 			'priority'                => $priority,
 			'priority_label'          => visioni_lead_hub_priority_label( $priority ),
@@ -469,6 +479,7 @@ function visioni_lead_hub_collect_ambassador_rows() {
 		$note_raw = (string) get_post_meta( $post->ID, 'visioni_lead_note', true );
 		$priority = visioni_lead_hub_get_priority( $post->ID, $score );
 		$owner = (string) get_post_meta( $post->ID, 'visioni_lead_owner', true );
+		$campaign_source = visioni_lead_hub_campaign_source_label( $post->ID );
 
 		$rows[] = array(
 			'id'                      => (int) $post->ID,
@@ -477,6 +488,7 @@ function visioni_lead_hub_collect_ambassador_rows() {
 			'title'                   => (string) ( $payload['nome'] ?? '' ) ?: $post->post_title,
 			'email'                   => (string) ( $payload['email'] ?? '' ),
 			'phone'                   => (string) ( $payload['telefono'] ?? '' ),
+			'campaign_source'         => $campaign_source,
 			'temperature'             => visioni_lead_hub_temperature_from_score( $score ),
 			'priority'                => $priority,
 			'priority_label'          => visioni_lead_hub_priority_label( $priority ),
@@ -585,6 +597,29 @@ function visioni_lead_hub_get_priority( $post_id, $score ) {
 	}
 
 	return visioni_lead_hub_priority_from_score( $score );
+}
+
+function visioni_lead_hub_campaign_source_label( $post_id ) {
+	$lead_source = (string) get_post_meta( $post_id, 'visioni_lead_source', true );
+	$offer = (string) get_post_meta( $post_id, 'visioni_lead_offer', true );
+	$campaign = (string) get_post_meta( $post_id, 'visioni_utm_campaign', true );
+	$medium = (string) get_post_meta( $post_id, 'visioni_utm_medium', true );
+
+	$parts = array();
+	if ( '' !== $lead_source ) {
+		$parts[] = ucfirst( str_replace( array( '_', '-' ), ' ', $lead_source ) );
+	}
+	if ( '' !== $offer ) {
+		$parts[] = ucfirst( str_replace( array( '_', '-' ), ' ', $offer ) );
+	}
+	if ( '' !== $campaign ) {
+		$parts[] = $campaign;
+	}
+	if ( '' !== $medium ) {
+		$parts[] = $medium;
+	}
+
+	return ! empty( $parts ) ? implode( ' / ', $parts ) : 'Diretto o interno';
 }
 
 function visioni_lead_hub_status_label( $status ) {
