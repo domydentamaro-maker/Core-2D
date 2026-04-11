@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Visioni Platform
  * Description: Moduli innovativi della piattaforma Visioni (Radar, Momento, Memoria, ecc.).
- * Version: 0.2.1
+ * Version: 0.2.2
  * Author: 2D Sviluppo Immobiliare
  */
 
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'VISIONI_PLATFORM_VERSION' ) ) {
-    define( 'VISIONI_PLATFORM_VERSION', '0.2.1' );
+    define( 'VISIONI_PLATFORM_VERSION', '0.2.2' );
 }
 
 if ( ! defined( 'VISIONI_PLATFORM_FILE' ) ) {

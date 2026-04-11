@@ -16,6 +16,7 @@
   var registerRoleRoot = null;
   var registerRoleInput = null;
   var registerFeedback = null;
+  var installPromptTracked = false;
 
   var roles = {
     acquirente: {
@@ -511,6 +512,24 @@
     navigator.serviceWorker.register(cfg.swUrl, { scope: "/" }).catch(function () {});
   }
 
+  function trackInstallEvent(eventName) {
+    if (!cfg.installEventUrl || !window.fetch) return;
+
+    window.fetch(cfg.installEventUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-WP-Nonce": cfg.restNonce || "",
+      },
+      credentials: "same-origin",
+      keepalive: true,
+      body: JSON.stringify({
+        event: eventName,
+        screen: "platform",
+      }),
+    }).catch(function () {});
+  }
+
   function bindInstallButton() {
     var btn = document.getElementById("visioni-platform-install");
     if (!btn || btn.getAttribute("data-bound") === "1") return;
@@ -520,6 +539,8 @@
       if (isStandalone()) {
         return;
       }
+
+      trackInstallEvent("install_click");
 
       if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -535,10 +556,12 @@
       }
 
       if (isIos()) {
+        trackInstallEvent("ios_manual_hint");
         window.alert("Per scaricare 2D Radar su iPhone: apri il menu Condividi di Safari e scegli 'Aggiungi a Home'.");
         return;
       }
 
+      trackInstallEvent("browser_manual_hint");
       window.alert("Download diretto non disponibile in questo momento. Puoi proseguire dal browser oppure usare il menu del browser per installare la app su questo dispositivo.");
     });
   }
@@ -546,11 +569,16 @@
   window.addEventListener("beforeinstallprompt", function (event) {
     event.preventDefault();
     deferredPrompt = event;
+    if (!installPromptTracked) {
+      installPromptTracked = true;
+      trackInstallEvent("prompt_available");
+    }
     updateInstallUi();
   });
 
   window.addEventListener("appinstalled", function () {
     deferredPrompt = null;
+    trackInstallEvent("install_completed");
     updateInstallUi();
     renderSummary();
   });

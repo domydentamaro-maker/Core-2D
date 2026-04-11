@@ -420,6 +420,51 @@ class Visioni_Platform {
                 'permission_callback' => '__return_true',
             )
         );
+
+        register_rest_route(
+            self::API_NAMESPACE,
+            '/app/install-event',
+            array(
+                'methods'             => WP_REST_Server::CREATABLE,
+                'callback'            => array( __CLASS__, 'handle_install_event' ),
+                'permission_callback' => '__return_true',
+            )
+        );
+    }
+
+    public static function handle_install_event( WP_REST_Request $request ) {
+        $event = sanitize_key( (string) $request->get_param( 'event' ) );
+        $screen = sanitize_key( (string) $request->get_param( 'screen' ) );
+        $allowed_events = array( 'prompt_available', 'install_click', 'install_completed', 'ios_manual_hint', 'browser_manual_hint' );
+        $allowed_screens = array( 'platform', 'radar' );
+
+        if ( ! in_array( $event, $allowed_events, true ) ) {
+            return new WP_Error( 'visioni_invalid_install_event', 'Evento installazione non valido.', array( 'status' => 400 ) );
+        }
+
+        if ( ! in_array( $screen, $allowed_screens, true ) ) {
+            $screen = 'platform';
+        }
+
+        $events = get_option( 'visioni_platform_install_events', array() );
+        if ( ! is_array( $events ) ) {
+            $events = array();
+        }
+
+        array_unshift(
+            $events,
+            array(
+                'event'      => $event,
+                'screen'     => $screen,
+                'created_at' => current_time( 'mysql' ),
+                'user_id'    => get_current_user_id(),
+                'ua'         => sanitize_text_field( substr( (string) ( $_SERVER['HTTP_USER_AGENT'] ?? '' ), 0, 180 ) ),
+            )
+        );
+
+        update_option( 'visioni_platform_install_events', array_slice( $events, 0, 25 ), false );
+
+        return rest_ensure_response( array( 'ok' => true ) );
     }
 
     public static function handle_access_register( WP_REST_Request $request ) {
@@ -836,6 +881,7 @@ class Visioni_Platform {
                 'ambassadorUrl' => esc_url_raw( home_url( '/my-area/ambassador/' ) ),
                 'loginUrl'      => esc_url_raw( self::login_page_url() ),
                 'registerUrl'   => esc_url_raw( rest_url( self::API_NAMESPACE . '/access/register' ) ),
+                'installEventUrl' => esc_url_raw( rest_url( self::API_NAMESPACE . '/app/install-event' ) ),
                 'restNonce'     => wp_create_nonce( 'wp_rest' ),
                 'logoutUrl'     => esc_url_raw( add_query_arg( 'visioni_platform_logout', '1', home_url( '/platform/' ) ) ),
                 'adminUrl'      => esc_url_raw( admin_url( 'admin.php?page=visioni-platform' ) ),
@@ -1022,6 +1068,7 @@ class Visioni_Platform {
                 'ambassadorUrl' => esc_url_raw( home_url( '/my-area/ambassador/' ) ),
                 'loginUrl'      => esc_url_raw( self::login_page_url() ),
                 'registerUrl'   => esc_url_raw( rest_url( self::API_NAMESPACE . '/access/register' ) ),
+                'installEventUrl' => esc_url_raw( rest_url( self::API_NAMESPACE . '/app/install-event' ) ),
                 'restNonce'     => wp_create_nonce( 'wp_rest' ),
                 'logoutUrl'     => esc_url_raw( add_query_arg( 'visioni_platform_logout', '1', home_url( '/platform/' ) ) ),
                 'adminUrl'      => esc_url_raw( admin_url( 'admin.php?page=visioni-platform' ) ),

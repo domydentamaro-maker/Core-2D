@@ -3,7 +3,7 @@
  * Plugin Name: 2D Social AutoPoster
  * Plugin URI: https://www.2dsviluppoimmobiliare.it
  * Description: Pubblica automaticamente gli articoli su Facebook, Instagram e LinkedIn. Plugin leggero, gratuito e senza dipendenze esterne. By Domenico Dentamaro – 2D Sviluppo Immobiliare.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Domenico Dentamaro
  * Author URI: https://www.2dsviluppoimmobiliare.it
  * License: GPL2
@@ -12,7 +12,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('SAP_VERSION', '1.0.1');
+define('SAP_VERSION', '1.0.2');
 define('SAP_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SAP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -148,14 +148,14 @@ function sap_settings_page() {
                         <th>Modello AI</th>
                         <td>
                             <input type="text" name="sap_ai_model" value="<?php echo esc_attr(get_option('sap_ai_model', 'gemini-2.0-flash')); ?>" style="width:100%;max-width:320px">
-                            <p class="description">Default consigliato: <code>gemini-2.0-flash</code>.</p>
+                            <p class="description">Puoi usare un modello Gemini tipo <code>gemini-2.0-flash</code> oppure, se il plugin aggancia il fallback OpenRouter gia presente nel progetto, un modello tipo <code>google/gemma-3-12b-it:free</code>.</p>
                         </td>
                     </tr>
                     <tr>
                         <th>API Key AI</th>
                         <td>
                             <input type="password" name="sap_ai_api_key" value="<?php echo esc_attr(get_option('sap_ai_api_key', '')); ?>" style="width:100%;max-width:500px" autocomplete="off">
-                            <p class="description">Lascia vuoto se vuoi usare la variabile ambiente <code>GEMINI_API_KEY</code>.</p>
+                            <p class="description">Lascia vuoto se vuoi usare in automatico <code>GEMINI_API_KEY</code> oppure il fallback AI gia presente nel progetto via <code>2d-perizie-api.php</code>.</p>
                         </td>
                     </tr>
                 </table>
@@ -450,16 +450,13 @@ function sap_build_ai_message($post, $channel = 'generic') {
         return '';
     }
 
-    $api_key = sap_get_ai_api_key();
-    if (empty($api_key)) {
+    $ai = sap_get_ai_runtime();
+    if (empty($ai['api_key'])) {
         sap_log('AI: chiave non disponibile, uso template standard', 'info');
         return '';
     }
 
-    $model = trim((string) get_option('sap_ai_model', 'gemini-2.0-flash'));
-    if ($model === '') {
-        $model = 'gemini-2.0-flash';
-    }
+    $model = $ai['model'];
 
     $excerpt = wp_trim_words(wp_strip_all_tags($post->post_content), 40, '...');
     $categories = implode(', ', wp_list_pluck(get_the_category($post->ID), 'name'));
@@ -490,22 +487,47 @@ function sap_build_ai_message($post, $channel = 'generic') {
         'Hashtag da riusare se coerenti: ' . $hashtags,
     ]);
 
-    $response = wp_remote_post(
-        'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($model) . ':generateContent?key=' . rawurlencode($api_key),
-        [
-            'headers' => [ 'Content-Type' => 'application/json' ],
-            'body'    => wp_json_encode([
-                'contents' => [
-                    [
-                        'parts' => [
-                            [ 'text' => $prompt ],
+    if ($ai['provider'] === 'openrouter') {
+        $response = wp_remote_post(
+            $ai['base_url'],
+            [
+                'headers' => [
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer ' . $ai['api_key'],
+                    'HTTP-Referer'  => $ai['site_url'],
+                    'X-Title'       => $ai['site_name'],
+                ],
+                'body'    => wp_json_encode([
+                    'model'       => $model,
+                    'temperature' => 0.4,
+                    'messages'    => [
+                        [
+                            'role'    => 'user',
+                            'content' => $prompt,
                         ],
                     ],
-                ],
-            ]),
-            'timeout' => 30,
-        ]
-    );
+                ]),
+                'timeout' => 30,
+            ]
+        );
+    } else {
+        $response = wp_remote_post(
+            'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($model) . ':generateContent?key=' . rawurlencode($ai['api_key']),
+            [
+                'headers' => [ 'Content-Type' => 'application/json' ],
+                'body'    => wp_json_encode([
+                    'contents' => [
+                        [
+                            'parts' => [
+                                [ 'text' => $prompt ],
+                            ],
+                        ],
+                    ],
+                ]),
+                'timeout' => 30,
+            ]
+        );
+    }
 
     if (is_wp_error($response)) {
         sap_log('AI errore richiesta: ' . $response->get_error_message(), 'error');
@@ -520,7 +542,11 @@ function sap_build_ai_message($post, $channel = 'generic') {
         return '';
     }
 
-    $text = trim((string) ($data['candidates'][0]['content']['parts'][0]['text'] ?? ''));
+    if ($ai['provider'] === 'openrouter') {
+        $text = trim((string) ($data['choices'][0]['message']['content'] ?? ''));
+    } else {
+        $text = trim((string) ($data['candidates'][0]['content']['parts'][0]['text'] ?? ''));
+    }
     if ($text === '') {
         sap_log('AI: risposta vuota, uso template standard', 'info');
         return '';
@@ -671,6 +697,103 @@ function sap_get_ai_api_key() {
     }
 
     return '';
+}
+
+function sap_get_ai_runtime() {
+    $saved = trim((string) get_option('sap_ai_api_key', ''));
+    $saved_model = trim((string) get_option('sap_ai_model', 'gemini-2.0-flash'));
+    if ($saved !== '') {
+        return [
+            'provider' => 'gemini',
+            'api_key'  => $saved,
+            'model'    => $saved_model !== '' ? $saved_model : 'gemini-2.0-flash',
+            'base_url' => '',
+            'site_url' => home_url('/'),
+            'site_name'=> get_bloginfo('name'),
+        ];
+    }
+
+    $env = getenv('GEMINI_API_KEY');
+    if (is_string($env) && trim($env) !== '') {
+        return [
+            'provider' => 'gemini',
+            'api_key'  => trim($env),
+            'model'    => $saved_model !== '' ? $saved_model : 'gemini-2.0-flash',
+            'base_url' => '',
+            'site_url' => home_url('/'),
+            'site_name'=> get_bloginfo('name'),
+        ];
+    }
+
+    $fallback = sap_get_project_ai_fallback();
+    if (!empty($fallback['api_key'])) {
+        $fallback_model = $fallback['model'] ?? 'google/gemma-3-12b-it:free';
+        $effective_model = $saved_model !== '' && strpos($saved_model, 'gemini-') !== 0 ? $saved_model : $fallback_model;
+
+        return [
+            'provider' => 'openrouter',
+            'api_key'  => $fallback['api_key'],
+            'model'    => $effective_model,
+            'base_url' => $fallback['base_url'] ?? 'https://openrouter.ai/api/v1/chat/completions',
+            'site_url' => $fallback['site_url'] ?? home_url('/'),
+            'site_name'=> $fallback['site_name'] ?? get_bloginfo('name'),
+        ];
+    }
+
+    return [
+        'provider' => 'gemini',
+        'api_key'  => '',
+        'model'    => $saved_model !== '' ? $saved_model : 'gemini-2.0-flash',
+        'base_url' => '',
+        'site_url' => home_url('/'),
+        'site_name'=> get_bloginfo('name'),
+    ];
+}
+
+function sap_get_project_ai_fallback() {
+    $candidates = [
+        ABSPATH . '2d-perizie-api.php',
+        dirname(ABSPATH) . '/2d-perizie-api.php',
+    ];
+
+    foreach ($candidates as $file) {
+        if (!is_string($file) || !file_exists($file) || !is_readable($file)) {
+            continue;
+        }
+
+        $contents = file_get_contents($file);
+        if (!is_string($contents) || $contents === '') {
+            continue;
+        }
+
+        $api_key = sap_extract_define_value($contents, 'AI_API_KEY');
+        if ($api_key === '') {
+            continue;
+        }
+
+        return [
+            'api_key'  => $api_key,
+            'base_url' => sap_extract_define_value($contents, 'AI_BASE_URL'),
+            'model'    => sap_extract_define_value($contents, 'AI_MODEL'),
+            'site_url' => sap_extract_define_value($contents, 'AI_SITE_URL'),
+            'site_name'=> sap_extract_define_value($contents, 'AI_SITE_NAME'),
+        ];
+    }
+
+    return [];
+}
+
+function sap_extract_define_value($contents, $constant) {
+    if (!is_string($contents) || !is_string($constant) || $constant === '') {
+        return '';
+    }
+
+    $pattern = "/define\\(\\s*['\"]" . preg_quote($constant, '/') . "['\"]\\s*,\\s*['\"]([^'\"]*)['\"]\\s*\\)/";
+    if (!preg_match($pattern, $contents, $matches)) {
+        return '';
+    }
+
+    return trim((string) ($matches[1] ?? ''));
 }
 
 function sap_get_featured_image($post_id) {

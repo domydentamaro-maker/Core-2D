@@ -35,6 +35,7 @@ CARICAMENTO MODULI
 -----------------------------------*/
 
 require_once plugin_dir_path( __FILE__ ) . 'dashboard-gestionale.php';
+require_once plugin_dir_path( __FILE__ ) . 'lead-hub.php';
 require_once plugin_dir_path( __FILE__ ) . 'ricerca-gestionale.php';
 require_once plugin_dir_path( __FILE__ ) . 'mappa-immobili.php';
 require_once plugin_dir_path( __FILE__ ) . 'incrocio-clienti.php';

@@ -11,6 +11,7 @@
   if (!app || !resultsEl) return;
 
   let deferredPrompt = null;
+  let installPromptTracked = false;
 
   const storageKey = "visioni_radar_profile";
   const notifiedKey = "visioni_radar_notified";
@@ -104,6 +105,24 @@
     navigator.serviceWorker.register(cfg.swUrl, { scope: "/" }).catch(() => {});
   }
 
+  function trackInstallEvent(eventName) {
+    if (!cfg.apiBase || !window.fetch) return;
+
+    fetch(cfg.apiBase.replace(/\/$/, "") + "/app/install-event", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-WP-Nonce": cfg.nonce || "",
+      },
+      credentials: "same-origin",
+      keepalive: true,
+      body: JSON.stringify({
+        event: eventName,
+        screen: "radar",
+      }),
+    }).catch(() => {});
+  }
+
   function isStandalone() {
     return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
   }
@@ -152,6 +171,8 @@
     installBtn.addEventListener("click", async () => {
       if (isStandalone()) return;
 
+      trackInstallEvent("install_click");
+
       if (deferredPrompt) {
         deferredPrompt.prompt();
         try {
@@ -165,10 +186,12 @@
       }
 
       if (isIos()) {
+        trackInstallEvent("ios_manual_hint");
         window.alert("Per scaricare 2D Radar su iPhone: apri il menu Condividi di Safari e scegli 'Aggiungi a Home'.");
         return;
       }
 
+      trackInstallEvent("browser_manual_hint");
       window.alert("Download diretto non disponibile in questo momento. Usa il menu del browser e scegli Installa app sul dispositivo corrente.");
     });
   }
@@ -659,11 +682,16 @@
   window.addEventListener("beforeinstallprompt", function (event) {
     event.preventDefault();
     deferredPrompt = event;
+    if (!installPromptTracked) {
+      installPromptTracked = true;
+      trackInstallEvent("prompt_available");
+    }
     updateInstallUi();
   });
 
   window.addEventListener("appinstalled", function () {
     deferredPrompt = null;
+    trackInstallEvent("install_completed");
     updateInstallUi();
   });
 
