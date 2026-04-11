@@ -787,10 +787,20 @@ class Visioni_Platform {
             return;
         }
 
+		$install_events = get_option( 'visioni_platform_install_events', array() );
+		$install_events = is_array( $install_events ) ? $install_events : array();
+		$install_event_count = count( $install_events );
+		$last_install_event = ! empty( $install_events ) && is_array( $install_events[0] ) ? $install_events[0] : array();
+		$last_install_label = '';
+		if ( ! empty( $last_install_event ) ) {
+			$last_install_label = ucfirst( str_replace( '_', ' ', sanitize_key( (string) ( $last_install_event['event'] ?? '' ) ) ) );
+			$last_install_label .= ' • ' . mysql2date( 'd/m/Y H:i', (string) ( $last_install_event['created_at'] ?? current_time( 'mysql' ) ) );
+		}
+
         ?>
         <div class="wrap">
             <h1>Visioni Platform</h1>
-            <p>Plugin separato per l'evoluzione della piattaforma Visioni a fasi, senza impattare il core gestionale attuale.</p>
+            <p>Piattaforma frontend riservata di Visioni con accesso app, hub operativo, moduli specializzati, PWA installabile e integrazione con il backoffice lead.</p>
 
             <p>
                 <a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=visioni-platform-guida' ) ); ?>">
@@ -802,7 +812,33 @@ class Visioni_Platform {
                 <a class="button button-secondary" href="<?php echo esc_url( self::login_page_url() ); ?>" style="margin-left:8px;">
                     Apri Login Clienti
                 </a>
+                <a class="button button-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=visioni-lead-hub' ) ); ?>" style="margin-left:8px;">
+                    Apri Lead Hub
+                </a>
             </p>
+
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1180px;margin:18px 0 22px;">
+                <div style="background:#fff;border:1px solid #dcdcde;border-radius:16px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,0.04);">
+                    <p style="margin:0 0 8px;color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Accesso App</p>
+                    <p style="margin:0;font-size:30px;font-weight:700;line-height:1;">Attivo</p>
+                    <p style="margin:10px 0 0;color:#50575e;">Login clienti, onboarding ruolo e instradamento verso i moduli corretti.</p>
+                </div>
+                <div style="background:#fff;border:1px solid #dcdcde;border-radius:16px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,0.04);">
+                    <p style="margin:0 0 8px;color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Moduli Core</p>
+                    <p style="margin:0;font-size:30px;font-weight:700;line-height:1;">Radar + Anticipa</p>
+                    <p style="margin:10px 0 0;color:#50575e;">Frontend attivi e già collegati alla pipeline lead operativa.</p>
+                </div>
+                <div style="background:#fff;border:1px solid #dcdcde;border-radius:16px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,0.04);">
+                    <p style="margin:0 0 8px;color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Lead Hub</p>
+                    <p style="margin:0;font-size:30px;font-weight:700;line-height:1;">Unificato</p>
+                    <p style="margin:10px 0 0;color:#50575e;">Raccoglie Radar, Anticipa, Cantiere, Ambassador e Cliente nel backoffice Visioni.</p>
+                </div>
+                <div style="background:#fff;border:1px solid #dcdcde;border-radius:16px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,0.04);">
+                    <p style="margin:0 0 8px;color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Installazione App</p>
+                    <p style="margin:0;font-size:30px;font-weight:700;line-height:1;"><?php echo esc_html( (string) $install_event_count ); ?></p>
+                    <p style="margin:10px 0 0;color:#50575e;"><?php echo esc_html( $last_install_label !== '' ? $last_install_label : 'Nessun evento registrato ancora.' ); ?></p>
+                </div>
+            </div>
 
             <form method="post" style="margin:14px 0 22px;">
                 <?php wp_nonce_field( 'visioni_platform_generate_pages_action' ); ?>
@@ -813,10 +849,12 @@ class Visioni_Platform {
 
             <h2 style="margin-top:24px;">Stato Moduli</h2>
             <ul style="list-style:disc; margin-left:18px;">
-                <li><strong>Radar:</strong> struttura base pronta</li>
-                <li><strong>Momento:</strong> pianificato</li>
-                <li><strong>Memoria:</strong> pianificato</li>
-                <li><strong>Altri moduli:</strong> pianificati</li>
+                <li><strong>Accesso App + Platform:</strong> attivi, con onboarding, selezione ruolo e CTA Scarica app.</li>
+                <li><strong>Radar:</strong> attivo sul frontend con salvataggio profili e compatibilità.</li>
+                <li><strong>Anticipa:</strong> attivo sul frontend come intake venditori.</li>
+                <li><strong>My Area:</strong> moduli riservati disponibili per Memoria, Advisor, Vicinato, Ambassador e Cantiere.</li>
+                <li><strong>PWA:</strong> manifest, service worker e telemetria installazione attivi.</li>
+                <li><strong>Backoffice:</strong> Lead Hub operativo per regia lead e conversione a Cliente.</li>
             </ul>
 
             <h2 style="margin-top:24px;">Configurazione</h2>
