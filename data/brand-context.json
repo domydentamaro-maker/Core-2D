@@ -68,7 +68,7 @@
       "repo_path": "osservatorio-theme/",
       "cpt": ["analisi", "report", "approfondimenti"],
       "contenuto": "Media istituzionale: analisi mercato, report, approfondimenti Puglia e Mezzogiorno",
-      "sftp_utente": "su1203377",
+      "sftp_utente": "su391951",
       "sftp_server": "access-5019331717.webspace-host.com"
     },
     "materiaprima": {
@@ -126,6 +126,12 @@
     ]
   },
 
+  "plugin_live": {
+    "osservatorio": ["2d-image-generator", "2d-social-autoposter", "ecosystem-crosslink", "seo-by-rank-math", "updraftplus", "wordpress-importer", "wp-file-manager"],
+    "visioni": ["2d-social-autoposter", "advanced-custom-fields", "custom-post-type-ui", "ecosystem-crosslink", "navz-photo-gallery", "seo-by-rank-math", "updraftplus", "vision-core", "visioni-platform", "wp-file-manager"],
+    "note": "wordpress-importer su Osservatorio: disattivare dopo ogni import WXR"
+  },
+
   "problema_noto_404": {
     "causa": "Dopo import WXR di CPT custom (analisi/report), WordPress non riconosce i permalink finché non si fa flush rewrite rules",
     "soluzione": "Andare su Impostazioni > Permalink > Salva (basta un salva senza modifiche)",
@@ -137,12 +143,16 @@
     "hosting": "IONOS condiviso",
     "sftp_server": "access-5019331717.webspace-host.com",
     "porta_sftp": 22,
+    "accesso": "SFTP solo (no SSH shell)",
     "utenti_sftp": {
-      "osservatorio": "su1203377",
+      "osservatorio": "su391951",
+      "visioni": "su318279",
       "principale_2d_materia": "su63044"
     },
     "note": [
       "No Node.js su hosting condiviso IONOS",
+      "No SSH shell — solo SFTP",
+      "SFTP remove fallisce su file owned da www-data — usare sftp.open(path, 'wb') per sovrascrivere",
       "PHP disponibile, WordPress sempre online",
       "SFTP affidabile via paramiko Python da Codespace"
     ]
