@@ -17,9 +17,14 @@ const LeadMagnet: React.FC = () => {
       const pageWidth = 210;
       const margin = 20;
       const contentWidth = pageWidth - (margin * 2);
+      const footerExcludedPages = new Set<number>([7]);
 
       // Helper per footer
       const addFooter = (pageNum: number) => {
+        if (footerExcludedPages.has(pageNum)) {
+          return;
+        }
+
         doc.setDrawColor(200, 200, 200);
         doc.line(margin, 280, pageWidth - margin, 280);
         doc.setFontSize(9);

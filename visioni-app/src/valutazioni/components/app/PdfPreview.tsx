@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Perizia } from '@/types/perizia';
 import { calcValoreFinale, formatCurrency } from '@/lib/storage';
 import { X, Download, Loader2 } from 'lucide-react';
@@ -9,9 +9,26 @@ interface PdfPreviewProps {
   onGenerate: () => void;
 }
 
+interface PdfOptions {
+  includiSezione1: boolean;
+  includiSezione2: boolean;
+  includiSezione3: boolean;
+  includiSezione4: boolean;
+  includiSezione5: boolean;
+  includiSezione6: boolean;
+  includiSezione7: boolean;
+  qualitaFoto: 'alta' | 'media';
+}
+
+interface MapSnapshot {
+  mapUrl: string;
+  sourceLabel: string;
+  addressLabel: string;
+}
+
 export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewProps) {
   const [generating, setGenerating] = useState(false);
-  const [options, setOptions] = useState({
+  const [options, setOptions] = useState<PdfOptions>({
     includiSezione1: true,
     includiSezione2: true,
     includiSezione3: true,
@@ -21,28 +38,99 @@ export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewP
     includiSezione7: true,
     qualitaFoto: 'alta' as 'alta' | 'media',
   });
+  const [mapSnapshot, setMapSnapshot] = useState<MapSnapshot | null>(null);
+  const [mapLoading, setMapLoading] = useState(false);
 
   const { valoreFinale } = calcValoreFinale(perizia.metodiValutazione);
   const d = perizia.datiIncarico;
   const imm = perizia.datiImmobile;
+  const indirizzoCompleto = [imm.via, imm.civico, imm.comune, imm.provincia]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+
+  useEffect(() => {
+    if (!indirizzoCompleto) {
+      setMapSnapshot(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const loadMap = async () => {
+      setMapLoading(true);
+      try {
+        const params = new URLSearchParams({
+          format: 'jsonv2',
+          limit: '1',
+          countrycodes: 'it',
+          q: indirizzoCompleto,
+        });
+
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+          signal: controller.signal,
+          headers: {
+            'Accept-Language': 'it',
+          },
+        });
+
+        if (!response.ok) {
+          setMapSnapshot(null);
+          return;
+        }
+
+        const data = await response.json();
+        const first = data?.[0];
+        if (!first?.lat || !first?.lon) {
+          setMapSnapshot(null);
+          return;
+        }
+
+        const lat = Number(first.lat);
+        const lon = Number(first.lon);
+        const mapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lon}&zoom=18&size=1000x560&markers=${lat},${lon},red-pushpin`;
+
+        setMapSnapshot({
+          mapUrl,
+          sourceLabel: 'OpenStreetMap / Nominatim',
+          addressLabel: first.display_name || indirizzoCompleto,
+        });
+      } catch {
+        if (!controller.signal.aborted) {
+          setMapSnapshot(null);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setMapLoading(false);
+        }
+      }
+    };
+
+    void loadMap();
+
+    return () => controller.abort();
+  }, [indirizzoCompleto]);
+
+  const previewHtml = useMemo(
+    () => generatePdfHtml(perizia, options, valoreFinale, false, mapSnapshot),
+    [perizia, options, valoreFinale, mapSnapshot]
+  );
 
   const handleGenerate = async () => {
+    // Open synchronously on user gesture to avoid popup blockers.
+    const printWindow = window.open('', '_blank', 'noopener,noreferrer');
+    if (!printWindow) {
+      alert('Popup bloccato dal browser. Abilita i popup per salvare il PDF.');
+      return;
+    }
+
     setGenerating(true);
-    await new Promise(r => setTimeout(r, 1500));
+    printWindow.document.open();
+    printWindow.document.write(generatePdfHtml(perizia, options, valoreFinale, true, mapSnapshot));
+    printWindow.document.close();
+
     setGenerating(false);
     onGenerate();
-    
-    // Simple print-based PDF
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    
-    const html = generatePdfHtml(perizia, options, valoreFinale);
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-    }, 500);
   };
 
   return (
@@ -70,13 +158,17 @@ export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewP
             <label key={key} className="flex items-center gap-2.5 cursor-pointer">
               <input
                 type="checkbox"
-                checked={(options as any)[key]}
-                onChange={e => setOptions({ ...options, [key]: e.target.checked })}
+                checked={options[key as keyof PdfOptions] as boolean}
+                onChange={e => setOptions({ ...options, [key]: e.target.checked } as PdfOptions)}
                 className="accent-[#C8A96E]"
               />
               <span className="text-sm font-source text-[#1A1A1A]">{label}</span>
             </label>
           ))}
+
+          <div className="text-[11px] font-source text-[#5C5346] leading-relaxed bg-[#F5F0E8] border border-[#D4C9B0] rounded p-2.5">
+            {mapLoading ? 'Mappa esterna: recupero coordinate in corso...' : mapSnapshot ? 'Mappa esterna: pronta (OpenStreetMap).' : 'Mappa esterna: non disponibile per questo indirizzo.'}
+          </div>
 
           <div className="pt-2 border-t border-[#D4C9B0]">
             <p className="text-xs font-source text-[#5C5346] uppercase tracking-wider mb-3">Qualità Foto</p>
@@ -119,83 +211,25 @@ export default function PdfPreview({ perizia, onClose, onGenerate }: PdfPreviewP
 
       {/* Preview */}
       <div className="flex-1 overflow-y-auto bg-[#888] p-6">
-        <div className="max-w-2xl mx-auto space-y-2">
-          {/* Cover */}
-          <div className="bg-[#1A1A1A] p-12 text-center shadow-xl" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <p className="text-[#C8A96E]/50 text-xs font-source uppercase tracking-[0.3em] mb-6">2D Sviluppo Immobiliare</p>
-            <div className="w-16 h-px bg-[#C8A96E] mb-6" />
-            <h1 className="font-playfair text-4xl font-bold text-[#F5F0E8] mb-2">PERIZIA IMMOBILIARE</h1>
-            <h2 className="font-playfair text-xl text-[#C8A96E] mb-8">Stima del Valore di Mercato</h2>
-            <div className="w-24 h-px bg-[#C8A96E] mb-8" />
-            {imm.comune && (
-              <p className="text-[#F5F0E8]/70 text-sm font-source mb-1">
-                {imm.via} {imm.civico} — {imm.comune} ({imm.provincia})
-              </p>
-            )}
-            <p className="text-[#C8A96E]/60 text-xs font-source mb-4">Pratica n. {perizia.numeroPratica}</p>
-            {valoreFinale > 0 && (
-              <div className="mt-4 border border-[#C8A96E]/40 px-8 py-4">
-                <p className="text-[#C8A96E]/50 text-[10px] font-source uppercase tracking-wider">Valore di Stima</p>
-                <p className="font-playfair text-3xl font-bold text-[#C8A96E] mt-1">{formatCurrency(valoreFinale)}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Sezioni preview */}
-          <div className="bg-[#F5F0E8] p-8 shadow-xl">
-            <div className="border-b-2 border-[#C8A96E] pb-4 mb-6 flex items-center justify-between">
-              <span className="font-playfair text-xl font-bold text-[#1A1A1A]">Dati dell'Incarico</span>
-              <span className="text-xs text-[#C8A96E] font-source">2D Valuta Pro</span>
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-xs text-[#5C5346] font-source uppercase tracking-wide mb-1">Numero Pratica</p>
-                <p className="font-source font-600 text-[#1A1A1A]">{d.numeroPratica}</p>
-              </div>
-              <div>
-                <p className="text-xs text-[#5C5346] font-source uppercase tracking-wide mb-1">Data Perizia</p>
-                <p className="font-source font-600 text-[#1A1A1A]">{d.dataPerizia}</p>
-              </div>
-              <div>
-                <p className="text-xs text-[#5C5346] font-source uppercase tracking-wide mb-1">Committente</p>
-                <p className="font-source font-600 text-[#1A1A1A]">{d.committenteNome || '—'}</p>
-              </div>
-              <div>
-                <p className="text-xs text-[#5C5346] font-source uppercase tracking-wide mb-1">Perito</p>
-                <p className="font-source font-600 text-[#1A1A1A]">{d.peritoNome}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Foto preview */}
-          {perizia.foto.length > 0 && (
-            <div className="bg-[#F5F0E8] p-8 shadow-xl">
-              <div className="border-b-2 border-[#C8A96E] pb-4 mb-6">
-                <span className="font-playfair text-xl font-bold text-[#1A1A1A]">Documentazione Fotografica</span>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {perizia.foto.filter(f => f.includiPdf).slice(0, 6).map(f => (
-                  <div key={f.id}>
-                    <img src={f.url} alt={f.didascalia} className="w-full aspect-video object-cover rounded" />
-                    {f.didascalia && <p className="text-[10px] font-source text-[#5C5346] text-center mt-1">{f.didascalia}</p>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="bg-[#F5F0E8] p-6 shadow-xl text-center">
-            <p className="text-xs font-source text-[#5C5346]/60 italic">
-              Anteprima semplificata — Il PDF generato includerà tutte le sezioni selezionate
-            </p>
-          </div>
+        <div className="max-w-4xl mx-auto bg-white shadow-xl rounded overflow-hidden">
+          <iframe
+            title="Anteprima PDF perizia"
+            className="w-full min-h-[85vh] bg-white"
+            srcDoc={previewHtml}
+          />
         </div>
       </div>
     </div>
   );
 }
 
-function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): string {
+function generatePdfHtml(
+  perizia: Perizia,
+  options: PdfOptions,
+  valoreFinale: number,
+  autoPrint: boolean,
+  mapSnapshot: MapSnapshot | null
+): string {
   const d = perizia.datiIncarico;
   const imm = perizia.datiImmobile;
   const { valori } = calcValoreFinale(perizia.metodiValutazione);
@@ -217,6 +251,9 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   .cover .value-box { border: 1px solid rgba(200,169,110,0.4); padding: 24px 40px; margin-top: 24px; }
   .cover .value-label { color: rgba(200,169,110,0.5); font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; }
   .cover .value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #C8A96E; margin-top: 8px; }
+  .cover-map { width: 100%; max-width: 430px; margin-top: 20px; padding: 10px; border: 1px solid rgba(200,169,110,0.35); background: rgba(26,26,26,0.25); }
+  .cover-map img { width: 100%; height: auto; border: 1px solid rgba(200,169,110,0.35); display: block; }
+  .cover-map p { margin-top: 6px; font-size: 10px; color: rgba(245,240,232,0.75); }
   .page { background: #F5F0E8; padding: 40px; page-break-after: always; }
   .page-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #C8A96E; padding-bottom: 12px; margin-bottom: 24px; }
   .page-header h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: #1A1A1A; }
@@ -236,9 +273,13 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   .value-final { background: #C8A96E; padding: 32px; text-align: center; margin: 20px 0; border-radius: 4px; }
   .value-final .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(26,26,26,0.6); }
   .value-final .amount { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: #1A1A1A; margin-top: 8px; }
-  .photo-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 16px 0; }
-  .photo-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 2px; }
-  .photo-caption { font-size: 10px; color: #5C5346; text-align: center; margin-top: 4px; }
+  .map-wrap { margin-top: 20px; border: 1px solid #D4C9B0; background: #FDFAF4; border-radius: 4px; padding: 10px; }
+  .map-wrap img { width: 100%; max-height: 130mm; object-fit: cover; border: 1px solid #D4C9B0; }
+  .map-caption { font-size: 10px; color: #5C5346; margin-top: 6px; text-align: center; }
+  .photo-list { display: block; }
+  .photo-item { min-height: 260mm; display: flex; flex-direction: column; justify-content: space-between; page-break-inside: avoid; break-inside: avoid; }
+  .photo-item img { width: 100%; max-height: 238mm; object-fit: contain; border: 1px solid #D4C9B0; background: #fff; }
+  .photo-caption { font-size: 11px; color: #5C5346; text-align: center; margin-top: 10px; min-height: 8mm; }
   .legal-note { background: #1A1A1A; padding: 20px; border-radius: 4px; }
   .legal-note p { font-size: 10px; color: rgba(245,240,232,0.5); line-height: 1.7; font-style: italic; }
   .text-section { margin-bottom: 16px; }
@@ -246,7 +287,11 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   .text-section p { font-size: 12px; line-height: 1.8; color: #1A1A1A; white-space: pre-line; }
   @media print {
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    * { overflow: visible !important; }
     .cover { min-height: 297mm; }
+    .page:last-of-type { page-break-after: auto; }
+    .photo-item { page-break-after: always; }
+    .photo-item:last-child { page-break-after: auto; }
   }
 </style>
 </head>
@@ -262,6 +307,12 @@ function generatePdfHtml(perizia: Perizia, options: any, valoreFinale: number): 
   ${imm.comune ? `<p style="color:rgba(245,240,232,0.7);font-size:13px;margin-bottom:4px">${imm.via} ${imm.civico} — ${imm.comune} (${imm.provincia})</p>` : ''}
   <p style="color:rgba(200,169,110,0.6);font-size:11px">Pratica n. ${perizia.numeroPratica}</p>
   ${valoreFinale > 0 ? `<div class="value-box"><p class="value-label">Valore di Stima</p><p class="value">${formatCurrency(valoreFinale)}</p></div>` : ''}
+  ${mapSnapshot ? `
+    <div class="cover-map">
+      <img src="${mapSnapshot.mapUrl}" alt="Vista esterna immobile su mappa" />
+      <p>Vista esterna indicativa da indirizzo</p>
+    </div>
+  ` : ''}
 </div>
 
 ${options.includiSezione1 ? `
@@ -281,6 +332,30 @@ ${options.includiSezione1 ? `
     <div class="field"><label>Finalità</label><p>${d.finalita.join(', ') || '—'}</p></div>
     <div class="field"><label>Perito</label><p>${d.peritoNome} · ${d.peritoQualifica}</p></div>
   </div>
+</div>` : ''}
+
+${options.includiSezione2 ? `
+<!-- Sezione 2 -->
+<div class="page">
+  <div class="page-header">
+    <h2>Dati dell'Immobile</h2>
+    <span>2D Valuta Pro · ${perizia.numeroPratica}</span>
+  </div>
+  <div class="grid-2">
+    <div class="field"><label>Indirizzo</label><p>${imm.via || '—'} ${imm.civico || ''}</p></div>
+    <div class="field"><label>Comune</label><p>${imm.comune || '—'}${imm.provincia ? ` (${imm.provincia})` : ''}</p></div>
+    <div class="field"><label>CAP</label><p>${imm.cap || '—'}</p></div>
+    <div class="field"><label>Categoria catastale</label><p>${imm.categoria || '—'}</p></div>
+    <div class="field"><label>Foglio / Particella / Sub</label><p>${imm.foglio || '—'} / ${imm.particella || '—'} / ${imm.subalterno || '—'}</p></div>
+    <div class="field"><label>Rendita</label><p>${imm.rendita || '—'}</p></div>
+  </div>
+  ${mapSnapshot ? `
+    <div class="map-wrap">
+      <img src="${mapSnapshot.mapUrl}" alt="Mappa esterna immobile" />
+      <p class="map-caption">Vista esterna indicativa da indirizzo: ${mapSnapshot.addressLabel}</p>
+      <p class="map-caption">Fonte mappa: ${mapSnapshot.sourceLabel}</p>
+    </div>
+  ` : `<p style="font-size:11px;color:#5C5346;margin-top:10px">Mappa esterna non disponibile per l'indirizzo inserito.</p>`}
 </div>` : ''}
 
 ${options.includiSezione5 && valori.length > 0 ? `
@@ -310,9 +385,9 @@ ${options.includiSezione6 && perizia.foto.filter(f => f.includiPdf).length > 0 ?
     <h2>Documentazione Fotografica</h2>
     <span>2D Valuta Pro · ${perizia.numeroPratica}</span>
   </div>
-  <div class="photo-grid">
+  <div class="photo-list">
     ${perizia.foto.filter(f => f.includiPdf).map(f => `
-      <div>
+      <div class="photo-item">
         <img src="${f.url}" alt="${f.didascalia}" />
         ${f.didascalia ? `<p class="photo-caption">${f.didascalia}</p>` : ''}
       </div>
@@ -337,6 +412,35 @@ ${options.includiSezione7 && perizia.sezioniTestuali.length > 0 ? `
     <p>La presente perizia è stata redatta da Domenico Dentamaro – Agente Immobiliare e Consulente del settore – con sede in Bari (BA), Puglia. Il valore stimato espresso nella presente perizia si riferisce alla data di sopralluogo indicata e alle condizioni di mercato rilevate in tale data. — 2D Sviluppo Immobiliare, Domenico Dentamaro — Bari, Puglia</p>
   </div>
 </div>` : ''}
+
+${autoPrint ? `<script>
+  (function () {
+    document.title = 'perizia-${perizia.numeroPratica}.pdf';
+
+    function waitForAssets() {
+      const images = Array.from(document.images || []);
+      if (!images.length) return Promise.resolve();
+
+      return Promise.all(
+        images.map(function (img) {
+          if (img.complete) return Promise.resolve();
+          return new Promise(function (resolve) {
+            img.addEventListener('load', resolve, { once: true });
+            img.addEventListener('error', resolve, { once: true });
+          });
+        })
+      );
+    }
+
+    Promise.resolve(document.fonts ? document.fonts.ready : undefined)
+      .then(waitForAssets)
+      .catch(function () {})
+      .finally(function () {
+        window.focus();
+        window.print();
+      });
+  })();
+</script>` : ''}
 
 </body>
 </html>`;

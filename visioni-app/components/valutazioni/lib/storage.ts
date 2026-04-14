@@ -241,7 +241,7 @@ export function calcPrezzoMqFontiSelezionate(mercato: AnalisiMercato, storicoOve
 }
 
 export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
+  return '€\u00a0' + new Intl.NumberFormat('it-IT', { maximumFractionDigits: 0 }).format(value);
 }
 
 export function calcCompletamento(perizia: Perizia): { [key: string]: number } {

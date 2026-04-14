@@ -13,8 +13,15 @@ export const generatePDF = async (userEmail: string) => {
   const brandAccent = "#06b6d4"; // Cyan
   const textGray = "#4b5563";
 
+  // Pagine dense: evita il footer dove potrebbe sovrapporsi al contenuto.
+  const footerExcludedPages = new Set<number>([4]);
+
   // Helper: Draw Footer on every page
   const addFooter = (pageNumber: number) => {
+    if (footerExcludedPages.has(pageNumber)) {
+      return;
+    }
+
     doc.setFontSize(8);
     doc.setTextColor(150);
     doc.text(`Report Generato per: ${userEmail} - 2D Sviluppo Immobiliare`, margin, height - 10);

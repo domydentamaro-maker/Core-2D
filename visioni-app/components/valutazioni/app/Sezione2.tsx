@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DatiImmobile, CATEGORIE_CATASTALI, COMUNI_PUGLIA, UnitaCatastale, createEmptyUnitaCatastale, normalizeDatiImmobile } from '@/components/valutazioni/types/perizia';
 import { SectionHeader, SectionCard, FormField, Input, SelectField, ToggleField, FormGrid, TextareaField } from './FormComponents';
 import { cn } from '@/components/valutazioni/lib/utils';
@@ -14,6 +14,22 @@ const TIPI_PROPRIETA = ['Piena proprietà', 'Nuda proprietà', 'Usufrutto', 'Dir
 export default function Sezione2({ data, onChange }: Sezione2Props) {
   const [comuniSuggestions, setComuniSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [geoCoords, setGeoCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [geoError, setGeoError] = useState(false);
+  const [mapLabel, setMapLabel] = useState('');
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
+  const [mapsReady, setMapsReady] = useState(false);
+  const [mapsError, setMapsError] = useState<string | null>(null);
+  const streetContainerRef = useRef<HTMLDivElement | null>(null);
+  const panoramaRef = useRef<any>(null);
+  // URL confermato per il PDF: impostato solo dopo "Salva questa vista".
+  // Inizializzato dai dati salvati se già presenti (ricaricamento pagina).
+  const [savedPreviewUrl, setSavedPreviewUrl] = useState<string | null>(() => {
+    if (!googleMapsApiKey || !data.mappaLat || !data.mappaLon) return null;
+    return `https://maps.googleapis.com/maps/api/streetview?size=640x360&location=${data.mappaLat},${data.mappaLon}&heading=${data.mappaHeading ?? 0}&pitch=${data.mappaPitch ?? 0}&fov=85&key=${googleMapsApiKey}`;
+  });
+  // Ref per evitare geocoding duplicati: tiene traccia dell'ultima query geocodificata
+  const lastGeoKey = useRef<string>('');
 
   const update = (field: keyof DatiImmobile, value: any) => {
     onChange(normalizeDatiImmobile({ ...data, [field]: value }));
@@ -50,6 +66,179 @@ export default function Sezione2({ data, onChange }: Sezione2Props) {
       setShowSuggestions(filtered.length > 0);
     } else {
       setShowSuggestions(false);
+    }
+  };
+
+  // Geocoding diretto Nominatim (CORS open): evita PHP e apiFetch
+  useEffect(() => {
+    if (!data.includiMappaEsterna) {
+      setGeoCoords(null); setGeoError(false); setMapLabel('');
+      lastGeoKey.current = '';
+      return;
+    }
+
+    // Coordinate già salvate manualmente → usale subito, nessun geocoding
+    if (data.mappaLat && data.mappaLon) {
+      setGeoCoords({ lat: data.mappaLat, lon: data.mappaLon });
+      setGeoError(false);
+      setMapLabel([data.via, data.civico, data.comune, data.provincia].filter(Boolean).join(', '));
+      return;
+    }
+
+    const addressParts = [data.via, data.civico, data.comune, data.cap, data.provincia, 'Italia'].filter(Boolean);
+    if (addressParts.length < 2) {
+      setGeoCoords(null); setGeoError(false); setMapLabel('');
+      return;
+    }
+
+    const geoKey = addressParts.join('|');
+    // Già geocodificato questo indirizzo → non rifarlo
+    if (lastGeoKey.current === geoKey) return;
+
+    setGeoError(false);
+    const controller = new AbortController();
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const q = encodeURIComponent(addressParts.join(', '));
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${q}`,
+          { signal: controller.signal }
+        );
+        const json = await res.json();
+        if (json?.[0]) {
+          const { lat, lon, display_name } = json[0];
+          lastGeoKey.current = geoKey;
+          setGeoCoords({ lat: Number(lat), lon: Number(lon) });
+          setGeoError(false);
+          setMapLabel(display_name ?? addressParts.join(', '));
+        } else {
+          lastGeoKey.current = geoKey;
+          setGeoCoords(null);
+          setGeoError(true);
+        }
+      } catch {
+        // AbortError (cleanup) o rete: non mostrare errore se abortito
+        if (!controller.signal.aborted) {
+          setGeoCoords(null);
+          setGeoError(true);
+        }
+      }
+    }, 600);
+
+    return () => { controller.abort(); window.clearTimeout(timer); };
+  }, [
+    data.includiMappaEsterna,
+    data.via, data.civico, data.comune, data.provincia, data.cap,
+    data.mappaLat, data.mappaLon,
+  ]);
+
+  // Carica Google Maps JavaScript API (necessaria per leggere la vista corrente e salvarla)
+  useEffect(() => {
+    if (!data.includiMappaEsterna || !googleMapsApiKey) return;
+    if (typeof window === 'undefined') return;
+
+    (window as any).gm_authFailure = () => {
+      setMapsError('Errore chiave Google Maps: controlla API attive, restrizioni referrer e billing');
+      setMapsReady(false);
+    };
+
+    if ((window as any).google?.maps) {
+      setMapsReady(true);
+      setMapsError(null);
+      return;
+    }
+
+    const existing = document.getElementById('gmaps-streetview-loader') as HTMLScriptElement | null;
+    if (existing) {
+      const onLoad = () => {
+        if ((window as any).google?.maps) {
+          setMapsReady(true);
+          setMapsError(null);
+        }
+      };
+      existing.addEventListener('load', onLoad);
+      return () => existing.removeEventListener('load', onLoad);
+    }
+
+    (window as any).__initStreetView = () => {
+      setMapsReady(true);
+      setMapsError(null);
+    };
+
+    const script = document.createElement('script');
+    script.id = 'gmaps-streetview-loader';
+    script.async = true;
+    script.defer = true;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&callback=__initStreetView`;
+    script.onerror = () => {
+      setMapsError('Impossibile caricare Google Maps JavaScript API');
+      setMapsReady(false);
+    };
+    document.head.appendChild(script);
+  }, [data.includiMappaEsterna, googleMapsApiKey]);
+
+  // Inizializza Street View navigabile e usa heading/pitch salvati come stato iniziale
+  useEffect(() => {
+    if (!mapsReady || !geoCoords || !streetContainerRef.current) return;
+    const g = (window as any).google;
+    if (!g?.maps?.StreetViewPanorama) return;
+
+    panoramaRef.current = new g.maps.StreetViewPanorama(streetContainerRef.current, {
+      position: { lat: geoCoords.lat, lng: geoCoords.lon },
+      pov: { heading: data.mappaHeading ?? 0, pitch: data.mappaPitch ?? 0 },
+      zoom: 1,
+      addressControl: false,
+      fullscreenControl: true,
+      motionTracking: false,
+    });
+  }, [mapsReady, geoCoords, data.mappaHeading, data.mappaPitch]);
+
+  const staticFallbackUrl = (() => {
+    if (!googleMapsApiKey) return null;
+    const loc = data.mappaLat && data.mappaLon
+      ? `${data.mappaLat},${data.mappaLon}`
+      : geoCoords ? `${geoCoords.lat},${geoCoords.lon}` : null;
+    if (!loc) return null;
+    const enc = encodeURIComponent(loc);
+    return `https://maps.googleapis.com/maps/api/staticmap?center=${enc}&zoom=${data.mappaZoom || 18}&size=640x360&maptype=roadmap&markers=color:red%7C${enc}&key=${googleMapsApiKey}`;
+  })();
+
+  // Quando si ricarica una pratica con vista già salvata, mostra subito l'anteprima PDF salvata
+  useEffect(() => {
+    if (!googleMapsApiKey || !data.mappaLat || !data.mappaLon) {
+      setSavedPreviewUrl(null);
+      return;
+    }
+    setSavedPreviewUrl(
+      `https://maps.googleapis.com/maps/api/streetview?size=640x360&location=${data.mappaLat},${data.mappaLon}&heading=${data.mappaHeading ?? 0}&pitch=${data.mappaPitch ?? 0}&fov=85&key=${googleMapsApiKey}`
+    );
+  }, [googleMapsApiKey, data.mappaLat, data.mappaLon, data.mappaHeading, data.mappaPitch]);
+
+  const saveCurrentView = () => {
+    const pano = panoramaRef.current;
+    const pov = pano?.getPov?.();
+    const pos = pano?.getPosition?.();
+    const latFromPano = pos?.lat ? pos.lat() : null;
+    const lonFromPano = pos?.lng ? pos.lng() : null;
+
+    const newLat = latFromPano ?? data.mappaLat ?? geoCoords?.lat ?? null;
+    const newLon = lonFromPano ?? data.mappaLon ?? geoCoords?.lon ?? null;
+    const heading = typeof pov?.heading === 'number' ? pov.heading : (data.mappaHeading ?? 0);
+    const pitch = typeof pov?.pitch === 'number' ? pov.pitch : (data.mappaPitch ?? 0);
+
+    onChange(normalizeDatiImmobile({
+      ...data,
+      mappaLat: newLat,
+      mappaLon: newLon,
+      mappaHeading: heading,
+      mappaPitch: pitch,
+    }));
+
+    if (googleMapsApiKey && newLat && newLon) {
+      setSavedPreviewUrl(
+        `https://maps.googleapis.com/maps/api/streetview?size=640x360&location=${encodeURIComponent(`${newLat},${newLon}`)}&heading=${heading}&pitch=${pitch}&fov=85&key=${googleMapsApiKey}`
+      );
     }
   };
 
@@ -114,6 +303,84 @@ export default function Sezione2({ data, onChange }: Sezione2Props) {
                 </SelectField>
               </FormField>
             </FormGrid>
+
+            <div className="pt-2 border-t border-[#D4C9B0] space-y-3">
+              <ToggleField
+                label="Includi mappa esterna in perizia"
+                value={data.includiMappaEsterna}
+                onChange={v => update('includiMappaEsterna', v)}
+                description="Mostra la vista esterna da indirizzo in compilazione e nel PDF"
+              />
+
+              {data.includiMappaEsterna && (
+                <div className="rounded border border-[#D4C9B0] bg-[#FDFAF4] p-3 space-y-3">
+
+                  {/* Stato geocoding */}
+                  {!googleMapsApiKey ? (
+                    <p className="text-xs font-source text-red-600">API key Google non configurata</p>
+                  ) : !(data.via || data.comune || data.cap) ? (
+                    <p className="text-xs font-source text-[#7a6d59]">Compila l'indirizzo per attivare la vista esterna</p>
+                  ) : mapsError ? (
+                    <p className="text-xs font-source text-red-600">{mapsError}. Verifica anche che il referrer https://www.2dsviluppoimmobiliare.it/* sia autorizzato.</p>
+                  ) : geoError ? (
+                    <p className="text-xs font-source text-red-600">Indirizzo non trovato — verifica via, comune e provincia</p>
+                  ) : !geoCoords ? (
+                    <div className="flex items-center gap-2 text-xs font-source text-[#7a6d59]">
+                      <svg className="animate-spin h-4 w-4 text-[#C8A96E]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                      Localizzazione indirizzo...
+                    </div>
+                  ) : !mapsReady ? (
+                    <div className="flex items-center gap-2 text-xs font-source text-[#7a6d59]">
+                      <svg className="animate-spin h-4 w-4 text-[#C8A96E]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                      Caricamento Street View...
+                    </div>
+                  ) : null}
+
+                  {/* Street View navigabile (fonte unica della vista da salvare) */}
+                  {mapsReady && geoCoords && !mapsError && (
+                    <div>
+                      <p className="text-xs font-source text-[#5C5346] font-semibold mb-1">
+                        Street View navigabile: muoviti e inquadra l'immobile, poi salva.
+                      </p>
+                      <div ref={streetContainerRef} className="h-72 w-full rounded border border-[#D4C9B0]" />
+                    </div>
+                  )}
+
+                  {mapsReady && geoCoords && !mapsError && (
+                    <div className="rounded border border-[#D4C9B0] bg-white/70 p-3">
+                      <button
+                        type="button"
+                        className="w-full rounded border border-[#C8A96E] bg-[#C8A96E] px-4 py-2 text-sm font-source font-semibold text-white hover:bg-[#b8995e] transition-colors"
+                        onClick={saveCurrentView}
+                      >
+                        ✓ Salva questa vista nel PDF
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Immagine confermata per il PDF */}
+                  {savedPreviewUrl && (
+                    <div className="rounded border-2 border-[#C8A96E] bg-[#FFFDF7] p-3">
+                      <p className="text-xs font-source text-[#C8A96E] font-bold mb-2">
+                        ✓ IMMAGINE NEL PDF — salvata dalla Street View corrente
+                      </p>
+                      <img
+                        src={savedPreviewUrl}
+                        alt="Immagine Street View per il PDF"
+                        className="w-full rounded border border-[#C8A96E]"
+                        onError={(event) => {
+                          if (staticFallbackUrl && event.currentTarget.src !== staticFallbackUrl) {
+                            event.currentTarget.src = staticFallbackUrl;
+                          }
+                        }}
+                      />
+                      {mapLabel && <p className="mt-1 text-[10px] font-source text-[#5C5346]">{mapLabel}</p>}
+                    </div>
+                  )}
+
+                </div>
+              )}
+            </div>
           </div>
         </SectionCard>
 

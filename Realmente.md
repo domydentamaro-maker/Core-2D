@@ -8,7 +8,23 @@ Mantenere continuita operativa tra sessioni e PC diversi, senza perdere decision
 - Le modifiche tecniche devono essere tracciate anche su Git (commit o almeno branch aggiornato).
 - Le credenziali non si salvano qui in chiaro: usare password manager e inserire solo riferimenti operativi.
 
-## Stato corrente (2026-03-27, ore 17:40)
+## Stato corrente (2026-04-14)
+
+### REPO RIORGANIZZATO ✅
+- `progetto (1)` rinominato → `visioni-app/`
+- Script PHP spostati in `tools/osservatorio/`, `tools/materiaprima/`, `tools/perizie/`
+- File XML legacy → `_archive/xml-root/`
+- PLATFORM_PROMPT.md → `docs/`
+- Creato `data/brand-context.json` (DNA brand per agenti AI)
+- Creato `REPO_INDEX.md` (mappa navigazione master)
+- `Realmente.md` rimane in root come memoria operativa
+
+### ⚠️ DA FARE URGENTE
+- Verificare 2 articoli Osservatorio con problema 404 (sprint aprile) — chiedere a Domenico quali specifici
+- Import batch `imports/2026-05-sprint-20/` ancora da fare
+- Flush permalink Osservatorio dopo ogni import CPT
+
+---
 
 ### Osservatorio — LIVE ✅
 - Tema v3.0 "Authority & Institutional Design" deployato e attivo

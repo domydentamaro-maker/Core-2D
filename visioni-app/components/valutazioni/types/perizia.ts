@@ -32,6 +32,12 @@ export interface DatiImmobile {
   comune: string;
   cap: string;
   provincia: string;
+  includiMappaEsterna: boolean;
+  mappaLat: number | null;
+  mappaLon: number | null;
+  mappaZoom: number;
+  mappaHeading: number;
+  mappaPitch: number;
   unitaCatastali: UnitaCatastale[];
   foglio: string;
   particella: string;
@@ -379,6 +385,12 @@ export function normalizeDatiImmobile(raw?: Partial<DatiImmobile>): DatiImmobile
     comune: raw?.comune || '',
     cap: raw?.cap || '',
     provincia: raw?.provincia || 'BA',
+    includiMappaEsterna: raw?.includiMappaEsterna ?? true,
+    mappaLat: raw?.mappaLat ?? null,
+    mappaLon: raw?.mappaLon ?? null,
+    mappaZoom: raw?.mappaZoom ?? 18,
+    mappaHeading: raw?.mappaHeading ?? 0,
+    mappaPitch: raw?.mappaPitch ?? 0,
     unitaCatastali,
     foglio: principale.foglio,
     particella: principale.particella,

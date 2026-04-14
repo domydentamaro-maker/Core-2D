@@ -1,0 +1,150 @@
+{
+  "_meta": {
+    "versione": "1.0",
+    "aggiornato": "2026-04-14",
+    "descrizione": "DNA del brand 2D Sviluppo Immobiliare — usato dagli agenti AI come contesto base per qualsiasi output (articoli, social, schede, strategia)"
+  },
+
+  "brand": {
+    "nome": "2D Sviluppo Immobiliare",
+    "fondatore": "Domenico Dentamaro",
+    "sede": "Bari, Puglia",
+    "mercato_riferimento": ["Bari", "Puglia", "Sud Italia", "Mezzogiorno", "ZES Unica"],
+    "sito_principale": "https://www.2dsviluppoimmobiliare.it",
+    "siti_ecosistema": {
+      "visioni": "https://visioniimmobiliari.2dsviluppoimmobiliare.it",
+      "osservatorio": "https://osservatorio.2dsviluppoimmobiliare.it",
+      "materiaprima": "https://materiaprima.2dsviluppoimmobiliare.it"
+    },
+    "paletta_colori": {
+      "nero": "#1A1A1A",
+      "oro": "#C8A96E",
+      "bianco": "#F5F0E8"
+    }
+  },
+
+  "identita": {
+    "tono": "autorevole ma accessibile, concreto, mai freddo, meridionale di sostanza",
+    "posizionamento": "Il consulente immobiliare che conosce il territorio meglio di chiunque altro, con metodo rigoroso e visione strategica",
+    "valori": ["rigore metodologico", "trasparenza", "conoscenza locale profonda", "innovazione PropTech"],
+    "NON_fare": [
+      "tono aggressivo o venditore",
+      "promesse generiche",
+      "copia di contenuti nazionali senza localizzazione Puglia",
+      "gergo tecnico senza spiegazione"
+    ]
+  },
+
+  "metodo_filo": {
+    "nome_completo": "Metodo F.I.L.O.™",
+    "fasi": {
+      "F": "Fusione — raccolta e unificazione di tutti i dati dell'immobile",
+      "I": "Indagine — analisi tecnica, urbanistica, catastale, di mercato",
+      "L": "Lettura — interpretazione del valore reale vs valore percepito",
+      "O": "Operazione — strategia di acquisto, sviluppo o vendita"
+    },
+    "differenziazione": "Unico metodo strutturato per il real estate nel Sud Italia",
+    "keyword_brand": ["Metodo FILO", "Metodo F.I.L.O.", "metodo immobiliare Bari", "consulenza immobiliare strutturata"]
+  },
+
+  "ecosistema_siti": {
+    "2d_principale": {
+      "tipo": "React SPA + prerender",
+      "repo_path": "visioni-app/",
+      "stack": "React + TypeScript + Vite + Tailwind",
+      "deploy": "SFTP IONOS → /",
+      "contenuto": "Landing istituzionale, portfolio, Metodo FILO, aree geografiche, ZES, contatti"
+    },
+    "visioni": {
+      "tipo": "WordPress + plugin custom",
+      "repo_path": "visioni-plugin/ + visioni-theme/",
+      "plugin_gestionale": "vision-core/",
+      "plugin_piattaforma": "visioni-platform/",
+      "tema": "visioni-theme/hello-child/",
+      "contenuto": "Piattaforma acquirenti: Radar, Momento, Memoria, EvaluationWizard, Perizie"
+    },
+    "osservatorio": {
+      "tipo": "WordPress + tema custom",
+      "repo_path": "osservatorio-theme/",
+      "cpt": ["analisi", "report", "approfondimenti"],
+      "contenuto": "Media istituzionale: analisi mercato, report, approfondimenti Puglia e Mezzogiorno",
+      "sftp_utente": "su1203377",
+      "sftp_server": "access-5019331717.webspace-host.com"
+    },
+    "materiaprima": {
+      "tipo": "WordPress standard",
+      "repo_path": "tools/materiaprima/",
+      "contenuto": "Blog operativo: guide pratiche acquisto/vendita/ristrutturazione, taglio how-to",
+      "sftp_utente": "su63044",
+      "sftp_server": "access-5019331717.webspace-host.com"
+    }
+  },
+
+  "keyword_master": {
+    "brand_personale": ["Domenico Dentamaro", "Domenico Dentamaro immobiliare", "Domenico Dentamaro Bari"],
+    "sviluppo_immobiliare": ["sviluppo immobiliare", "sviluppo immobiliare Puglia", "operazioni immobiliari Sud Italia"],
+    "metodo_filo": ["Metodo FILO", "Metodo F.I.L.O.", "metodo immobiliare strutturato"],
+    "zes": ["ZES", "ZES Puglia", "ZES Unica", "Zona Economica Speciale Puglia", "credito imposta ZES"],
+    "mercato_locale": ["mercato immobiliare Bari", "prezzi case Bari 2026", "immobili Puglia", "acquisto casa Bari"],
+    "categorie_osservatorio": ["mercato-immobiliare", "normative-sostenibilita", "rigenerazione-urbana", "asset-class", "capitali-investimenti", "abitare-politiche-urbane", "innovazione-real-estate"],
+    "long_tail_prioritari": [
+      "comprare casa a Bari con il Metodo FILO",
+      "analisi mercato immobiliare Puglia 2026",
+      "investimento immobiliare Sud Italia",
+      "rigenerazione urbana Bari",
+      "direttiva case green impatto mercato Puglia"
+    ]
+  },
+
+  "social": {
+    "piattaforme_attive": ["Threads", "Instagram", "Facebook"],
+    "profilo_threads": "@domydentamaro",
+    "tono_social": "autorevole, diretto, senza fronzoli, identità meridionale forte",
+    "pilastri_contenuto": ["Visione", "Dati di mercato", "Metodo", "Territorio", "Esperienza sul campo"],
+    "regole": [
+      "Non inseguire approvazione",
+      "Dati reali del mercato locale, non generici nazionali",
+      "Breve e denso, non dilungato",
+      "CTA sempre implicita, mai aggressiva"
+    ]
+  },
+
+  "contenuto_editoriale": {
+    "cadenza_import": "sprint da 20 articoli (10 Osservatorio + 10 Materia Prima) ogni ~30 giorni",
+    "batch_completati": ["2026-04-batch-01", "2026-04-sprint-20"],
+    "batch_pianificati": ["2026-05-sprint-20"],
+    "struttura_batch": {
+      "osservatorio": "CPT analisi, taglio authority/istituzionale, dati mercato e normative",
+      "materiaprima": "post standard, taglio operativo/how-to, forte peso RankMath"
+    },
+    "workflow_import": [
+      "1. Caricare assets in wp-content/uploads/YYYY/MM/",
+      "2. Importare XML su Materia Prima",
+      "3. Importare XML su Osservatorio",
+      "4. Verificare featured images e RankMath",
+      "5. Flush permalink (Settings > Permalinks > Salva)"
+    ]
+  },
+
+  "problema_noto_404": {
+    "causa": "Dopo import WXR di CPT custom (analisi/report), WordPress non riconosce i permalink finché non si fa flush rewrite rules",
+    "soluzione": "Andare su Impostazioni > Permalink > Salva (basta un salva senza modifiche)",
+    "script_fix": "tools/osservatorio/osservatorio-fix.php (token: oss2d_fix_2026_secure)",
+    "nota": "Verificare SEMPRE dopo ogni import su Osservatorio"
+  },
+
+  "infrastruttura": {
+    "hosting": "IONOS condiviso",
+    "sftp_server": "access-5019331717.webspace-host.com",
+    "porta_sftp": 22,
+    "utenti_sftp": {
+      "osservatorio": "su1203377",
+      "principale_2d_materia": "su63044"
+    },
+    "note": [
+      "No Node.js su hosting condiviso IONOS",
+      "PHP disponibile, WordPress sempre online",
+      "SFTP affidabile via paramiko Python da Codespace"
+    ]
+  }
+}

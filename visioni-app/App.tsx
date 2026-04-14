@@ -348,7 +348,7 @@ const App: React.FC = () => {
     || pathname.startsWith('/metodofilo/');
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 antialiased overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 text-gray-800 antialiased">
         <div className="animate-fade-in relative">
           <Seo />
           {!isZesPage && <ProgressBar />}
