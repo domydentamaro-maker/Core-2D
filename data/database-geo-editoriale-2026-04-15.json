@@ -1,0 +1,2813 @@
+{
+  "generated_at": "2026-04-15",
+  "source_xml_files": [
+    "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+    "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+    "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+    "imports/2026-04-batch-01/materiaprima-premium-batch-01.xml",
+    "visioni-app/materiaprima-import-completo.xml",
+    "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+    "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+    "imports/2026-04-batch-01/osservatorio-premium-batch-01.xml",
+    "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml"
+  ],
+  "geo_taxonomy_model": {
+    "shared_hierarchy": [
+      "Italia",
+      "Mezzogiorno",
+      "Sud Italia",
+      "Puglia",
+      "Bari",
+      "Provincia di Bari",
+      "BAT",
+      "Brindisi",
+      "Taranto",
+      "Foggia",
+      "Capitanata",
+      "Lecce",
+      "Salento"
+    ],
+    "materiaprima": {
+      "model": "geo-aware",
+      "recommended_fields": [
+        "area_geo_principale",
+        "aree_geo_secondarie",
+        "livello_geo",
+        "geo_title_status"
+      ]
+    },
+    "osservatorio": {
+      "model": "geo-structured",
+      "recommended_fields": [
+        "area_geo_principale",
+        "aree_geo_secondarie",
+        "livello_geo",
+        "publisher_geo_priority",
+        "social_geo_hook"
+      ]
+    }
+  },
+  "site_summaries": {
+    "materiaprima": {
+      "items": 40,
+      "by_geo_level": {
+        "regionale": 17,
+        "cittadino": 11,
+        "da_definire": 11,
+        "provinciale": 1
+      },
+      "by_primary_geo": {
+        "Puglia": 17,
+        "Bari": 7,
+        "Da assegnare": 11,
+        "Brindisi": 1,
+        "Lecce": 1,
+        "Taranto": 1,
+        "Foggia": 1,
+        "BAT": 1
+      },
+      "geo_missing": 11,
+      "publisher_high_priority": 0
+    },
+    "osservatorio": {
+      "items": 32,
+      "by_geo_level": {
+        "macroarea": 14,
+        "regionale": 8,
+        "cittadino": 9,
+        "da_definire": 1
+      },
+      "by_primary_geo": {
+        "Mezzogiorno": 7,
+        "Puglia": 8,
+        "Sud Italia": 7,
+        "Bari": 9,
+        "Da assegnare": 1
+      },
+      "geo_missing": 1,
+      "publisher_high_priority": 31
+    }
+  },
+  "geo_backlog": [
+    {
+      "site": "materiaprima",
+      "title": "Bonus ristrutturazione 2026: come pianificare lavori, costi e documenti senza perdere margine",
+      "post_type": "post",
+      "source_file": "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Due diligence urbanistica: i 12 controlli da fare prima di comprare un immobile da trasformare",
+      "post_type": "post",
+      "source_file": "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Mutuo oggi o attesa? Come decidere nel 2026 con tassi incerti e prezzi ancora rigidi",
+      "post_type": "post",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Terreni in area ZES: come cambia la logica di valutazione rispetto a un terreno ordinario",
+      "post_type": "post",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Due diligence su capannoni e immobili produttivi: controlli indispensabili prima di investire",
+      "post_type": "post",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Conformita urbanistica e catastale prima del rogito: la checklist completa per non comprare problemi",
+      "post_type": "post",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Agibilita, APE e conformita impianti: cosa blocca piu spesso una compravendita immobiliare",
+      "post_type": "post",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Contenuto pratico senza geo esplicita: conviene allinearlo al perimetro regionale dominante di MateriaPrima."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Diritto di superficie, PEEP e trasformazione in piena proprieta: come valutare l'affare senza errori",
+      "post_type": "post",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Contenuto pratico senza geo esplicita: conviene allinearlo al perimetro regionale dominante di MateriaPrima."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Come leggere una visura ipotecaria e capire se un immobile ha rischi nascosti",
+      "post_type": "post",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Aree agricole e trasformazioni urbanistiche: come distinguere un'opportunita da un'illusione",
+      "post_type": "post",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Contenuto pratico senza geo esplicita: conviene allinearlo al perimetro regionale dominante di MateriaPrima."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Come impostare una vera analisi di fattibilita immobiliare prima di fare un'offerta",
+      "post_type": "post",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "osservatorio",
+      "title": "ZES Unica 2026-2028: quali immobili e investimenti stanno beneficiando davvero dell'incentivo",
+      "post_type": "analisi",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Tema strutturalmente letto in chiave Sud/Mezzogiorno: usare macroarea come default editoriale."
+    }
+  ],
+  "items": [
+    {
+      "site": "materiaprima",
+      "title": "CILA o SCIA in Puglia: quale pratica serve davvero per ristrutturare senza blocchi",
+      "post_type": "post",
+      "status": "future",
+      "slug": "cila-o-scia-puglia-ristrutturazione",
+      "source_file": "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Agibilità immobile a Bari: la checklist da fare prima del preliminare",
+      "post_type": "post",
+      "status": "future",
+      "slug": "agibilita-immobile-bari-checklist-acquisto",
+      "source_file": "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Bonus ristrutturazione 2026: come pianificare lavori, costi e documenti senza perdere margine",
+      "post_type": "post",
+      "status": "future",
+      "slug": "bonus-ristrutturazione-2026-pianificare-lavori",
+      "source_file": "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Due diligence urbanistica: i 12 controlli da fare prima di comprare un immobile da trasformare",
+      "post_type": "post",
+      "status": "future",
+      "slug": "due-diligence-urbanistica-checklist-acquisto-immobile",
+      "source_file": "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Demolizione e ricostruzione in Puglia: quando conviene davvero e quali vincoli pesano sul margine",
+      "post_type": "post",
+      "status": "future",
+      "slug": "demolizione-ricostruzione-puglia-quando-conviene",
+      "source_file": "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Direttiva Case Green in Puglia 2026: cosa deve fare oggi un proprietario per non trovarsi fuori mercato domani",
+      "post_type": "post",
+      "status": "future",
+      "slug": "direttiva-case-green-puglia-2026-proprietario",
+      "source_file": "imports/2026-04-batch-01/materiaprima-premium-batch-01.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Salva Casa in Puglia 2026: cosa cambia davvero per pratiche, sanatorie e conformita",
+      "post_type": "post",
+      "status": "future",
+      "slug": "salva-casa-puglia-2026-pratiche-sanatorie-conformita",
+      "source_file": "imports/2026-04-batch-01/materiaprima-premium-batch-01.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "SCIA o CILA in Puglia nel 2026: differenze reali, errori frequenti e quando sbagli titolo edilizio",
+      "post_type": "post",
+      "status": "future",
+      "slug": "scia-o-cila-puglia-2026-differenze-errori",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Mutuo oggi o attesa? Come decidere nel 2026 con tassi incerti e prezzi ancora rigidi",
+      "post_type": "post",
+      "status": "future",
+      "slug": "mutuo-oggi-o-attesa-2026-tassi-prezzi",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Acquistare un immobile da ristrutturare a Bari: come capire se il prezzo e davvero interessante",
+      "post_type": "post",
+      "status": "future",
+      "slug": "comprare-immobile-ristrutturare-bari-prezzo",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Terreni in area ZES: come cambia la logica di valutazione rispetto a un terreno ordinario",
+      "post_type": "post",
+      "status": "future",
+      "slug": "terreni-area-zes-logica-valutazione",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Due diligence su capannoni e immobili produttivi: controlli indispensabili prima di investire",
+      "post_type": "post",
+      "status": "future",
+      "slug": "due-diligence-capannoni-immobili-produttivi",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Oneri di urbanizzazione in Puglia: come si calcolano davvero e quanto pesano sul margine",
+      "post_type": "post",
+      "status": "future",
+      "slug": "oneri-urbanizzazione-puglia-calcolo-margine",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Cambio di destinazione d'uso da ufficio a residenziale: quando conviene davvero in Puglia",
+      "post_type": "post",
+      "status": "future",
+      "slug": "cambio-destinazione-uso-ufficio-residenziale-puglia",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 80,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 80,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Conformita urbanistica e catastale prima del rogito: la checklist completa per non comprare problemi",
+      "post_type": "post",
+      "status": "future",
+      "slug": "conformita-urbanistica-catastale-prima-rogito",
+      "source_file": "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Terreni in Puglia vicino a infrastrutture e nuove opere: come leggere il potenziale prima del mercato",
+      "post_type": "post",
+      "status": "future",
+      "slug": "terreni-puglia-infrastrutture-nuove-opere-potenziale",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Agibilita, APE e conformita impianti: cosa blocca piu spesso una compravendita immobiliare",
+      "post_type": "post",
+      "status": "future",
+      "slug": "agibilita-ape-conformita-impianti-compravendita",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Contenuto pratico senza geo esplicita: conviene allinearlo al perimetro regionale dominante di MateriaPrima."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Diritto di superficie, PEEP e trasformazione in piena proprieta: come valutare l'affare senza errori",
+      "post_type": "post",
+      "status": "future",
+      "slug": "diritto-superficie-peep-piena-proprieta",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Contenuto pratico senza geo esplicita: conviene allinearlo al perimetro regionale dominante di MateriaPrima."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Comprare locale commerciale e trasformarlo: guida per chi cerca operazioni value-add in Puglia",
+      "post_type": "post",
+      "status": "future",
+      "slug": "comprare-locale-commerciale-trasformarlo-puglia",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Come leggere una visura ipotecaria e capire se un immobile ha rischi nascosti",
+      "post_type": "post",
+      "status": "future",
+      "slug": "visura-ipotecaria-rischi-immobile",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Vincoli paesaggistici in Puglia: cosa puoi fare e cosa no prima di comprare o progettare",
+      "post_type": "post",
+      "status": "future",
+      "slug": "vincoli-paesaggistici-puglia-acquisto-progetto",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Aree agricole e trasformazioni urbanistiche: come distinguere un'opportunita da un'illusione",
+      "post_type": "post",
+      "status": "future",
+      "slug": "aree-agricole-trasformazioni-urbanistiche",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Contenuto pratico senza geo esplicita: conviene allinearlo al perimetro regionale dominante di MateriaPrima."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Come impostare una vera analisi di fattibilita immobiliare prima di fare un'offerta",
+      "post_type": "post",
+      "status": "future",
+      "slug": "analisi-fattibilita-immobiliare-offerta",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Aggiungere almeno un angolo geo in intro, tag o blocco finale senza forzare il titolo.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con beneficio pratico + territorio consigliato",
+      "geo_action_required": true,
+      "recommended_geo_default": "Italia",
+      "recommended_geo_note": "Contenuto operativo generalista: classificazione nazionale consigliata, con eventuale adattamento Puglia nella distribuzione."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Bonus ristrutturazione ed efficientamento 2026: cosa e rimasto davvero conveniente in Puglia",
+      "post_type": "post",
+      "status": "future",
+      "slug": "bonus-ristrutturazione-efficientamento-2026-puglia",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Comprare casa all'asta in Puglia: quando conviene e quali errori fanno quasi tutti",
+      "post_type": "post",
+      "status": "future",
+      "slug": "comprare-casa-asta-puglia-errori",
+      "source_file": "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Direttiva Case Green e infrazione UE: quali immobili rischiano di perdere valore in Italia e nel Mezzogiorno",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "direttiva-case-green-infrazione-ue-immobili-rischio-valore",
+      "source_file": "imports/2026-04-batch-01/osservatorio-premium-batch-01.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Mezzogiorno",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Mezzogiorno",
+      "geo_action_required": false,
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Salva Casa 2026 e attuazione regionale: impatto reale sul mercato immobiliare italiano e pugliese",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "salva-casa-2026-attuazione-regionale-impatto-mercato-immobiliare",
+      "source_file": "imports/2026-04-batch-01/osservatorio-premium-batch-01.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Mutui, BCE e accesso al credito 2026: cosa puo cambiare davvero per il mercato residenziale del Sud",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "mutui-bce-accesso-credito-2026-sud",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Sud Italia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 73,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 55,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Sud Italia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Sud Italia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Investitori stranieri nel real estate italiano 2026: perche il Sud entra sempre piu spesso nei radar",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "investitori-stranieri-real-estate-italia-2026-sud",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Mezzogiorno",
+      "aree_geo_secondarie": [
+        "Sud Italia",
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 68,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Mezzogiorno",
+      "geo_action_required": false,
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Bari quartiere per quartiere 2026: prezzi, canoni, domanda e potenziale di rivalutazione",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "bari-quartiere-per-quartiere-2026",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "ZES Unica 2026-2028: quali immobili e investimenti stanno beneficiando davvero dell'incentivo",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "zes-unica-2026-2028-investimenti-immobiliari",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "da_definire",
+      "area_geo_principale": "Da assegnare",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_assente",
+      "geo_strength": "da_costruire",
+      "geo_score": 0,
+      "geo_signals": [],
+      "geo_recommendation": "Assegnare una geo primaria esplicita prima di considerare il contenuto pronto per Osservatorio.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Usare un frame dati + territorio esplicito",
+      "geo_action_required": true,
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Tema strutturalmente letto in chiave Sud/Mezzogiorno: usare macroarea come default editoriale."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Logistica e capannoni in Puglia: confronto tra Bari, Brindisi, Taranto e Foggia",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "logistica-capannoni-puglia-bari-brindisi-taranto-foggia",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Taranto",
+        "Foggia",
+        "Brindisi"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 100,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Taranto",
+          "level": "citta",
+          "weight": 94,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Foggia",
+          "level": "citta",
+          "weight": 94,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Brindisi",
+          "level": "citta",
+          "weight": 94,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Piano Casa, delibera Bari e nuovo PUG: come cambia l'equilibrio tra rigenerazione e nuove volumetrie",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "piano-casa-bari-pug-rigenerazione-volumetrie",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Turismo residenziale in Puglia 2026: chi compra, dove compra e che asset cerca davvero",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "turismo-residenziale-puglia-2026-acquisti-asset",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Student housing in Italia 2026: perche il Sud sta entrando davvero nella mappa degli investitori",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "student-housing-italia-2026-sud-investitori",
+      "source_file": "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Sud Italia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 73,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 55,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Sud Italia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Sud Italia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Mercato immobiliare nel Mezzogiorno 2026: prezzi, canoni e volumi stanno davvero andando nella stessa direzione?",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "mercato-immobiliare-mezzogiorno-2026-prezzi-canoni-volumi",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Mezzogiorno",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 75,
+      "geo_signals": [
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Mezzogiorno",
+      "geo_action_required": false,
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Affitti residenziali nel Sud Italia 2026: crescita dei canoni o semplice squilibrio tra domanda e offerta?",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "affitti-residenziali-sud-italia-2026",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Sud Italia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 73,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 55,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Sud Italia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Sud Italia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Retail high street a Bari nel 2026: il centro commerciale naturale torna investibile o resta selettivo?",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "retail-high-street-bari-2026",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Build to Rent nel Mezzogiorno: nel 2026 esiste davvero un mercato investibile o solo casi isolati?",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "build-to-rent-mezzogiorno-mercato-investibile",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Mezzogiorno",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 75,
+      "geo_signals": [
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Mezzogiorno",
+      "geo_action_required": false,
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Aree dismesse nel Sud Italia: la riconversione torna centrale, ma solo dove esiste una tesi urbana credibile",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "aree-dismesse-sud-italia-riconversione",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Sud Italia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 73,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 55,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Sud Italia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Sud Italia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "NPL, UTP e distressed real estate nel Mezzogiorno: nel 2026 dove si stanno aprendo le vere finestre di acquisto",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "npl-utp-distressed-real-estate-mezzogiorno",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Mezzogiorno",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 70,
+      "geo_signals": [
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 70,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Mezzogiorno",
+      "geo_action_required": false,
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Mercato immobiliare di lusso nel Mezzogiorno 2026: tenuta reale o crescita raccontata troppo in fretta?",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "mercato-lusso-mezzogiorno-2026",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Mezzogiorno",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 55,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Mezzogiorno",
+      "geo_action_required": false,
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Uffici secondari e stock obsoleto nel Sud: nel 2026 il vero tema non e venderli ma ripensarli",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "uffici-secondari-stock-obsoleto-sud",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Sud Italia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 73,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 55,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Sud Italia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Sud Italia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Social housing ed edilizia accessibile nel Sud: il 2026 puo essere l'anno del ritorno a una scala credibile?",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "social-housing-edilizia-accessibile-sud",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Sud Italia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 73,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 55,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Sud Italia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Sud Italia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Smart building e domotica nel Sud: nel 2026 quanto incidono davvero sul valore immobiliare?",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "smart-building-domotica-mercato-immobiliare-sud",
+      "source_file": "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Sud Italia",
+      "aree_geo_secondarie": [
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 73,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 55,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Sud Italia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Sud Italia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "valorizzare-terreni-agricoli-puglia",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Provincia di Bari",
+        "Puglia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Provincia di Bari",
+          "level": "provincia",
+          "weight": 101,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "zes-bari-incentivi-2024-2025",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Provincia di Bari"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Provincia di Bari",
+          "level": "provincia",
+          "weight": 101,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "edilizia-bari-2025-mercato-opportunita",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Puglia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Terreni in Vendita Puglia: Come Riconoscere Opportunità d'Oro e Investimenti Redditizi",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "terreni-vendita-puglia-opportunita",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Metodo F.I.L.O.: La Metodologia Proprietaria per Sviluppo Immobiliare di Successo",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "metodo-filo-sviluppo-immobiliare",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Stima Terreni Bari: Come Calcolare il Valore Corretto e Non Sbagliare Investimento",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "stima-valutazione-terreni-bari",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Puglia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 100,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Immobiliare Brindisi 2025: Mercato in Crescita e Opportunità di Investimento",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "immobiliare-brindisi-2025",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Brindisi",
+      "aree_geo_secondarie": [
+        "Puglia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Brindisi",
+          "level": "citta",
+          "weight": 94,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + brindisi",
+      "geo_action_required": false,
+      "recommended_geo_default": "Brindisi",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Lecce e Salento: Immobiliare ad Alta Rendita tra Storia e Modernità",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "immobiliare-lecce-salento",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Lecce",
+      "aree_geo_secondarie": [
+        "Salento"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Lecce",
+          "level": "citta",
+          "weight": 94,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Salento",
+          "level": "area",
+          "weight": 92,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + lecce",
+      "geo_action_required": false,
+      "recommended_geo_default": "Lecce",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Taranto: Mercato Immobiliare in Espansione verso la Transizione Verde",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "immobiliare-taranto-2025",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Taranto",
+      "aree_geo_secondarie": [
+        "Puglia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Taranto",
+          "level": "citta",
+          "weight": 94,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + taranto",
+      "geo_action_required": false,
+      "recommended_geo_default": "Taranto",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Immobiliare Foggia e Capitanata: Guida Completa al Mercato in Ascesa",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "immobiliare-foggia-capitanata",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Foggia",
+      "aree_geo_secondarie": [
+        "Capitanata",
+        "Puglia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Foggia",
+          "level": "citta",
+          "weight": 94,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Capitanata",
+          "level": "provincia",
+          "weight": 93,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 80,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + foggia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Foggia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "BAT - Barletta Andria Trani: Immobiliare nella Provincia Emergente della Puglia",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "immobiliare-barletta-andria-trani",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "provinciale",
+      "area_geo_principale": "BAT",
+      "aree_geo_secondarie": [
+        "Puglia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "BAT",
+          "level": "provincia",
+          "weight": 95,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + bat",
+      "geo_action_required": false,
+      "recommended_geo_default": "BAT",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Fattibilità Immobiliare: Come Analizzare un Progetto Prima di Investire",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "fattibilita-immobiliare-analisi",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Terreni Edificabili Bari: Potenziale Costruttivo e Valore di Mercato",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "terreni-edificabili-bari",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 100,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Investimenti Immobiliari Puglia: Strategie Avanzate e Tendenze 2025",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "investimenti-immobiliari-puglia-2025",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "materiaprima",
+      "title": "Come Trovare un Consulente Immobiliare Bravo: Criteri, Competenze e Red Flags",
+      "post_type": "post",
+      "status": "draft",
+      "slug": "scegliere-consulente-immobiliare",
+      "source_file": "visioni-app/materiaprima-import-completo.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 85,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        }
+      ],
+      "geo_recommendation": "Mantenere la geo nel title, rafforzare intro e snippet social con il territorio principale.",
+      "publisher_geo_priority": "media",
+      "social_geo_hook": "Aprire la condivisione con il problema pratico + puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Mercato Immobiliare del Mezzogiorno 2026: Dati, Trend e Previsioni",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "mercato-immobiliare-mezzogiorno-2026",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [
+        "Mezzogiorno",
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "ZES Unica Mezzogiorno: Come Cambia il Gioco per gli Investitori Immobiliari",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "zes-unica-investitori-immobiliari",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [
+        "Mezzogiorno"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Dove Investire nel Sud Italia nel 2026: La Classifica delle 10 Città con Maggiore Potenziale",
+      "post_type": "report",
+      "status": "future",
+      "slug": "dove-investire-sud-italia-classifica",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Puglia",
+        "Mezzogiorno",
+        "Sud Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 68,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Perché il Mezzogiorno è il Prossimo Hotspot Immobiliare d'Europa",
+      "post_type": "approfondimenti",
+      "status": "future",
+      "slug": "mezzogiorno-hotspot-immobiliare-europa",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [
+        "Mezzogiorno",
+        "Sud Italia",
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 68,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Credito d'Imposta ZES 2026: Guida Operativa Completa per Investitori Immobiliari",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "credito-imposta-zes-2026-guida-operativa",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [
+        "Mezzogiorno"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 70,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Direttiva Case Green (EPBD): Impatto Reale sul Mercato Immobiliare del Mezzogiorno",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "direttiva-case-green-impatto-mezzogiorno",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "macroarea",
+      "area_geo_principale": "Mezzogiorno",
+      "aree_geo_secondarie": [
+        "Sud Italia",
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "media",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 68,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Mezzogiorno",
+      "geo_action_required": false,
+      "recommended_geo_default": "Mezzogiorno",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Report Prezzi Immobiliari Puglia Q1 2026: Analisi Provincia per Provincia",
+      "post_type": "report",
+      "status": "future",
+      "slug": "report-prezzi-puglia-q1-2026",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Taranto",
+        "Lecce",
+        "Puglia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Taranto",
+          "level": "citta",
+          "weight": 99,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Lecce",
+          "level": "citta",
+          "weight": 99,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Rigenerazione Urbana nel Mezzogiorno: Come Trasforma il Valore degli Immobili",
+      "post_type": "approfondimenti",
+      "status": "future",
+      "slug": "rigenerazione-urbana-valore-immobili",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Taranto",
+        "Mezzogiorno"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Taranto",
+          "level": "citta",
+          "weight": 99,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Come l'Alta Velocità Cambierà il Valore degli Immobili nel Sud Italia",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "alta-velocita-valore-immobili-sud",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Mezzogiorno",
+        "Sud Italia",
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 68,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Mappa Completa dei Comuni della ZES Unica Mezzogiorno: Tutti i Territori Agevolati",
+      "post_type": "report",
+      "status": "future",
+      "slug": "mappa-comuni-zes-unica-mezzogiorno",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [
+        "Mezzogiorno"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Quotazioni OMI 2026: Analisi delle Variazioni nel Mezzogiorno",
+      "post_type": "analisi",
+      "status": "future",
+      "slug": "quotazioni-omi-2026-variazioni-mezzogiorno",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "regionale",
+      "area_geo_principale": "Puglia",
+      "aree_geo_secondarie": [
+        "Mezzogiorno"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Puglia",
+          "level": "regione",
+          "weight": 85,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Puglia",
+      "geo_action_required": false,
+      "recommended_geo_default": "Puglia",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    },
+    {
+      "site": "osservatorio",
+      "title": "Student Housing nel Sud Italia: L'Opportunità da 2 Miliardi che il Mercato Sta Ignorando",
+      "post_type": "approfondimenti",
+      "status": "future",
+      "slug": "student-housing-sud-italia-opportunita",
+      "source_file": "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml",
+      "livello_geo": "cittadino",
+      "area_geo_principale": "Bari",
+      "aree_geo_secondarie": [
+        "Mezzogiorno",
+        "Sud Italia",
+        "Italia"
+      ],
+      "geo_title_status": "geo_esplicita",
+      "geo_strength": "forte",
+      "geo_score": 100,
+      "geo_signals": [
+        {
+          "label": "Bari",
+          "level": "citta",
+          "weight": 105,
+          "sources": [
+            "taxonomy"
+          ]
+        },
+        {
+          "label": "Mezzogiorno",
+          "level": "macroarea",
+          "weight": 75,
+          "sources": [
+            "taxonomy",
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Sud Italia",
+          "level": "macroarea",
+          "weight": 68,
+          "sources": [
+            "title_or_slug"
+          ]
+        },
+        {
+          "label": "Italia",
+          "level": "nazionale",
+          "weight": 50,
+          "sources": [
+            "title_or_slug"
+          ]
+        }
+      ],
+      "geo_recommendation": "Rendere la geo un campo strutturato stabile tra titolo, tassonomia, snippet e distribuzione.",
+      "publisher_geo_priority": "alta",
+      "social_geo_hook": "Usare nel post social il frame dati + territorio Bari",
+      "geo_action_required": false,
+      "recommended_geo_default": "Bari",
+      "recommended_geo_note": "Geo gia esplicita nel contenuto."
+    }
+  ]
+}

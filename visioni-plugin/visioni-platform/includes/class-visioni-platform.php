@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once VISIONI_PLATFORM_DIR . 'includes/class-visioni-platform-radar.php';
 require_once VISIONI_PLATFORM_DIR . 'includes/class-visioni-platform-modules.php';
+require_once VISIONI_PLATFORM_DIR . 'includes/class-visioni-platform-control-tower.php';
 
 class Visioni_Platform {
     private const API_NAMESPACE = 'visioni-platform/v1';
@@ -76,11 +77,13 @@ class Visioni_Platform {
 
         Visioni_Platform_Radar::init();
         Visioni_Platform_Modules::init();
+        Visioni_Platform_Control_Tower::init();
     }
 
     public static function on_activation() {
         self::ensure_default_access_credentials();
         self::ensure_platform_pages();
+        Visioni_Platform_Control_Tower::on_activation();
         flush_rewrite_rules();
         set_transient( 'visioni_platform_show_activation_notice', 1, 5 * MINUTE_IN_SECONDS );
     }

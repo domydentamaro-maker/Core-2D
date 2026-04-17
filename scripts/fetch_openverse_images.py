@@ -34,16 +34,34 @@ def slugify(value: str, fallback: str) -> str:
     return text[:80] or fallback
 
 
-def http_get_json(url: str) -> Dict:
-    request = Request(url, headers={"User-Agent": USER_AGENT})
-    with urlopen(request, timeout=30) as response:
-        return json.loads(response.read().decode("utf-8"))
+def http_get_json(url: str, retries: int = 3) -> Dict:
+    for attempt in range(retries):
+        try:
+            request = Request(url, headers={"User-Agent": USER_AGENT})
+            with urlopen(request, timeout=30) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except (HTTPError, URLError, TimeoutError) as exc:
+            if attempt == retries - 1:
+                raise
+            wait = 2 ** attempt
+            print(f"  retry {attempt+1}/{retries} in {wait}s ({exc})", file=sys.stderr)
+            time.sleep(wait)
+    return {}
 
 
-def download_file(url: str, destination: Path) -> None:
-    request = Request(url, headers={"User-Agent": USER_AGENT})
-    with urlopen(request, timeout=60) as response:
-        destination.write_bytes(response.read())
+def download_file(url: str, destination: Path, retries: int = 3) -> None:
+    for attempt in range(retries):
+        try:
+            request = Request(url, headers={"User-Agent": USER_AGENT})
+            with urlopen(request, timeout=60) as response:
+                destination.write_bytes(response.read())
+            return
+        except (HTTPError, URLError, TimeoutError) as exc:
+            if attempt == retries - 1:
+                raise
+            wait = 2 ** attempt
+            print(f"  retry {attempt+1}/{retries} in {wait}s ({exc})", file=sys.stderr)
+            time.sleep(wait)
 
 
 def iter_results(query: str, license_code: str, page_size: int) -> Iterable[Dict]:
@@ -141,38 +159,44 @@ def main() -> int:
     seen_urls = set()
     records: List[Dict] = []
 
-    for query in queries:
+    for qi, query in enumerate(queries):
+        if qi > 0:
+            time.sleep(2)
         downloaded = 0
         query_slug = slugify(query, "query")
-        for result in iter_results(query, args.license, args.page_size):
-            image_url = result.get("url")
-            if not image_url or image_url in seen_urls:
-                continue
-            source = (result.get("source") or "").lower()
-            provider = (result.get("provider") or "").lower()
-            if not args.include_wikimedia and ("wikimedia" in source or "wikimedia" in provider):
-                continue
-            seen_urls.add(image_url)
+        try:
+            for result in iter_results(query, args.license, args.page_size):
+                image_url = result.get("url")
+                if not image_url or image_url in seen_urls:
+                    continue
+                source = (result.get("source") or "").lower()
+                provider = (result.get("provider") or "").lower()
+                if not args.include_wikimedia and ("wikimedia" in source or "wikimedia" in provider):
+                    continue
+                seen_urls.add(image_url)
 
-            fallback = hashlib.sha1(image_url.encode("utf-8")).hexdigest()[:10]
-            title_slug = slugify(result.get("title") or query_slug, fallback)
-            ext = pick_extension(image_url)
-            file_name = f"{query_slug}--{title_slug}--{fallback}{ext}"
-            destination = output_dir / file_name
+                fallback = hashlib.sha1(image_url.encode("utf-8")).hexdigest()[:10]
+                title_slug = slugify(result.get("title") or query_slug, fallback)
+                ext = pick_extension(image_url)
+                file_name = f"{query_slug}--{title_slug}--{fallback}{ext}"
+                destination = output_dir / file_name
 
-            try:
-                download_file(image_url, destination)
-            except (HTTPError, URLError, TimeoutError) as error:
-                print(f"skip {query}: {image_url} -> {error}", file=sys.stderr)
-                continue
+                try:
+                    download_file(image_url, destination)
+                except (HTTPError, URLError, TimeoutError) as error:
+                    print(f"skip {query}: {image_url} -> {error}", file=sys.stderr)
+                    continue
 
-            records.append(build_record(result, query, file_name))
-            downloaded += 1
-            print(f"downloaded {file_name}")
-            time.sleep(0.2)
+                records.append(build_record(result, query, file_name))
+                downloaded += 1
+                print(f"downloaded {file_name}")
+                time.sleep(0.2)
 
-            if downloaded >= args.per_query:
-                break
+                if downloaded >= args.per_query:
+                    break
+        except (HTTPError, URLError, TimeoutError) as exc:
+            print(f"skip query '{query}': {exc}", file=sys.stderr)
+            continue
 
     write_manifests(output_dir, records)
     print(f"saved {len(records)} images in {output_dir}")

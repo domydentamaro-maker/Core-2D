@@ -1,0 +1,1132 @@
+{
+  "generated_at": "2026-04-15",
+  "sources": {
+    "local_xml_files": [
+      "visioni-app/materiaprima-batch-01-5-articoli-20260414.xml",
+      "imports/2026-04-sprint-20/materiaprima-sprint-20.xml",
+      "imports/2026-05-sprint-20/materiaprima-sprint-20.xml",
+      "imports/2026-04-batch-01/materiaprima-premium-batch-01.xml",
+      "visioni-app/materiaprima-import-completo.xml",
+      "imports/2026-04-sprint-20/osservatorio-sprint-20.xml",
+      "imports/2026-05-sprint-20/osservatorio-sprint-20.xml",
+      "imports/2026-04-batch-01/osservatorio-premium-batch-01.xml",
+      "osservatorio-articoli/OSSERVATORIO_ARTICOLI_WXR_RANKMATH.xml"
+    ],
+    "live_admin_checked": true
+  },
+  "sites": {
+    "materiaprima": {
+      "local_items": 40,
+      "live_seen_items": 2,
+      "not_seen_in_live_admin": 38,
+      "taxonomy_domains": {
+        "category": 40,
+        "post_tag": 164
+      },
+      "top_topics": [
+        {
+          "topic": "Puglia",
+          "count": 21
+        },
+        {
+          "topic": "Guide",
+          "count": 9
+        },
+        {
+          "topic": "Investimenti",
+          "count": 6
+        },
+        {
+          "topic": "Valutazioni",
+          "count": 5
+        },
+        {
+          "topic": "Investimento immobiliare",
+          "count": 5
+        },
+        {
+          "topic": "Bari",
+          "count": 4
+        },
+        {
+          "topic": "Sviluppo immobiliare",
+          "count": 4
+        },
+        {
+          "topic": "Terreni agricoli",
+          "count": 4
+        },
+        {
+          "topic": "Terreno edificabile",
+          "count": 4
+        },
+        {
+          "topic": "Urbanistica",
+          "count": 3
+        },
+        {
+          "topic": "terreni",
+          "count": 3
+        },
+        {
+          "topic": "Strategie valorizzazione",
+          "count": 3
+        },
+        {
+          "topic": "Terreno agricolo",
+          "count": 3
+        },
+        {
+          "topic": "Urbanistica normative",
+          "count": 3
+        },
+        {
+          "topic": "Consulenza servizi",
+          "count": 3
+        },
+        {
+          "topic": "CILA",
+          "count": 2
+        },
+        {
+          "topic": "SCIA",
+          "count": 2
+        },
+        {
+          "topic": "conformita urbanistica",
+          "count": 2
+        },
+        {
+          "topic": "conformita catastale",
+          "count": 2
+        },
+        {
+          "topic": "Cambio destinazione",
+          "count": 2
+        },
+        {
+          "topic": "Fattibilita urbanistica",
+          "count": 2
+        },
+        {
+          "topic": "Provincia bari",
+          "count": 2
+        },
+        {
+          "topic": "Bari centro",
+          "count": 2
+        },
+        {
+          "topic": "Bari periferia",
+          "count": 2
+        },
+        {
+          "topic": "Mercato immobiliare puglia",
+          "count": 2
+        },
+        {
+          "topic": "Mercato immobiliare",
+          "count": 2
+        },
+        {
+          "topic": "Cantiere residenziale",
+          "count": 2
+        },
+        {
+          "topic": "Valutazione terreni",
+          "count": 2
+        },
+        {
+          "topic": "Metodo filo",
+          "count": 2
+        },
+        {
+          "topic": "2d sviluppo",
+          "count": 2
+        },
+        {
+          "topic": "Vincoli paesaggistici",
+          "count": 2
+        },
+        {
+          "topic": "Investimenti finanziamenti",
+          "count": 2
+        },
+        {
+          "topic": "Finanziamento progetti",
+          "count": 2
+        },
+        {
+          "topic": "Ambiente",
+          "count": 2
+        },
+        {
+          "topic": "Normativa",
+          "count": 1
+        },
+        {
+          "topic": "Ristrutturazione",
+          "count": 1
+        },
+        {
+          "topic": "Pratiche edilizie",
+          "count": 1
+        },
+        {
+          "topic": "Guide Pratiche",
+          "count": 1
+        },
+        {
+          "topic": "Agibilità",
+          "count": 1
+        },
+        {
+          "topic": "Acquisto immobile",
+          "count": 1
+        }
+      ],
+      "topic_to_titles": {
+        "2d sviluppo": [
+          "Metodo F.I.L.O.: La Metodologia Proprietaria per Sviluppo Immobiliare di Successo",
+          "Investimenti Immobiliari Puglia: Strategie Avanzate e Tendenze 2025"
+        ],
+        "APE": [
+          "Agibilita, APE e conformita impianti: cosa blocca piu spesso una compravendita immobiliare"
+        ],
+        "Acquisto immobile": [
+          "Agibilità immobile a Bari: la checklist da fare prima del preliminare"
+        ],
+        "Agibilità": [
+          "Agibilità immobile a Bari: la checklist da fare prima del preliminare"
+        ],
+        "Ambiente": [
+          "BAT - Barletta Andria Trani: Immobiliare nella Provincia Emergente della Puglia",
+          "Come Trovare un Consulente Immobiliare Bravo: Criteri, Competenze e Red Flags"
+        ],
+        "Analisi fattibilita": [
+          "Stima Terreni Bari: Come Calcolare il Valore Corretto e Non Sbagliare Investimento"
+        ],
+        "Banca": [
+          "Fattibilità Immobiliare: Come Analizzare un Progetto Prima di Investire"
+        ],
+        "Bari": [
+          "Agibilità immobile a Bari: la checklist da fare prima del preliminare",
+          "Acquistare un immobile da ristrutturare a Bari: come capire se il prezzo e davvero interessante",
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali",
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione"
+        ],
+        "Bari centro": [
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali",
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione"
+        ],
+        "Bari periferia": [
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali",
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione"
+        ],
+        "Bonus ristrutturazione": [
+          "Bonus ristrutturazione 2026: come pianificare lavori, costi e documenti senza perdere margine"
+        ],
+        "CILA": [
+          "CILA o SCIA in Puglia: quale pratica serve davvero per ristrutturare senza blocchi",
+          "SCIA o CILA in Puglia nel 2026: differenze reali, errori frequenti e quando sbagli titolo edilizio"
+        ],
+        "Cambio destinazione": [
+          "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+          "Immobiliare Brindisi 2025: Mercato in Crescita e Opportunità di Investimento"
+        ],
+        "Cantiere commerciale": [
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione"
+        ],
+        "Cantiere residenziale": [
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione",
+          "Immobiliare Foggia e Capitanata: Guida Completa al Mercato in Ascesa"
+        ],
+        "Case Green": [
+          "Direttiva Case Green in Puglia 2026: cosa deve fare oggi un proprietario per non trovarsi fuori mercato domani"
+        ],
+        "Checklist immobile": [
+          "Due diligence urbanistica: i 12 controlli da fare prima di comprare un immobile da trasformare"
+        ],
+        "Consulenza immobiliare": [
+          "Investimenti Immobiliari Puglia: Strategie Avanzate e Tendenze 2025"
+        ],
+        "Consulenza servizi": [
+          "Immobiliare Foggia e Capitanata: Guida Completa al Mercato in Ascesa",
+          "Terreni Edificabili Bari: Potenziale Costruttivo e Valore di Mercato",
+          "Investimenti Immobiliari Puglia: Strategie Avanzate e Tendenze 2025"
+        ],
+        "Demolizione e ricostruzione": [
+          "Demolizione e ricostruzione in Puglia: quando conviene davvero e quali vincoli pesano sul margine"
+        ],
+        "Detrazioni fiscali": [
+          "Bonus ristrutturazione 2026: come pianificare lavori, costi e documenti senza perdere margine"
+        ],
+        "Domenico dentamaro": [
+          "Metodo F.I.L.O.: La Metodologia Proprietaria per Sviluppo Immobiliare di Successo"
+        ],
+        "Due diligence": [
+          "Agibilità immobile a Bari: la checklist da fare prima del preliminare"
+        ],
+        "Due diligence urbanistica": [
+          "Due diligence urbanistica: i 12 controlli da fare prima di comprare un immobile da trasformare"
+        ],
+        "Edilizia": [
+          "Immobiliare Foggia e Capitanata: Guida Completa al Mercato in Ascesa"
+        ],
+        "Edilizia bari": [
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione"
+        ],
+        "Edilizia e Costruzioni": [
+          "Demolizione e ricostruzione in Puglia: quando conviene davvero e quali vincoli pesano sul margine"
+        ],
+        "Edilizia sostenibile": [
+          "Come Trovare un Consulente Immobiliare Bravo: Criteri, Competenze e Red Flags"
+        ],
+        "Esperto immobiliare": [
+          "Investimenti Immobiliari Puglia: Strategie Avanzate e Tendenze 2025"
+        ],
+        "Fattibilita urbanistica": [
+          "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+          "Stima Terreni Bari: Come Calcolare il Valore Corretto e Non Sbagliare Investimento"
+        ],
+        "Finanziamento progetti": [
+          "Taranto: Mercato Immobiliare in Espansione verso la Transizione Verde",
+          "Fattibilità Immobiliare: Come Analizzare un Progetto Prima di Investire"
+        ],
+        "Fiscalità": [
+          "Bonus ristrutturazione 2026: come pianificare lavori, costi e documenti senza perdere margine"
+        ],
+        "Gestione cantieri": [
+          "Immobiliare Foggia e Capitanata: Guida Completa al Mercato in Ascesa"
+        ],
+        "Green building": [
+          "Come Trovare un Consulente Immobiliare Bravo: Criteri, Competenze e Red Flags"
+        ],
+        "Guide": [
+          "Direttiva Case Green in Puglia 2026: cosa deve fare oggi un proprietario per non trovarsi fuori mercato domani",
+          "Salva Casa in Puglia 2026: cosa cambia davvero per pratiche, sanatorie e conformita",
+          "SCIA o CILA in Puglia nel 2026: differenze reali, errori frequenti e quando sbagli titolo edilizio",
+          "Mutuo oggi o attesa? Come decidere nel 2026 con tassi incerti e prezzi ancora rigidi",
+          "Conformita urbanistica e catastale prima del rogito: la checklist completa per non comprare problemi",
+          "Agibilita, APE e conformita impianti: cosa blocca piu spesso una compravendita immobiliare",
+          "Come leggere una visura ipotecaria e capire se un immobile ha rischi nascosti",
+          "Vincoli paesaggistici in Puglia: cosa puoi fare e cosa no prima di comprare o progettare",
+          "Bonus ristrutturazione ed efficientamento 2026: cosa e rimasto davvero conveniente in Puglia"
+        ],
+        "Guide Pratiche": [
+          "Agibilità immobile a Bari: la checklist da fare prima del preliminare"
+        ],
+        "Incentivi fiscali": [
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali"
+        ],
+        "Investimenti": [
+          "Terreni in area ZES: come cambia la logica di valutazione rispetto a un terreno ordinario",
+          "Due diligence su capannoni e immobili produttivi: controlli indispensabili prima di investire",
+          "Cambio di destinazione d'uso da ufficio a residenziale: quando conviene davvero in Puglia",
+          "Terreni in Puglia vicino a infrastrutture e nuove opere: come leggere il potenziale prima del mercato",
+          "Comprare locale commerciale e trasformarlo: guida per chi cerca operazioni value-add in Puglia",
+          "Comprare casa all'asta in Puglia: quando conviene e quali errori fanno quasi tutti"
+        ],
+        "Investimenti finanziamenti": [
+          "Taranto: Mercato Immobiliare in Espansione verso la Transizione Verde",
+          "Fattibilità Immobiliare: Come Analizzare un Progetto Prima di Investire"
+        ],
+        "Investimenti immobiliari": [
+          "Due diligence urbanistica: i 12 controlli da fare prima di comprare un immobile da trasformare"
+        ],
+        "Investimento immobiliare": [
+          "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali",
+          "Terreni in Vendita Puglia: Come Riconoscere Opportunità d'Oro e Investimenti Redditizi",
+          "Taranto: Mercato Immobiliare in Espansione verso la Transizione Verde",
+          "Fattibilità Immobiliare: Come Analizzare un Progetto Prima di Investire"
+        ],
+        "Lavori edili": [
+          "Bonus ristrutturazione 2026: come pianificare lavori, costi e documenti senza perdere margine"
+        ],
+        "Lottizzazione": [
+          "Lecce e Salento: Immobiliare ad Alta Rendita tra Storia e Modernità"
+        ],
+        "Mercato immobiliare": [
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione",
+          "Terreni Edificabili Bari: Potenziale Costruttivo e Valore di Mercato"
+        ],
+        "Mercato immobiliare puglia": [
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione",
+          "Terreni in Vendita Puglia: Come Riconoscere Opportunità d'Oro e Investimenti Redditizi"
+        ],
+        "Metodo filo": [
+          "Metodo F.I.L.O.: La Metodologia Proprietaria per Sviluppo Immobiliare di Successo",
+          "Metodo F.I.L.O.: La Metodologia Proprietaria per Sviluppo Immobiliare di Successo"
+        ],
+        "Normativa": [
+          "CILA o SCIA in Puglia: quale pratica serve davvero per ristrutturare senza blocchi"
+        ],
+        "PEEP": [
+          "Diritto di superficie, PEEP e trasformazione in piena proprieta: come valutare l'affare senza errori"
+        ],
+        "Partnership immobiliare": [
+          "Taranto: Mercato Immobiliare in Espansione verso la Transizione Verde"
+        ],
+        "Pratiche edilizie": [
+          "CILA o SCIA in Puglia: quale pratica serve davvero per ristrutturare senza blocchi"
+        ],
+        "Provincia bari": [
+          "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali"
+        ],
+        "Puglia": [
+          "CILA o SCIA in Puglia: quale pratica serve davvero per ristrutturare senza blocchi",
+          "Demolizione e ricostruzione in Puglia: quando conviene davvero e quali vincoli pesano sul margine",
+          "Direttiva Case Green in Puglia 2026: cosa deve fare oggi un proprietario per non trovarsi fuori mercato domani",
+          "Salva Casa in Puglia 2026: cosa cambia davvero per pratiche, sanatorie e conformita",
+          "SCIA o CILA in Puglia nel 2026: differenze reali, errori frequenti e quando sbagli titolo edilizio",
+          "Oneri di urbanizzazione in Puglia: come si calcolano davvero e quanto pesano sul margine",
+          "Terreni in Puglia vicino a infrastrutture e nuove opere: come leggere il potenziale prima del mercato",
+          "Comprare locale commerciale e trasformarlo: guida per chi cerca operazioni value-add in Puglia",
+          "Vincoli paesaggistici in Puglia: cosa puoi fare e cosa no prima di comprare o progettare",
+          "Bonus ristrutturazione ed efficientamento 2026: cosa e rimasto davvero conveniente in Puglia"
+        ],
+        "Rigenerazione urbana": [
+          "Demolizione e ricostruzione in Puglia: quando conviene davvero e quali vincoli pesano sul margine"
+        ],
+        "Ristrutturazione": [
+          "CILA o SCIA in Puglia: quale pratica serve davvero per ristrutturare senza blocchi"
+        ],
+        "Ristrutturazione casa": [
+          "Bonus ristrutturazione 2026: come pianificare lavori, costi e documenti senza perdere margine"
+        ],
+        "SCIA": [
+          "CILA o SCIA in Puglia: quale pratica serve davvero per ristrutturare senza blocchi",
+          "SCIA o CILA in Puglia nel 2026: differenze reali, errori frequenti e quando sbagli titolo edilizio"
+        ],
+        "Salva Casa": [
+          "Salva Casa in Puglia 2026: cosa cambia davvero per pratiche, sanatorie e conformita"
+        ],
+        "Sostenibilita innovazione": [
+          "Come Trovare un Consulente Immobiliare Bravo: Criteri, Competenze e Red Flags"
+        ],
+        "Stato legittimo": [
+          "Due diligence urbanistica: i 12 controlli da fare prima di comprare un immobile da trasformare"
+        ],
+        "Stima immobili": [
+          "Terreni Edificabili Bari: Potenziale Costruttivo e Valore di Mercato"
+        ],
+        "Strategia immobiliare": [
+          "Metodo F.I.L.O.: La Metodologia Proprietaria per Sviluppo Immobiliare di Successo"
+        ],
+        "Strategie valorizzazione": [
+          "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+          "Immobiliare Brindisi 2025: Mercato in Crescita e Opportunità di Investimento",
+          "Lecce e Salento: Immobiliare ad Alta Rendita tra Storia e Modernità"
+        ],
+        "Sviluppo immobiliare": [
+          "Demolizione e ricostruzione in Puglia: quando conviene davvero e quali vincoli pesano sul margine",
+          "Edilizia Bari 2025: Mercato, Opportunità e Mega-Progetti in Espansione",
+          "Lecce e Salento: Immobiliare ad Alta Rendita tra Storia e Modernità",
+          "Immobiliare Foggia e Capitanata: Guida Completa al Mercato in Ascesa"
+        ],
+        "Terreni agricoli": [
+          "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+          "Terreni in Vendita Puglia: Come Riconoscere Opportunità d'Oro e Investimenti Redditizi",
+          "Immobiliare Brindisi 2025: Mercato in Crescita e Opportunità di Investimento",
+          "Lecce e Salento: Immobiliare ad Alta Rendita tra Storia e Modernità"
+        ],
+        "Terreno agricolo": [
+          "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+          "Terreni in Vendita Puglia: Come Riconoscere Opportunità d'Oro e Investimenti Redditizi",
+          "Immobiliare Brindisi 2025: Mercato in Crescita e Opportunità di Investimento"
+        ],
+        "Terreno edificabile": [
+          "Come Valorizzare Terreni Agricoli in Puglia: Guida Completa per Proprietari e Investitori",
+          "Terreni in Vendita Puglia: Come Riconoscere Opportunità d'Oro e Investimenti Redditizi",
+          "Lecce e Salento: Immobiliare ad Alta Rendita tra Storia e Modernità",
+          "Terreni Edificabili Bari: Potenziale Costruttivo e Valore di Mercato"
+        ],
+        "Urbanistica": [
+          "Due diligence urbanistica: i 12 controlli da fare prima di comprare un immobile da trasformare",
+          "Immobiliare Brindisi 2025: Mercato in Crescita e Opportunità di Investimento",
+          "BAT - Barletta Andria Trani: Immobiliare nella Provincia Emergente della Puglia"
+        ],
+        "Urbanistica normative": [
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali",
+          "Stima Terreni Bari: Come Calcolare il Valore Corretto e Non Sbagliare Investimento",
+          "BAT - Barletta Andria Trani: Immobiliare nella Provincia Emergente della Puglia"
+        ],
+        "Valutazione terreni": [
+          "Terreni in Vendita Puglia: Come Riconoscere Opportunità d'Oro e Investimenti Redditizi",
+          "Terreni Edificabili Bari: Potenziale Costruttivo e Valore di Mercato"
+        ],
+        "Valutazioni": [
+          "Acquistare un immobile da ristrutturare a Bari: come capire se il prezzo e davvero interessante",
+          "Oneri di urbanizzazione in Puglia: come si calcolano davvero e quanto pesano sul margine",
+          "Diritto di superficie, PEEP e trasformazione in piena proprieta: come valutare l'affare senza errori",
+          "Aree agricole e trasformazioni urbanistiche: come distinguere un'opportunita da un'illusione",
+          "Come impostare una vera analisi di fattibilita immobiliare prima di fare un'offerta"
+        ],
+        "Vincoli paesaggistici": [
+          "Stima Terreni Bari: Come Calcolare il Valore Corretto e Non Sbagliare Investimento",
+          "BAT - Barletta Andria Trani: Immobiliare nella Provincia Emergente della Puglia"
+        ],
+        "ZES": [
+          "Terreni in area ZES: come cambia la logica di valutazione rispetto a un terreno ordinario"
+        ],
+        "Zona economica speciale": [
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali"
+        ],
+        "Zona zes": [
+          "ZES Bari 2024-2025: Guida Completa agli Incentivi e Agevolazioni Fiscali"
+        ],
+        "Zonizzazione": [
+          "Stima Terreni Bari: Come Calcolare il Valore Corretto e Non Sbagliare Investimento"
+        ],
+        "acquisto casa": [
+          "Mutuo oggi o attesa? Come decidere nel 2026 con tassi incerti e prezzi ancora rigidi"
+        ],
+        "agibilita": [
+          "Agibilita, APE e conformita impianti: cosa blocca piu spesso una compravendita immobiliare"
+        ],
+        "analisi di fattibilita": [
+          "Come impostare una vera analisi di fattibilita immobiliare prima di fare un'offerta"
+        ],
+        "aree agricole": [
+          "Aree agricole e trasformazioni urbanistiche: come distinguere un'opportunita da un'illusione"
+        ],
+        "aste immobiliari": [
+          "Comprare casa all'asta in Puglia: quando conviene e quali errori fanno quasi tutti"
+        ],
+        "bonus ristrutturazione": [
+          "Bonus ristrutturazione ed efficientamento 2026: cosa e rimasto davvero conveniente in Puglia"
+        ],
+        "cambio destinazione d'uso": [
+          "Cambio di destinazione d'uso da ufficio a residenziale: quando conviene davvero in Puglia"
+        ],
+        "capannoni": [
+          "Due diligence su capannoni e immobili produttivi: controlli indispensabili prima di investire"
+        ],
+        "classe energetica": [
+          "Direttiva Case Green in Puglia 2026: cosa deve fare oggi un proprietario per non trovarsi fuori mercato domani"
+        ],
+        "compravendita": [
+          "Come leggere una visura ipotecaria e capire se un immobile ha rischi nascosti"
+        ],
+        "conformita catastale": [
+          "Salva Casa in Puglia 2026: cosa cambia davvero per pratiche, sanatorie e conformita",
+          "Conformita urbanistica e catastale prima del rogito: la checklist completa per non comprare problemi"
+        ],
+        "conformita urbanistica": [
+          "Salva Casa in Puglia 2026: cosa cambia davvero per pratiche, sanatorie e conformita",
+          "Conformita urbanistica e catastale prima del rogito: la checklist completa per non comprare problemi"
+        ],
+        "diritto di superficie": [
+          "Diritto di superficie, PEEP e trasformazione in piena proprieta: come valutare l'affare senza errori"
+        ],
+        "due diligence": [
+          "Due diligence su capannoni e immobili produttivi: controlli indispensabili prima di investire"
+        ],
+        "efficientamento": [
+          "Bonus ristrutturazione ed efficientamento 2026: cosa e rimasto davvero conveniente in Puglia"
+        ],
+        "efficientamento energetico": [
+          "Direttiva Case Green in Puglia 2026: cosa deve fare oggi un proprietario per non trovarsi fuori mercato domani"
+        ],
+        "errori": [
+          "Comprare casa all'asta in Puglia: quando conviene e quali errori fanno quasi tutti"
+        ],
+        "immobili produttivi": [
+          "Due diligence su capannoni e immobili produttivi: controlli indispensabili prima di investire"
+        ],
+        "impianti": [
+          "Agibilita, APE e conformita impianti: cosa blocca piu spesso una compravendita immobiliare"
+        ],
+        "infrastrutture": [
+          "Terreni in Puglia vicino a infrastrutture e nuove opere: come leggere il potenziale prima del mercato"
+        ],
+        "investimento": [
+          "Come impostare una vera analisi di fattibilita immobiliare prima di fare un'offerta"
+        ],
+        "locale commerciale": [
+          "Comprare locale commerciale e trasformarlo: guida per chi cerca operazioni value-add in Puglia"
+        ],
+        "margine": [
+          "Oneri di urbanizzazione in Puglia: come si calcolano davvero e quanto pesano sul margine"
+        ],
+        "mutui": [
+          "Mutuo oggi o attesa? Come decidere nel 2026 con tassi incerti e prezzi ancora rigidi"
+        ],
+        "offerta": [
+          "Come impostare una vera analisi di fattibilita immobiliare prima di fare un'offerta"
+        ],
+        "oneri urbanizzazione": [
+          "Oneri di urbanizzazione in Puglia: come si calcolano davvero e quanto pesano sul margine"
+        ],
+        "piena proprieta": [
+          "Diritto di superficie, PEEP e trasformazione in piena proprieta: come valutare l'affare senza errori"
+        ],
+        "pratiche edilizie": [
+          "Salva Casa in Puglia 2026: cosa cambia davvero per pratiche, sanatorie e conformita"
+        ],
+        "prezzo immobile": [
+          "Acquistare un immobile da ristrutturare a Bari: come capire se il prezzo e davvero interessante"
+        ],
+        "progetto": [
+          "Vincoli paesaggistici in Puglia: cosa puoi fare e cosa no prima di comprare o progettare"
+        ],
+        "proprietari": [
+          "Direttiva Case Green in Puglia 2026: cosa deve fare oggi un proprietario per non trovarsi fuori mercato domani"
+        ],
+        "residenziale": [
+          "Cambio di destinazione d'uso da ufficio a residenziale: quando conviene davvero in Puglia"
+        ],
+        "rischi immobile": [
+          "Come leggere una visura ipotecaria e capire se un immobile ha rischi nascosti"
+        ],
+        "ristrutturazione": [
+          "Acquistare un immobile da ristrutturare a Bari: come capire se il prezzo e davvero interessante"
+        ],
+        "rogito": [
+          "Conformita urbanistica e catastale prima del rogito: la checklist completa per non comprare problemi"
+        ],
+        "sanatoria": [
+          "Salva Casa in Puglia 2026: cosa cambia davvero per pratiche, sanatorie e conformita"
+        ],
+        "tassi": [
+          "Mutuo oggi o attesa? Come decidere nel 2026 con tassi incerti e prezzi ancora rigidi"
+        ],
+        "terreni": [
+          "Terreni in area ZES: come cambia la logica di valutazione rispetto a un terreno ordinario",
+          "Terreni in Puglia vicino a infrastrutture e nuove opere: come leggere il potenziale prima del mercato",
+          "Aree agricole e trasformazioni urbanistiche: come distinguere un'opportunita da un'illusione"
+        ],
+        "trasformazioni urbanistiche": [
+          "Aree agricole e trasformazioni urbanistiche: come distinguere un'opportunita da un'illusione"
+        ],
+        "ufficio": [
+          "Cambio di destinazione d'uso da ufficio a residenziale: quando conviene davvero in Puglia"
+        ],
+        "valore immobile": [
+          "Direttiva Case Green in Puglia 2026: cosa deve fare oggi un proprietario per non trovarsi fuori mercato domani"
+        ],
+        "value-add": [
+          "Comprare locale commerciale e trasformarlo: guida per chi cerca operazioni value-add in Puglia"
+        ],
+        "valutazione": [
+          "Terreni in area ZES: come cambia la logica di valutazione rispetto a un terreno ordinario"
+        ],
+        "vincoli paesaggistici": [
+          "Vincoli paesaggistici in Puglia: cosa puoi fare e cosa no prima di comprare o progettare"
+        ],
+        "visura ipotecaria": [
+          "Come leggere una visura ipotecaria e capire se un immobile ha rischi nascosti"
+        ]
+      }
+    },
+    "osservatorio": {
+      "local_items": 32,
+      "live_seen_items": 6,
+      "not_seen_in_live_admin": 26,
+      "taxonomy_domains": {
+        "category": 32,
+        "post_tag": 134
+      },
+      "top_topics": [
+        {
+          "topic": "Mezzogiorno",
+          "count": 14
+        },
+        {
+          "topic": "Mercato Immobiliare",
+          "count": 13
+        },
+        {
+          "topic": "Puglia",
+          "count": 11
+        },
+        {
+          "topic": "Bari",
+          "count": 8
+        },
+        {
+          "topic": "Investimenti Immobiliari",
+          "count": 8
+        },
+        {
+          "topic": "Sud Italia",
+          "count": 7
+        },
+        {
+          "topic": "ZES Unica",
+          "count": 4
+        },
+        {
+          "topic": "Asset Class",
+          "count": 4
+        },
+        {
+          "topic": "Normative e Sostenibilita",
+          "count": 3
+        },
+        {
+          "topic": "Dati OMI",
+          "count": 3
+        },
+        {
+          "topic": "ZES e Incentivi",
+          "count": 3
+        },
+        {
+          "topic": "Investimenti",
+          "count": 3
+        },
+        {
+          "topic": "Direttiva Case Green",
+          "count": 2
+        },
+        {
+          "topic": "Green Value Gap",
+          "count": 2
+        },
+        {
+          "topic": "Valore Immobiliare",
+          "count": 2
+        },
+        {
+          "topic": "Student Housing",
+          "count": 2
+        },
+        {
+          "topic": "Rigenerazione Urbana",
+          "count": 2
+        },
+        {
+          "topic": "Credito d'Imposta",
+          "count": 2
+        },
+        {
+          "topic": "Prezzi Immobiliari",
+          "count": 2
+        },
+        {
+          "topic": "Taranto",
+          "count": 2
+        },
+        {
+          "topic": "PNRR",
+          "count": 2
+        },
+        {
+          "topic": "Infrazione UE",
+          "count": 1
+        },
+        {
+          "topic": "Salva Casa",
+          "count": 1
+        },
+        {
+          "topic": "Attuazione Regionale",
+          "count": 1
+        },
+        {
+          "topic": "Conformita Edilizia",
+          "count": 1
+        },
+        {
+          "topic": "Mutui",
+          "count": 1
+        },
+        {
+          "topic": "BCE",
+          "count": 1
+        },
+        {
+          "topic": "Investitori Stranieri",
+          "count": 1
+        },
+        {
+          "topic": "Real Estate",
+          "count": 1
+        },
+        {
+          "topic": "quartieri",
+          "count": 1
+        },
+        {
+          "topic": "rivalutazione",
+          "count": 1
+        },
+        {
+          "topic": "logistica",
+          "count": 1
+        },
+        {
+          "topic": "capannoni",
+          "count": 1
+        },
+        {
+          "topic": "Piano Casa",
+          "count": 1
+        },
+        {
+          "topic": "PUG",
+          "count": 1
+        },
+        {
+          "topic": "Turismo Residenziale",
+          "count": 1
+        },
+        {
+          "topic": "Acquisti Immobiliari",
+          "count": 1
+        },
+        {
+          "topic": "investitori",
+          "count": 1
+        },
+        {
+          "topic": "prezzi immobiliari",
+          "count": 1
+        },
+        {
+          "topic": "canoni",
+          "count": 1
+        }
+      ],
+      "topic_to_titles": {
+        "Abitare e Politiche Urbane": [
+          "Social housing ed edilizia accessibile nel Sud: il 2026 puo essere l'anno del ritorno a una scala credibile?"
+        ],
+        "Acquisti Immobiliari": [
+          "Turismo residenziale in Puglia 2026: chi compra, dove compra e che asset cerca davvero"
+        ],
+        "Agenzia delle Entrate": [
+          "Quotazioni OMI 2026: Analisi delle Variazioni nel Mezzogiorno"
+        ],
+        "Alta Velocità": [
+          "Come l'Alta Velocità Cambierà il Valore degli Immobili nel Sud Italia"
+        ],
+        "Asset Class": [
+          "Retail high street a Bari nel 2026: il centro commerciale naturale torna investibile o resta selettivo?",
+          "Build to Rent nel Mezzogiorno: nel 2026 esiste davvero un mercato investibile o solo casi isolati?",
+          "Mercato immobiliare di lusso nel Mezzogiorno 2026: tenuta reale o crescita raccontata troppo in fretta?",
+          "Uffici secondari e stock obsoleto nel Sud: nel 2026 il vero tema non e venderli ma ripensarli"
+        ],
+        "Attuazione Regionale": [
+          "Salva Casa 2026 e attuazione regionale: impatto reale sul mercato immobiliare italiano e pugliese"
+        ],
+        "BCE": [
+          "Mutui, BCE e accesso al credito 2026: cosa puo cambiare davvero per il mercato residenziale del Sud"
+        ],
+        "Bari": [
+          "Bari quartiere per quartiere 2026: prezzi, canoni, domanda e potenziale di rivalutazione",
+          "Piano Casa, delibera Bari e nuovo PUG: come cambia l'equilibrio tra rigenerazione e nuove volumetrie",
+          "Retail high street a Bari nel 2026: il centro commerciale naturale torna investibile o resta selettivo?",
+          "Dove Investire nel Sud Italia nel 2026: La Classifica delle 10 Città con Maggiore Potenziale",
+          "Report Prezzi Immobiliari Puglia Q1 2026: Analisi Provincia per Provincia",
+          "Rigenerazione Urbana nel Mezzogiorno: Come Trasforma il Valore degli Immobili",
+          "Come l'Alta Velocità Cambierà il Valore degli Immobili nel Sud Italia",
+          "Student Housing nel Sud Italia: L'Opportunità da 2 Miliardi che il Mercato Sta Ignorando"
+        ],
+        "Build to Rent": [
+          "Build to Rent nel Mezzogiorno: nel 2026 esiste davvero un mercato investibile o solo casi isolati?"
+        ],
+        "Campania": [
+          "Mappa Completa dei Comuni della ZES Unica Mezzogiorno: Tutti i Territori Agevolati"
+        ],
+        "Capitali e Investimenti": [
+          "NPL, UTP e distressed real estate nel Mezzogiorno: nel 2026 dove si stanno aprendo le vere finestre di acquisto"
+        ],
+        "Classifica Città": [
+          "Dove Investire nel Sud Italia nel 2026: La Classifica delle 10 Città con Maggiore Potenziale"
+        ],
+        "Comuni Mezzogiorno": [
+          "Mappa Completa dei Comuni della ZES Unica Mezzogiorno: Tutti i Territori Agevolati"
+        ],
+        "Conformita Edilizia": [
+          "Salva Casa 2026 e attuazione regionale: impatto reale sul mercato immobiliare italiano e pugliese"
+        ],
+        "Confronto Mercati": [
+          "Perché il Mezzogiorno è il Prossimo Hotspot Immobiliare d'Europa"
+        ],
+        "Credito d'Imposta": [
+          "ZES Unica Mezzogiorno: Come Cambia il Gioco per gli Investitori Immobiliari",
+          "Credito d'Imposta ZES 2026: Guida Operativa Completa per Investitori Immobiliari"
+        ],
+        "Dati OMI": [
+          "Mercato Immobiliare del Mezzogiorno 2026: Dati, Trend e Previsioni",
+          "Report Prezzi Immobiliari Puglia Q1 2026: Analisi Provincia per Provincia",
+          "Quotazioni OMI 2026: Analisi delle Variazioni nel Mezzogiorno"
+        ],
+        "Direttiva Case Green": [
+          "Direttiva Case Green e infrazione UE: quali immobili rischiano di perdere valore in Italia e nel Mezzogiorno",
+          "Direttiva Case Green (EPBD): Impatto Reale sul Mercato Immobiliare del Mezzogiorno"
+        ],
+        "EPBD": [
+          "Direttiva Case Green (EPBD): Impatto Reale sul Mercato Immobiliare del Mezzogiorno"
+        ],
+        "Efficienza Energetica": [
+          "Direttiva Case Green (EPBD): Impatto Reale sul Mercato Immobiliare del Mezzogiorno"
+        ],
+        "Green Value Gap": [
+          "Direttiva Case Green e infrazione UE: quali immobili rischiano di perdere valore in Italia e nel Mezzogiorno",
+          "Direttiva Case Green (EPBD): Impatto Reale sul Mercato Immobiliare del Mezzogiorno"
+        ],
+        "Guida Operativa": [
+          "Credito d'Imposta ZES 2026: Guida Operativa Completa per Investitori Immobiliari"
+        ],
+        "Incentivi Fiscali": [
+          "Credito d'Imposta ZES 2026: Guida Operativa Completa per Investitori Immobiliari"
+        ],
+        "Infrastrutture": [
+          "Come l'Alta Velocità Cambierà il Valore degli Immobili nel Sud Italia"
+        ],
+        "Infrastrutture Ferroviarie": [
+          "Come l'Alta Velocità Cambierà il Valore degli Immobili nel Sud Italia"
+        ],
+        "Infrazione UE": [
+          "Direttiva Case Green e infrazione UE: quali immobili rischiano di perdere valore in Italia e nel Mezzogiorno"
+        ],
+        "Innovazione Real Estate": [
+          "Smart building e domotica nel Sud: nel 2026 quanto incidono davvero sul valore immobiliare?"
+        ],
+        "Investimenti": [
+          "Dove Investire nel Sud Italia nel 2026: La Classifica delle 10 Città con Maggiore Potenziale",
+          "Perché il Mezzogiorno è il Prossimo Hotspot Immobiliare d'Europa",
+          "Student Housing nel Sud Italia: L'Opportunità da 2 Miliardi che il Mercato Sta Ignorando"
+        ],
+        "Investimenti Immobiliari": [
+          "ZES Unica 2026-2028: quali immobili e investimenti stanno beneficiando davvero dell'incentivo",
+          "Mercato Immobiliare del Mezzogiorno 2026: Dati, Trend e Previsioni",
+          "ZES Unica Mezzogiorno: Come Cambia il Gioco per gli Investitori Immobiliari",
+          "Dove Investire nel Sud Italia nel 2026: La Classifica delle 10 Città con Maggiore Potenziale",
+          "Perché il Mezzogiorno è il Prossimo Hotspot Immobiliare d'Europa",
+          "Credito d'Imposta ZES 2026: Guida Operativa Completa per Investitori Immobiliari",
+          "Mappa Completa dei Comuni della ZES Unica Mezzogiorno: Tutti i Territori Agevolati",
+          "Student Housing nel Sud Italia: L'Opportunità da 2 Miliardi che il Mercato Sta Ignorando"
+        ],
+        "Investitori Stranieri": [
+          "Investitori stranieri nel real estate italiano 2026: perche il Sud entra sempre piu spesso nei radar"
+        ],
+        "Lecce": [
+          "Report Prezzi Immobiliari Puglia Q1 2026: Analisi Provincia per Provincia"
+        ],
+        "Mappa ZES": [
+          "Mappa Completa dei Comuni della ZES Unica Mezzogiorno: Tutti i Territori Agevolati"
+        ],
+        "Mercato Europeo": [
+          "Perché il Mezzogiorno è il Prossimo Hotspot Immobiliare d'Europa"
+        ],
+        "Mercato Immobiliare": [
+          "Salva Casa 2026 e attuazione regionale: impatto reale sul mercato immobiliare italiano e pugliese",
+          "Mutui, BCE e accesso al credito 2026: cosa puo cambiare davvero per il mercato residenziale del Sud",
+          "Investitori stranieri nel real estate italiano 2026: perche il Sud entra sempre piu spesso nei radar",
+          "Bari quartiere per quartiere 2026: prezzi, canoni, domanda e potenziale di rivalutazione",
+          "ZES Unica 2026-2028: quali immobili e investimenti stanno beneficiando davvero dell'incentivo",
+          "Logistica e capannoni in Puglia: confronto tra Bari, Brindisi, Taranto e Foggia",
+          "Turismo residenziale in Puglia 2026: chi compra, dove compra e che asset cerca davvero",
+          "Student housing in Italia 2026: perche il Sud sta entrando davvero nella mappa degli investitori",
+          "Mercato immobiliare nel Mezzogiorno 2026: prezzi, canoni e volumi stanno davvero andando nella stessa direzione?",
+          "Affitti residenziali nel Sud Italia 2026: crescita dei canoni o semplice squilibrio tra domanda e offerta?"
+        ],
+        "Mezzogiorno": [
+          "Direttiva Case Green e infrazione UE: quali immobili rischiano di perdere valore in Italia e nel Mezzogiorno",
+          "Investitori stranieri nel real estate italiano 2026: perche il Sud entra sempre piu spesso nei radar",
+          "Mercato immobiliare nel Mezzogiorno 2026: prezzi, canoni e volumi stanno davvero andando nella stessa direzione?",
+          "Build to Rent nel Mezzogiorno: nel 2026 esiste davvero un mercato investibile o solo casi isolati?",
+          "Mercato immobiliare di lusso nel Mezzogiorno 2026: tenuta reale o crescita raccontata troppo in fretta?",
+          "Mercato Immobiliare del Mezzogiorno 2026: Dati, Trend e Previsioni",
+          "ZES Unica Mezzogiorno: Come Cambia il Gioco per gli Investitori Immobiliari",
+          "Dove Investire nel Sud Italia nel 2026: La Classifica delle 10 Città con Maggiore Potenziale",
+          "Perché il Mezzogiorno è il Prossimo Hotspot Immobiliare d'Europa",
+          "Direttiva Case Green (EPBD): Impatto Reale sul Mercato Immobiliare del Mezzogiorno"
+        ],
+        "Mutui": [
+          "Mutui, BCE e accesso al credito 2026: cosa puo cambiare davvero per il mercato residenziale del Sud"
+        ],
+        "NPL": [
+          "NPL, UTP e distressed real estate nel Mezzogiorno: nel 2026 dove si stanno aprendo le vere finestre di acquisto"
+        ],
+        "Napoli-Bari": [
+          "Come l'Alta Velocità Cambierà il Valore degli Immobili nel Sud Italia"
+        ],
+        "Normative e Sostenibilita": [
+          "Direttiva Case Green e infrazione UE: quali immobili rischiano di perdere valore in Italia e nel Mezzogiorno",
+          "Salva Casa 2026 e attuazione regionale: impatto reale sul mercato immobiliare italiano e pugliese",
+          "Piano Casa, delibera Bari e nuovo PUG: come cambia l'equilibrio tra rigenerazione e nuove volumetrie"
+        ],
+        "Normative e Sostenibilità": [
+          "Direttiva Case Green (EPBD): Impatto Reale sul Mercato Immobiliare del Mezzogiorno"
+        ],
+        "PNRR": [
+          "Rigenerazione Urbana nel Mezzogiorno: Come Trasforma il Valore degli Immobili",
+          "Come l'Alta Velocità Cambierà il Valore degli Immobili nel Sud Italia"
+        ],
+        "PUG": [
+          "Piano Casa, delibera Bari e nuovo PUG: come cambia l'equilibrio tra rigenerazione e nuove volumetrie"
+        ],
+        "Piano Casa": [
+          "Piano Casa, delibera Bari e nuovo PUG: come cambia l'equilibrio tra rigenerazione e nuove volumetrie"
+        ],
+        "Prezzi Immobiliari": [
+          "Report Prezzi Immobiliari Puglia Q1 2026: Analisi Provincia per Provincia",
+          "Quotazioni OMI 2026: Analisi delle Variazioni nel Mezzogiorno"
+        ],
+        "Puglia": [
+          "Salva Casa 2026 e attuazione regionale: impatto reale sul mercato immobiliare italiano e pugliese",
+          "Logistica e capannoni in Puglia: confronto tra Bari, Brindisi, Taranto e Foggia",
+          "Turismo residenziale in Puglia 2026: chi compra, dove compra e che asset cerca davvero",
+          "Mercato Immobiliare del Mezzogiorno 2026: Dati, Trend e Previsioni",
+          "ZES Unica Mezzogiorno: Come Cambia il Gioco per gli Investitori Immobiliari",
+          "Dove Investire nel Sud Italia nel 2026: La Classifica delle 10 Città con Maggiore Potenziale",
+          "Perché il Mezzogiorno è il Prossimo Hotspot Immobiliare d'Europa",
+          "Credito d'Imposta ZES 2026: Guida Operativa Completa per Investitori Immobiliari",
+          "Report Prezzi Immobiliari Puglia Q1 2026: Analisi Provincia per Provincia",
+          "Mappa Completa dei Comuni della ZES Unica Mezzogiorno: Tutti i Territori Agevolati"
+        ],
+        "Quotazioni OMI": [
+          "Quotazioni OMI 2026: Analisi delle Variazioni nel Mezzogiorno"
+        ],
+        "Real Estate": [
+          "Investitori stranieri nel real estate italiano 2026: perche il Sud entra sempre piu spesso nei radar"
+        ],
+        "Rendimenti": [
+          "Student Housing nel Sud Italia: L'Opportunità da 2 Miliardi che il Mercato Sta Ignorando"
+        ],
+        "Rendimenti Immobiliari": [
+          "Dove Investire nel Sud Italia nel 2026: La Classifica delle 10 Città con Maggiore Potenziale"
+        ],
+        "Report Trimestrale": [
+          "Report Prezzi Immobiliari Puglia Q1 2026: Analisi Provincia per Provincia"
+        ],
+        "Rigenerazione Urbana": [
+          "Aree dismesse nel Sud Italia: la riconversione torna centrale, ma solo dove esiste una tesi urbana credibile",
+          "Rigenerazione Urbana nel Mezzogiorno: Come Trasforma il Valore degli Immobili"
+        ],
+        "Rigenerazione e Sviluppo": [
+          "Rigenerazione Urbana nel Mezzogiorno: Come Trasforma il Valore degli Immobili"
+        ],
+        "Ristrutturazione": [
+          "Direttiva Case Green (EPBD): Impatto Reale sul Mercato Immobiliare del Mezzogiorno"
+        ],
+        "Salva Casa": [
+          "Salva Casa 2026 e attuazione regionale: impatto reale sul mercato immobiliare italiano e pugliese"
+        ],
+        "Southworking": [
+          "Come l'Alta Velocità Cambierà il Valore degli Immobili nel Sud Italia"
+        ],
+        "Student Housing": [
+          "Student housing in Italia 2026: perche il Sud sta entrando davvero nella mappa degli investitori",
+          "Student Housing nel Sud Italia: L'Opportunità da 2 Miliardi che il Mercato Sta Ignorando"
+        ],
+        "Sud Italia": [
+          "Mutui, BCE e accesso al credito 2026: cosa puo cambiare davvero per il mercato residenziale del Sud",
+          "Student housing in Italia 2026: perche il Sud sta entrando davvero nella mappa degli investitori",
+          "Affitti residenziali nel Sud Italia 2026: crescita dei canoni o semplice squilibrio tra domanda e offerta?",
+          "Aree dismesse nel Sud Italia: la riconversione torna centrale, ma solo dove esiste una tesi urbana credibile",
+          "Uffici secondari e stock obsoleto nel Sud: nel 2026 il vero tema non e venderli ma ripensarli",
+          "Social housing ed edilizia accessibile nel Sud: il 2026 puo essere l'anno del ritorno a una scala credibile?",
+          "Smart building e domotica nel Sud: nel 2026 quanto incidono davvero sul valore immobiliare?"
+        ],
+        "Taranto": [
+          "Report Prezzi Immobiliari Puglia Q1 2026: Analisi Provincia per Provincia",
+          "Rigenerazione Urbana nel Mezzogiorno: Come Trasforma il Valore degli Immobili"
+        ],
+        "Trend Immobiliare": [
+          "Mercato Immobiliare del Mezzogiorno 2026: Dati, Trend e Previsioni"
+        ],
+        "Turismo Residenziale": [
+          "Turismo residenziale in Puglia 2026: chi compra, dove compra e che asset cerca davvero"
+        ],
+        "UTP": [
+          "NPL, UTP e distressed real estate nel Mezzogiorno: nel 2026 dove si stanno aprendo le vere finestre di acquisto"
+        ],
+        "Università": [
+          "Student Housing nel Sud Italia: L'Opportunità da 2 Miliardi che il Mercato Sta Ignorando"
+        ],
+        "Valore Immobiliare": [
+          "Direttiva Case Green e infrazione UE: quali immobili rischiano di perdere valore in Italia e nel Mezzogiorno",
+          "Rigenerazione Urbana nel Mezzogiorno: Come Trasforma il Valore degli Immobili"
+        ],
+        "ZES Unica": [
+          "ZES Unica 2026-2028: quali immobili e investimenti stanno beneficiando davvero dell'incentivo",
+          "ZES Unica Mezzogiorno: Come Cambia il Gioco per gli Investitori Immobiliari",
+          "Credito d'Imposta ZES 2026: Guida Operativa Completa per Investitori Immobiliari",
+          "Mappa Completa dei Comuni della ZES Unica Mezzogiorno: Tutti i Territori Agevolati"
+        ],
+        "ZES e Incentivi": [
+          "ZES Unica Mezzogiorno: Come Cambia il Gioco per gli Investitori Immobiliari",
+          "Credito d'Imposta ZES 2026: Guida Operativa Completa per Investitori Immobiliari",
+          "Mappa Completa dei Comuni della ZES Unica Mezzogiorno: Tutti i Territori Agevolati"
+        ],
+        "affitti residenziali": [
+          "Affitti residenziali nel Sud Italia 2026: crescita dei canoni o semplice squilibrio tra domanda e offerta?"
+        ],
+        "aree dismesse": [
+          "Aree dismesse nel Sud Italia: la riconversione torna centrale, ma solo dove esiste una tesi urbana credibile"
+        ],
+        "canoni": [
+          "Mercato immobiliare nel Mezzogiorno 2026: prezzi, canoni e volumi stanno davvero andando nella stessa direzione?"
+        ],
+        "canoni locazione": [
+          "Affitti residenziali nel Sud Italia 2026: crescita dei canoni o semplice squilibrio tra domanda e offerta?"
+        ],
+        "capannoni": [
+          "Logistica e capannoni in Puglia: confronto tra Bari, Brindisi, Taranto e Foggia"
+        ],
+        "distressed real estate": [
+          "NPL, UTP e distressed real estate nel Mezzogiorno: nel 2026 dove si stanno aprendo le vere finestre di acquisto"
+        ],
+        "domanda internazionale": [
+          "Mercato immobiliare di lusso nel Mezzogiorno 2026: tenuta reale o crescita raccontata troppo in fretta?"
+        ],
+        "domotica": [
+          "Smart building e domotica nel Sud: nel 2026 quanto incidono davvero sul valore immobiliare?"
+        ],
+        "edilizia accessibile": [
+          "Social housing ed edilizia accessibile nel Sud: il 2026 puo essere l'anno del ritorno a una scala credibile?"
+        ],
+        "high street": [
+          "Retail high street a Bari nel 2026: il centro commerciale naturale torna investibile o resta selettivo?"
+        ],
+        "investitori": [
+          "Student housing in Italia 2026: perche il Sud sta entrando davvero nella mappa degli investitori"
+        ],
+        "logistica": [
+          "Logistica e capannoni in Puglia: confronto tra Bari, Brindisi, Taranto e Foggia"
+        ],
+        "lusso immobiliare": [
+          "Mercato immobiliare di lusso nel Mezzogiorno 2026: tenuta reale o crescita raccontata troppo in fretta?"
+        ],
+        "prezzi immobiliari": [
+          "Mercato immobiliare nel Mezzogiorno 2026: prezzi, canoni e volumi stanno davvero andando nella stessa direzione?"
+        ],
+        "quartieri": [
+          "Bari quartiere per quartiere 2026: prezzi, canoni, domanda e potenziale di rivalutazione"
+        ],
+        "residenziale": [
+          "Build to Rent nel Mezzogiorno: nel 2026 esiste davvero un mercato investibile o solo casi isolati?"
+        ],
+        "retail": [
+          "Retail high street a Bari nel 2026: il centro commerciale naturale torna investibile o resta selettivo?"
+        ],
+        "riconversione": [
+          "Aree dismesse nel Sud Italia: la riconversione torna centrale, ma solo dove esiste una tesi urbana credibile"
+        ],
+        "rivalutazione": [
+          "Bari quartiere per quartiere 2026: prezzi, canoni, domanda e potenziale di rivalutazione"
+        ],
+        "smart building": [
+          "Smart building e domotica nel Sud: nel 2026 quanto incidono davvero sul valore immobiliare?"
+        ],
+        "social housing": [
+          "Social housing ed edilizia accessibile nel Sud: il 2026 puo essere l'anno del ritorno a una scala credibile?"
+        ],
+        "stock obsoleto": [
+          "Uffici secondari e stock obsoleto nel Sud: nel 2026 il vero tema non e venderli ma ripensarli"
+        ],
+        "uffici": [
+          "Uffici secondari e stock obsoleto nel Sud: nel 2026 il vero tema non e venderli ma ripensarli"
+        ]
+      }
+    }
+  }
+}
